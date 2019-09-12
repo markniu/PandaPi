@@ -478,7 +478,7 @@
  * details can be tuned in Configuration_adv.h
  */
 
-//#define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
+#define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
 //#define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
 
 //===========================================================================
@@ -529,6 +529,7 @@
 #define X_MIN_ENDSTOP_INVERTING  false//true // set to true to invert the logic of the endstop.
 #define Y_MIN_ENDSTOP_INVERTING  false//true // set to true to invert the logic of the endstop.
 #define Z_MIN_ENDSTOP_INVERTING   false//true // set to true to invert the logic of the endstop.
+
 #define X_MAX_ENDSTOP_INVERTING true//false // set to true to invert the logic of the endstop.
 #define Y_MAX_ENDSTOP_INVERTING true//false // set to true to invert the logic of the endstop.
 #define Z_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.

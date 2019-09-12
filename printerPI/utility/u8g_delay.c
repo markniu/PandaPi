@@ -91,8 +91,21 @@ void u8g_10MicroDelay(void);
 /*== Raspberry Pi Delay ==*/
 #if 1//defined (USE_RASPBERRYPI_DELAY)
 #include <unistd.h>
+#include <time.h>
 
 #include "../CMSIS/wiringPi.h"
+
+//
+void delay_ns (unsigned int howLong)
+{
+  struct timespec sleeper, dummy ;
+
+  sleeper.tv_sec  = (time_t)(howLong / 1000000) ;
+  sleeper.tv_nsec = (long)(howLong % 1000000) ;
+
+  nanosleep (&sleeper, &dummy) ;
+}
+
 //#include "/usr/local/include/wiringPi.h"
 void u8g_Delay(uint16_t val) {
    //delay(val);
@@ -101,14 +114,16 @@ void u8g_Delay(uint16_t val) {
 }
 void u8g_MicroDelay(void)
 {
-    usleep(1);
+	delayMicroseconds(1);
+   // usleep(1);
   // delay (1);
    
 }
 void u8g_10MicroDelay(void)
 {
   //  delay (10);
-	usleep(10);
+//	usleep(10);
+  delayMicroseconds(10);
 }
 #endif
 

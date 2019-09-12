@@ -813,6 +813,18 @@ char parse_string(char *src,char *start,char *end,char *out,int *e_pos)
  */
 void Temperature::manage_heater() {
 
+	static unsigned int time_s_old=0;
+	unsigned int time_s=millis();
+	if((time_s-time_s_old)>2000)
+	{
+		isr();
+		time_s_old=time_s;
+	}
+	
+	// Poll endstops state, if required
+	endstops.poll();	
+	// Periodically call the planner timer
+	planner.tick();
   return;
 
 

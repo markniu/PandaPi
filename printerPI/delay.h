@@ -31,6 +31,7 @@
 #ifndef MARLIN_DELAY_H
 #define MARLIN_DELAY_H
 
+#include "utility/U8g.h"
 #define nop() __asm__ __volatile__("nop;\n\t":::)
 
 FORCE_INLINE static void __delay_4cycles(unsigned int cy) {

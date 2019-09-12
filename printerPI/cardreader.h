@@ -110,8 +110,8 @@ public:
   FORCE_INLINE bool eof() { return sdpos >= filesize; }
   FORCE_INLINE int16_t get() { sdpos = file.curPosition(); return (int16_t)file.read(); }
   FORCE_INLINE void setIndex(const uint32_t index) { sdpos = index; file.seekSet(index); }
-  FORCE_INLINE uint32_t getIndex() { return sdpos; }
-  FORCE_INLINE uint8_t percentDone() { return (isFileOpen() && filesize) ? sdpos / ((filesize + 99) / 100) : 0; }
+  FORCE_INLINE uint32_t getIndex() {/*if(fd) sdpos= ftell(fd);*/ return sdpos; }
+  FORCE_INLINE uint8_t percentDone() {/*if(fd)  sdpos= ftell(fd); */return (isFileOpen() && filesize) ? sdpos / ((filesize + 99) / 100) : 0; }
   FORCE_INLINE char* getWorkDirName() { workDir.getFilename(filename); return filename; }
 
   #if ENABLED(AUTO_REPORT_SD_STATUS)
@@ -129,6 +129,7 @@ public:
   bool saving, logging, sdprinting, cardOK, filenameIsDir;
   char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH];
   int8_t autostart_index;
+  uint32_t filesize, sdpos;
 private:
   SdFile root, workDir, workDirParents[MAX_DIR_DEPTH];
   uint8_t workDirDepth;
@@ -196,7 +197,7 @@ private:
   uint8_t file_subcall_ctr;
   uint32_t filespos[SD_PROCEDURE_DEPTH];
   char proc_filenames[SD_PROCEDURE_DEPTH][MAXPATHNAMELENGTH];
-  uint32_t filesize, sdpos;
+  
 
   LsAction lsAction; //stored for recursion.
   uint16_t nrFiles; //counter for the files in the current directory and recycled as position counter for getting the nrFiles'th name in the directory.

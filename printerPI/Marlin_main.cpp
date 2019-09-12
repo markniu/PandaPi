@@ -275,6 +275,7 @@
 #include <unistd.h>
 #include <termios.h>		//Used for UART
 #include <string.h>
+#include "ini_file.h"
 
 
 
@@ -991,6 +992,7 @@ void setup_powerhold() {
 }
 
 void suicide() {
+  exit(0); //robert
   #if HAS_SUICIDE
     OUT_WRITE(SUICIDE_PIN, LOW);
   #endif
@@ -1233,6 +1235,7 @@ inline void get_serial_commands() {
 	  char sd_char;
 	  unsigned int n = fread(&sd_char,sizeof(char),1,card.fd);
       bool card_eof = n<=0?1:0;//card.eof();
+      card.sdpos+=n;
      // printf(&sd_char);
 	//  MYSERIAL0.write(sd_char);
       if (card_eof || n <=0
@@ -4199,8 +4202,8 @@ inline void gcode_G28(const bool always_home_all) {
   #endif
 
   #if ENABLED(BLTOUCH)
-    // Make sure any BLTouch error condition is cleared
-    bltouch_command(BLTOUCH_RESET);
+    // Make sure any BLTouch error condition is cleared 
+    // 
     set_bltouch_deployed(false);
   #endif
 
@@ -14493,7 +14496,9 @@ void idle(
 void kill(const char* lcd_msg) {
   SERIAL_ERROR_START();
   SERIAL_ERRORLNPGM(MSG_ERR_KILLED);
-
+  printf(lcd_msg);
+  printf(MSG_ERR_KILLED);
+  printf("\n");
   thermalManager.disable_all_heaters();
   disable_all_steppers();
 
@@ -14517,6 +14522,7 @@ void kill(const char* lcd_msg) {
   #if HAS_POWER_SWITCH
     PSU_OFF();
   #endif
+
 
   suicide();
   while (1) {
@@ -14812,7 +14818,7 @@ void setup() {
   #if ENABLED(POWER_LOSS_RECOVERY)
     check_print_job_recovery();
   #endif
-   tmper_init_stm32(thermalManager.isr);//robert
+ //  tmper_init_stm32(thermalManager.isr);//robert
   printf("setup19\n");
 
   #if ENABLED(USE_WATCHDOG)
@@ -14830,6 +14836,14 @@ int card_sd_in;
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "/home/ras/linux-rt/linux-rpi-4.14.y-rt/include/config/bt/rtl.h"
+#include <time.h>
+#include <pthread.h>
+#define TASK_PERIOD 100000
+         /* 100 microseconds period */
+#define TASK_PRIORITY 1
+         /* priority assigned to task */
+
 
 #define IN  0
 #define OUT 1
@@ -14988,7 +15002,24 @@ int mcp23017Setup (const int pinBase, const int i2cAddress)
 int
 main2(int argc, char *argv[])
 {
+
 	   int i2c_fe;
+
+	  char buf[260];
+	  char g_szConfigPath[260];
+	  memset(buf,0,sizeof(buf));
+	  GetCurrentPath(buf,"Config_panda.ini");
+	  strcpy(g_szConfigPath,buf);
+	  
+	  int iCatAge;
+	  char szCatName[32];
+	  
+	  iCatAge = GetIniKeyInt("CAT","age","/media/usb/Config_panda.ini");
+	  char *a = GetIniKeyString("CAT4","name",g_szConfigPath);
+	  printf("%d\r\n",iCatAge);
+	  printf("%s\r\n",a);
+
+	   
 	  // u8g_i2c_opt = options;
 	
 	/*   if (wiringPiSetup() == -1) {
@@ -15027,30 +15058,21 @@ main2(int argc, char *argv[])
 
 
 
-//////////////
-
-
+////////////// 
 int main(int argc, char* argv[])
  {
-  // wiringPiSetup () ;
- /* pinMode(11, INPUT) ; pullUpDnControl(4,PUD_UP);
-   pinMode(4, INPUT) ;pullUpDnControl(4,PUD_UP);
-   pinMode(1, INPUT) ; 
-   
-   
-   pullUpDnControl(11,PUD_DOWN);
-   for (;;)
-  {
-  //  digitalWrite (0, HIGH) ;  
 
-   // digitalWrite (0,  LOW) ; 
-   	  sleep(1);
-  	  printf("read=== %d   \n",digitalRead(11) );
-  }
-   */
+	int iCatAge;
+	char szCatName[32];
+	
+	iCatAge = GetIniKeyInt("CAT","age","/media/usb/Config_panda.ini");
+	char *a = GetIniKeyString("CAT4","name","/media/usb/Config_panda.ini");
+	printf("%d\r\n",iCatAge);
+	printf("%s\r\n",a);
+
 	setup() ;
 	 
-	
+	printf("main0\n");
 
 	// while(1) sleep(1);
 	enqueue_and_echo_commands_P("M20");
@@ -15086,15 +15108,10 @@ int main(int argc, char* argv[])
             true
           #endif
         );
-		  printf("stopSDPrint1\n");
-        clear_command_queue();
-		
-		printf("stopSDPrint2\n");
+
+        clear_command_queue();		
         quickstop_stepper();
-		printf("stopSDPrint3\n");
         print_job_timer.stop();
-		
-		printf("stopSDPrint4\n");
         thermalManager.disable_all_heaters();
         #if FAN_COUNT > 0
           for (uint8_t i = 0; i < FAN_COUNT; i++) fanSpeeds[i] = 0;
@@ -15103,8 +15120,6 @@ int main(int argc, char* argv[])
         #if ENABLED(POWER_LOSS_RECOVERY)
           card.removeJobRecoveryFile();
         #endif
-		
-		printf("stopSDPrint5\n");
       }
     #endif
 

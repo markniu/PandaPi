@@ -371,6 +371,8 @@ void CardReader::printFilename() {
 void CardReader::initsd() {
  // system("sudo mount /dev/sda1 /media/usb -o uid=pi,gid=pi");	
    cardOK = true;
+    SERIAL_ECHO_START();
+    SERIAL_ECHOLNPGM(MSG_SD_CARD_OK);
  return;
   /////////////// 
   cardOK = false;
@@ -596,7 +598,10 @@ void CardReader::removeFile(const char * const name) {
 }
 
 void CardReader::getStatus() {
+ 
   if (cardOK && sdprinting) {
+  /*	if(fd) 
+  		sdpos= ftell(fd);*/
     SERIAL_PROTOCOLPGM(MSG_SD_PRINTING_BYTE);
     SERIAL_PROTOCOL(sdpos);
     SERIAL_PROTOCOLCHAR('/');

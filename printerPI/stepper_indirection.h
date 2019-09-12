@@ -74,6 +74,11 @@
 void restore_stepper_drivers();  // Called by PSU_ON
 void reset_stepper_drivers();    // Called by settings.load / settings.reset
 
+#define delay_step() \
+{\
+	int jj=130;	/* A4988: 130(1us) ;TMC2208: 0(200ns) ;*/ \
+	while(jj--);\
+}
 // X Stepper
 #if AXIS_DRIVER_TYPE(X, L6470)
   extern L6470 stepperX;
@@ -104,7 +109,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define X_DIR_READ READ(X_DIR_PIN)
 #endif
 #define X_STEP_INIT SET_OUTPUT(X_STEP_PIN)
-#define X_STEP_WRITE(STATE) WRITE(X_STEP_PIN,STATE)
+#define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);delay_step();}
 #define X_STEP_READ READ(X_STEP_PIN)
 
 // Y Stepper
@@ -137,7 +142,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define Y_DIR_READ READ(Y_DIR_PIN)
 #endif
 #define Y_STEP_INIT SET_OUTPUT(Y_STEP_PIN)
-#define Y_STEP_WRITE(STATE) WRITE(Y_STEP_PIN,STATE)
+#define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);delay_step();}
 #define Y_STEP_READ READ(Y_STEP_PIN)
 
 // Z Stepper
@@ -170,7 +175,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define Z_DIR_READ READ(Z_DIR_PIN)
 #endif
 #define Z_STEP_INIT SET_OUTPUT(Z_STEP_PIN)
-#define Z_STEP_WRITE(STATE) WRITE(Z_STEP_PIN,STATE)
+#define Z_STEP_WRITE(STATE){ WRITE(Z_STEP_PIN,STATE);delay_step();}
 #define Z_STEP_READ READ(Z_STEP_PIN)
 
 // X2 Stepper
@@ -308,7 +313,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define E0_DIR_READ READ(E0_DIR_PIN)
 #endif
 #define E0_STEP_INIT SET_OUTPUT(E0_STEP_PIN)
-#define E0_STEP_WRITE(STATE) WRITE(E0_STEP_PIN,STATE)
+#define E0_STEP_WRITE(STATE) {WRITE(E0_STEP_PIN,STATE);delay_step();}
 #define E0_STEP_READ READ(E0_STEP_PIN)
 
 // E1 Stepper
@@ -341,7 +346,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define E1_DIR_READ READ(E1_DIR_PIN)
 #endif
 #define E1_STEP_INIT SET_OUTPUT(E1_STEP_PIN)
-#define E1_STEP_WRITE(STATE) WRITE(E1_STEP_PIN,STATE)
+#define E1_STEP_WRITE(STATE) {WRITE(E1_STEP_PIN,STATE);delay_step();}
 #define E1_STEP_READ READ(E1_STEP_PIN)
 
 // E2 Stepper

@@ -39,7 +39,7 @@
     #include "_Bootscreen.h"
 
     #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
-      #define CUSTOM_BOOTSCREEN_TIMEOUT 2500 
+      #define CUSTOM_BOOTSCREEN_TIMEOUT 1000 
     #endif
 
   #endif

@@ -1410,7 +1410,7 @@ void Stepper::stepper_pulse_phase_isr() {
       delta_error[_AXIS(AXIS)] += advance_dividend[_AXIS(AXIS)]; \
       if (delta_error[_AXIS(AXIS)] >= 0) { \
         _APPLY_STEP(AXIS)(!_INVERT_STEP_PIN(AXIS), 0); \
-        count_position[_AXIS(AXIS)] += count_direction[_AXIS(AXIS)]; /*rebort*/\
+        count_position[_AXIS(AXIS)] += count_direction[_AXIS(AXIS)]; /*robert*/\
       } \
     }while(0)
 
@@ -1525,7 +1525,7 @@ uint32_t Stepper::stepper_block_phase_isr() {
 
   // If no queued movements, just wait 1ms for the next move
   uint32_t interval = (STEPPER_TIMER_RATE / 1000);
-  endstops.update();
+ // endstops.update();
 
   // If there is a current block
   if (current_block) {
