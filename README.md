@@ -38,4 +38,7 @@ heater Output   | 	15Amax	 |
 MCU   | 	stm32f103c8t6	 | 
 LCD   | 	Graphic128*64/LCD2004	 | 
 
+## where to buy?
+https://www.tindie.com/products/17947/
+
 thans for your like/following or buy board, I need your help so this project can go long way.
