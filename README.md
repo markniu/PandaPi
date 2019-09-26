@@ -22,8 +22,6 @@ WIKI:https://github.com/markniu/PandaPi/wiki
 ### youtube:
 https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA
 
-![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
-![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
 
 ## Hardware resources
 RaspberryPi | Pi 4/3B/3B+ | .
@@ -40,6 +38,10 @@ Input   | 	7~35V 20A max	 |
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32f103c8t6	 | 
 LCD   | 	Graphic128*64/LCD2004	 | 
+
+
+![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
+![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
 
 ## where to buy?
 https://www.tindie.com/products/17947/
