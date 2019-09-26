@@ -19,6 +19,9 @@ https://drive.google.com/open?id=1uF02VOtW8U_Rh6nrCRZ1LV7nEt7S-ND2
 ## How to do ? 
 WIKI:https://github.com/markniu/PandaPi/wiki
 
+# youtube:
+https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA
+
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
 
