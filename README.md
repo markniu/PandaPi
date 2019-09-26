@@ -20,4 +20,18 @@ WIKI:https://github.com/markniu/PandaPi/wiki
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
 
-
+### Hardware resources
+RaspberryPi | Pi 4/3B/3B+ | .
+--- | --- | --- 
+Extruders | 	1 | 	 
+Controlled Fans | 	3	 |  1 board auto controlled
+Heaters   | 	2	 |  
+Endstops   | 	3	 | 
+Temp sens   | 	2	 | 
+SWD   | 	1	 | STlinkV2
+Serial port chip   | 	CH340G	 | 
+stepper driver   |  4*(TMC2208/A4988/TMC2130)	 | Modular, replaceable
+Input   | 	7~35V 20A max	 | 
+heater Output   | 	15Amax	 | 
+MCU   | 	stm32f103c8t6	 | 
+LCD   | 	Graphic128*64/LCD2004	 | 
