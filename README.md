@@ -15,6 +15,8 @@ thans for your like/following or buy board, I need your help so this project can
 download the released img file
 https://drive.google.com/open?id=1uF02VOtW8U_Rh6nrCRZ1LV7nEt7S-ND2
 
+WIKI:https://github.com/markniu/PandaPi/wiki
+
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
 
