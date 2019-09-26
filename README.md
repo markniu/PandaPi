@@ -12,16 +12,10 @@ Here is the test results:
 3. opensource. 
 
 4. ### based on Octoprint and marlin.
-
-### download the released img file
-https://drive.google.com/open?id=1uF02VOtW8U_Rh6nrCRZ1LV7nEt7S-ND2
+youtube:https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA
 
 ## How to do ? 
 WIKI:https://github.com/markniu/PandaPi/wiki
-
-### youtube:
-https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA
-
 
 ## Hardware resources
 RaspberryPi | Pi 4/3B/3B+ | .
