@@ -32,7 +32,7 @@ Input   | 	7~35V 20A max	 |
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32f103c8t6	 | 
 LCD   | 	Graphic128*64/LCD2004	 | 
-on board FAN   | 	silent 24V	 | 
+on board FAN   | 	silent 24V self auto controlled	 | 
 Spacer screw   | 	Nylon spacer screw	 | 
 
 
