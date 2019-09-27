@@ -21,7 +21,7 @@ WIKI:https://github.com/markniu/PandaPi/wiki
 RaspberryPi | Pi 4/3B/3B+ | .
 --- | --- | --- 
 Extruders | 	1 | 	 
-Controlled Fans | 	3	 |  1 board auto controlled
+Controlled Fans | 	3	 |  1 board self controlled
 Heaters   | 	2	 |  
 Endstops   | 	3	 | 
 Temp sens   | 	2	 | 
@@ -32,6 +32,8 @@ Input   | 	7~35V 20A max	 |
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32f103c8t6	 | 
 LCD   | 	Graphic128*64/LCD2004	 | 
+on board FAN   | 	silent 24V	 | 
+Spacer screw   | 	Nylon spacer screw	 | 
 
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
