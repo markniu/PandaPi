@@ -27,13 +27,14 @@ Endstops   | 	3	 |
 Temp sens   | 	2	 | 
 SWD   | 	1	 | STlinkV2
 Serial port chip   | 	CH340G	 | 
-stepper driver   |  4*(TMC2208/A4988/TMC2130)	 | Modular, replaceable
+stepper driver   |  4*(TMC2208/A4988/TMC2130)	 | Modular, replaceable,no uart/SPI
 Input   | 	7~35V 20A max	 | 
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32f103c8t6	 | 
 LCD   | 	Graphic128*64/LCD2004	 | 
 on board FAN   | 	silent 24V self auto controlled	 | 
 Spacer screw   | 	Nylon spacer screw	 | 
+filament detect pin    | 	  reuse the SWD pin   | 	
 
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
