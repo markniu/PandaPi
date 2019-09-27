@@ -20,4 +20,5 @@ $(TARGET): $(OBJ)
 	$(LINK) -o $(TARGET) $(OBJ) ${LIBS} 
 
 clean:
+	find . -type f | xargs touch
 	rm -f $(TARGET) $(OBJ)
