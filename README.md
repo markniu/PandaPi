@@ -12,7 +12,7 @@ Here is the test results:
 3. opensource. 
 
 4. ### based on Octoprint and marlin.
-youtube:https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA
+[youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA)
 
 ## How to start ?  [Wiki](https://github.com/markniu/PandaPi/wiki) 
 https://github.com/markniu/PandaPi/wiki
