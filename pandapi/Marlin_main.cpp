@@ -3119,7 +3119,7 @@ printf("distanc==%0.2f; mms=%.2f\n",distance,fr_mm_s);
  */
 
 static void homeaxis(const AxisEnum axis) {
-
+ 
   #if IS_SCARA
     // Only Z homing (with probe) is permitted
     if (axis != Z_AXIS) { BUZZ(100, 880); return; }
