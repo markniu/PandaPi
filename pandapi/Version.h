@@ -48,7 +48,7 @@
    * here we define this default string as the date where the latest release
    * version was tagged.
    */
-  #define STRING_DISTRIBUTION_DATE "2018-07-31"
+  #define STRING_DISTRIBUTION_DATE "2019-09-30"
 
   /**
    * Required minimum Configuration.h and Configuration_adv.h file versions.
@@ -78,12 +78,12 @@
    * has a distinct Github fork— the Source Code URL should just be the main
    * Marlin repository.
    */
-  #define SOURCE_CODE_URL "https://github.com/hackaday3D/marlin_stm32"
+  #define SOURCE_CODE_URL "https://github.com/markniu/PandaPi"
 
   /**
    * Default generic printer UUID.
    */
-  #define DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
+  #define DEFAULT_MACHINE_UUID "uede2a2f-45a2-4768-9082-c55c629867pt"
 
   /**
    * The WEBSITE_URL is the location where users can get more information such as
