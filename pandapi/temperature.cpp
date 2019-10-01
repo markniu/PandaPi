@@ -2044,42 +2044,14 @@ HAL_TEMP_TIMER_ISR {
 }
 
 #endif
-
-  void Temperature::get_i2c_temperature(int i) {
+/*
+  void Temperature::get_i2c_temperature(char *cmd_buf ) {
   	
-	 /*
-	///////////////
-	char cn=0,cmd_buf[64], out[64];
-	int k=0;
-	 
-	//sprintf(cmd_buf,"g;")
-	{
-		wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
-		wiringPiI2CWriteReg8(i2c_fd, 8, ';');
-		while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
-		{
-			delay(0);
-		}
-	//	printf(cmd_buf);
-		parse_string(cmd_buf,"T:","B",out,&k);	
-		current_temperature[0]=atof(out);
-		parse_string(cmd_buf,"B:","",out,&k);	
-		current_temperature_bed=atof(out);
-		////////////////////////////////
-	}
-	*/
-
-}
-
-
-
-void Temperature::isr() {
-		///////////////
-	char cn=0,cmd_buf[64], out[64];
+	char cn=0, out[64];
 	  int k=0;
 	//printf("get_i2c_temperature===\n");
 	//sprintf(cmd_buf,"g;")
-	{
+	
 		wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
 		wiringPiI2CWriteReg8(i2c_fd, 8, ';');
 		unsigned int kk=millis();
@@ -2087,17 +2059,79 @@ void Temperature::isr() {
 		{
 			delay(0);
 			if((millis()-kk)>2000)
+			{
+				cn=0;
 				break;
-			if(cn>=64) break;
+			}
+			if(cn>=64)
+			{
+				cn=0;
+				break;
+			}
 		}
-	//	printf(cmd_buf);
-		parse_string(cmd_buf,"T:","B",out,&k);	
-		current_temperature[0]=atof(out);
-		parse_string(cmd_buf,"B:","",out,&k);	
-		current_temperature_bed=atof(out);
+
+
+}
+
+*/
+
+void Temperature::isr() {
+		///////////////
+	char cn=0,cmd_buf[64], out[64];
+	  int k=0;
+	//printf("get_i2c_temperature===\n");
+	//sprintf(cmd_buf,"g;")
+	
+		wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
+		wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+		unsigned int kk=millis();
+		while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+		{
+			delay(0);
+			if((millis()-kk)>2000)
+			{
+				cn=0;
+				break;
+			}
+			if(cn>=64)
+			{
+				cn=0;
+				break;
+			}
+		}
+		///
+		wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
+		wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+		kk=millis();
+		cn=0;
+		while((out[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+		{
+			delay(0);
+			if((millis()-kk)>2000)
+			{
+				cn=0;
+				break;
+			}
+			if(cn>=64)
+			{
+				cn=0;
+				break;
+			}
+		}
+
+		/////
+		if(strcmp(cmd_buf,out)==0)
+		{
+			parse_string(cmd_buf,"T:","B",out,&k);	
+			float f= atof(out);
+			current_temperature[0]=f;
+			parse_string(cmd_buf,"B:","",out,&k);	
+		    f= atof(out);
+			current_temperature_bed=f;
+		}
 	//  	printf("current_temperature:%.2f,bed:%.2f\n",current_temperature[0],current_temperature_bed);
 		////////////////////////////////
-	}
+	
 	
 	/////////check target temperature.
 	static int16_t target_temperature_old[3],target_temperature_bed_old=0,fanSpeeds_old[FAN_COUNT];

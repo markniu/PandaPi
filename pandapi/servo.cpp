@@ -293,8 +293,28 @@ void Servo::write(int value) {
 #if PANDAPI	
 	if (value < MIN_PULSE_WIDTH) { // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
 	  value = map(constrain(value, 0, 180), 0, 180, 500, 2500);
-	  TIM_SetCompare2(TIM1, value); //
+	//  TIM_SetCompare2(TIM1, value); //
+	  
+	////////////////
+	char tmp_data[32],cmd_buf[64];
+	int cn=0;
+	sprintf(tmp_data,"P%d;",value);
+	printf(tmp_data);printf("\n");
+	for(int i=0;i<strlen(tmp_data);i++)
+	wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+	//wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+	unsigned int kk=millis();
+	while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+	{
+	  delay(0);
+	  if((millis()-kk)>2000)
+		break;
+	  if(cn>=64) break;
 	}
+	printf(cmd_buf);
+	printf("\n");
+	///////////////////
+
 #else	 
 	if (value < MIN_PULSE_WIDTH) { // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
 	  value = map(constrain(value, 0, 180), 0, 180, SERVO_MIN(), SERVO_MAX());

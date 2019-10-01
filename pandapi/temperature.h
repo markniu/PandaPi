@@ -544,7 +544,7 @@ class Temperature {
      * The software PWM power for a heater
      */
     static int getHeaterPower(const int heater);
-	  void  get_i2c_temperature(int i);
+	//  void  get_i2c_temperature(char *cmd_buf );
 	
 
     /**

@@ -8292,7 +8292,7 @@ inline void gcode_M109() {
 
     idle();
     reset_stepper_timeout(); // Keep steppers powered
-   thermalManager.get_i2c_temperature(0);
+   //thermalManager.get_i2c_temperature(0);
     const float temp = thermalManager.degHotend(target_extruder);
 
     #if ENABLED(PRINTER_EVENT_LEDS)
@@ -8438,7 +8438,7 @@ inline void gcode_M109() {
 
       idle();
       reset_stepper_timeout(); // Keep steppers powered
-	  thermalManager.get_i2c_temperature(0);
+	 // thermalManager.get_i2c_temperature(0);
       const float temp = thermalManager.degBed();
 
       #if ENABLED(PRINTER_EVENT_LEDS)
@@ -10204,6 +10204,7 @@ void quickstop_stepper() {
   set_current_from_steppers_for_axis(ALL_AXES);
   
   SYNC_PLAN_POSITION_KINEMATIC();
+   planner.finish_and_disable();
 }
 
 #if HAS_LEVELING
