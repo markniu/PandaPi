@@ -12,7 +12,11 @@ Here is the test results:
 3. opensource. 
 
 4. ### based on Octoprint and marlin.
+
+5. use browser to edit instead of Arduino IDE tool
+
 [youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA)
+
 facebook:https://www.facebook.com/groups/380795976169477/ 
 ## How to start ?  [Wiki](https://github.com/markniu/PandaPi/wiki) 
 https://github.com/markniu/PandaPi/wiki
