@@ -7,7 +7,7 @@
 // Servos
 //
 
-//#define SERVO0_PIN       2// 0xBE
+#define SERVO0_PIN       26// 0xBE
 
 //
 #define X_MIN_PIN           1//0xE5
