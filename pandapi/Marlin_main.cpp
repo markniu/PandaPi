@@ -12385,7 +12385,7 @@ void process_parsed_command() {
       case 28: gcode_G28(false); break;                           // G28: Home one or more axes
 
       #if HAS_LEVELING
-        case 29: gcode_G29(); break;                              // G29: Detailed Z probe
+        case 29: status_printer=1;gcode_G29();status_printer=0; break;                              // G29: Detailed Z probe
       #endif
 
       #if HAS_BED_PROBE
