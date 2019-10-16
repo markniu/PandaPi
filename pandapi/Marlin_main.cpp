@@ -9819,7 +9819,11 @@ inline void gcode_M226() {
     const uint8_t e = parser.byteval('E'); // extruder being updated
 
     if (e < HOTENDS) { // catch bad input value
-      if (parser.seen('P')) PID_PARAM(Kp, e) = parser.value_float();
+      if (parser.seen('P'))
+      {
+	  	PID_PARAM(Kp, e) = parser.value_float();
+		printf("gcode_M301===%.1f\n",PID_PARAM(Kp, e));
+      }
       if (parser.seen('I')) PID_PARAM(Ki, e) = scalePID_i(parser.value_float());
       if (parser.seen('D')) PID_PARAM(Kd, e) = scalePID_d(parser.value_float());
       #if ENABLED(PID_EXTRUSION_SCALING)
@@ -14822,6 +14826,9 @@ void setup() {
 
   #if ENABLED(POWER_LOSS_RECOVERY)
     check_print_job_recovery();
+  #endif
+  #if ENABLED(PIDTEMP)
+    thermalManager.updatePID();
   #endif
  //  tmper_init_stm32(thermalManager.isr);//robert
   printf("setup19\n");

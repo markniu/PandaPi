@@ -38,8 +38,8 @@
 
 // Change EEPROM version if the structure changes
 #define EEPROM_VERSION "V56"
-#define EEPROM_OFFSET 0x08038000//0X0807F800//mark  100
-#define HARDWARE_VERSION_ADDR  0x0803A000  
+#define EEPROM_OFFSET 0x00//0X0807F800//mark  100
+#define HARDWARE_VERSION_ADDR  0x0003A000  
 
 
 // Check the integrity of data offsets.
@@ -341,12 +341,34 @@ void MarlinSettings::postprocess() {
 #if ENABLED(EEPROM_SETTINGS)
 
   #define DUMMY_PID_VALUE 3000.0f
-  #define EEPROM_START() int eeprom_index = EEPROM_OFFSET
+ // #define EEPROM_START() int eeprom_index = EEPROM_OFFSET
   #define EEPROM_SKIP(VAR) eeprom_index += sizeof(VAR)
   #define EEPROM_WRITE(VAR) write_data(eeprom_index, (uint8_t*)&VAR, sizeof(VAR), &working_crc)
   #define EEPROM_READ(VAR) read_data(eeprom_index, (uint8_t*)&VAR, sizeof(VAR), &working_crc)
   #define EEPROM_READ_ALWAYS(VAR) read_data(eeprom_index, (uint8_t*)&VAR, sizeof(VAR), &working_crc, true)
   #define EEPROM_ASSERT(TST,ERR) if (!(TST)) do{ SERIAL_ERROR_START(); SERIAL_ERRORLNPGM(ERR); eeprom_error = true; }while(0)
+  FILE *fd_e2;
+
+int eeprom_index = EEPROM_OFFSET;
+unsigned char e2p_cache[1024*10];
+//"rb" "wb"
+char  EEPROM_START(char *wr)
+{
+	eeprom_index = EEPROM_OFFSET;
+	memset(e2p_cache,0,sizeof(e2p_cache));
+	return 0;
+
+	//////////
+	if((fd_e2=fopen("./e2prom",wr))!=NULL)  
+	{
+		return 0;
+	}
+	else
+		 SERIAL_PROTOCOLLNPGM("open e2prom failed!");
+	return 1;
+
+}
+
 
   #if ENABLED(DEBUG_EEPROM_READWRITE)
     #define _FIELD_TEST(FIELD) \
@@ -362,6 +384,32 @@ void MarlinSettings::postprocess() {
 
   bool MarlinSettings::eeprom_error, MarlinSettings::validating;
 
+  unsigned char eeprom_read_byte( unsigned int addr)
+  {
+  	 return e2p_cache[addr];
+	 
+	 unsigned char sd_char;
+	//  printf("eeprom_read_byteaddr5555\n");
+//	  printf("eeprom_read_byteaddr:%d\n",addr);
+	  fseek(fd_e2,addr,SEEK_SET);
+	  
+	  unsigned int n = fread(&sd_char,sizeof(char),1,fd_e2);
+      return sd_char;
+
+  }
+
+  char eeprom_write_byte( u32 addr, uint8_t v)
+  {
+	  e2p_cache[addr]=v;
+	  return 1;	
+	  
+	  fseek(fd_e2,addr,SEEK_SET);	 
+	  fwrite(&v,sizeof(char),1,fd_e2);
+      return 1;
+
+  }
+
+
   void MarlinSettings::write_data(int &pos, const uint8_t *value, uint16_t size, uint16_t *crc) {
     if (eeprom_error) { pos += size; return; }
 #if ENABLED(USE_WATCHDOG)//robert
@@ -370,14 +418,14 @@ void MarlinSettings::postprocess() {
  #endif
 
     while (size--) {
-    	uint32_t * const p = (uint32_t * const)pos;
+    	//uint32_t * const p = (uint32_t * const)pos;
       uint8_t v = *value;
       // EEPROM has only ~100,000 write cycles,
       // so only write bytes that have changed!
 
-      if (v != eeprom_read_byte(p)) {
-        eeprom_write_byte(p, v);
-        if (eeprom_read_byte(p) != v) {
+      if (v != e2p_cache[pos]) {
+        e2p_cache[pos]=v;
+        if (e2p_cache[pos] != v) {
           SERIAL_ECHO_START();
           SERIAL_ECHOLNPGM(MSG_ERR_EEPROM_WRITE);
           eeprom_error = true;
@@ -395,7 +443,9 @@ void MarlinSettings::postprocess() {
   void MarlinSettings::read_data(int &pos, uint8_t* value, uint16_t size, uint16_t *crc, const bool force/*=false*/) {
     if (eeprom_error) { pos += size; return; }
     do {
-      uint8_t c = eeprom_read_byte((uint32_t*)pos);
+		//printf("read_data01:%d %d  ",pos,e2p_cache[pos]);
+      uint8_t c = e2p_cache[pos]; //eeprom_read_byte((u32)pos);
+	//  printf("read_data1\n");
       if (!validating || force) *value = c;
       crc16(crc, &c, 1);
       pos++;
@@ -404,12 +454,54 @@ void MarlinSettings::postprocess() {
   }
 
   bool MarlinSettings::size_error(const uint16_t size) {
+  	printf("size:%d,%d\n",size,datasize());
     if (size != datasize()) {
       SERIAL_ERROR_START();
       SERIAL_ERRORLNPGM("EEPROM datasize error.");
       return true;
     }
     return false;
+  }
+
+
+  void load_to_cache()
+  {
+	if((fd_e2=fopen("./e2prom","rb"))==NULL)  
+	{
+	  SERIAL_PROTOCOLLNPGM("open e2prom failed!");
+	  return ;
+	}
+	  
+	// fseek(fd_e2,EEPROM_OFFSET,SEEK_SET);
+			
+	unsigned int n = fread(e2p_cache,sizeof(char),sizeof(e2p_cache),fd_e2);
+
+	fclose(fd_e2);
+//	for(int i=0;i<700;i++)
+//		printf("0x%x,",e2p_cache[i]);
+	
+    printf("\nload_to_cache()===\n");
+
+  }
+  void  write_from_cache()
+  {
+	if((fd_e2=fopen("./e2prom","wb"))==NULL)  
+	{
+	  SERIAL_PROTOCOLLNPGM("open e2prom failed!");
+	  return ;
+	}
+	  
+	// fseek(fd_e2,EEPROM_OFFSET,SEEK_SET);
+	fwrite(e2p_cache,sizeof(char),sizeof(e2p_cache),fd_e2);		
+	//unsigned int n = fread(&sd_char,sizeof(char),sizeof(e2p_cache),fd_e2);
+
+	fclose(fd_e2);
+	//for(int i=0;i<700;i++)
+	//		printf("0x%x,",e2p_cache[i]);
+		
+	  
+
+	printf("\nwrite_from_cache()===\n");
   }
 
   /**
@@ -420,13 +512,17 @@ void MarlinSettings::postprocess() {
     char ver[4] = "ERR";
 
     uint16_t working_crc = 0;
+	printf("save0\n");
 
-    EEPROM_START();
+    if(EEPROM_START("wb")==1)
+		return false;
+	printf("save1\n");
 
     eeprom_error = false;
 
     EEPROM_WRITE(ver);     // invalidate data first
     EEPROM_SKIP(working_crc); // Skip the checksum slot
+	printf("save2\n");
 
     working_crc = 0; // clear before first "real data"
 
@@ -970,6 +1066,7 @@ void MarlinSettings::postprocess() {
         store_mesh(ubl.storage_slot);
     #endif
 
+	write_from_cache();
     return !eeprom_error;
   }
 
@@ -978,11 +1075,16 @@ void MarlinSettings::postprocess() {
    */
   bool MarlinSettings::_load() {
     uint16_t working_crc = 0;
+	printf("load00\n");
 
-    EEPROM_START();
+     if(EEPROM_START("rb")==1)
+		return false;
+	 load_to_cache();
 
     char stored_ver[4];
+	printf("load0\n");
     EEPROM_READ_ALWAYS(stored_ver);
+    printf("stored_ver:%s\n",stored_ver);
 
     uint16_t stored_crc;
     EEPROM_READ_ALWAYS(stored_crc);
@@ -1240,6 +1342,7 @@ void MarlinSettings::postprocess() {
           else {
             for (uint8_t q=3; q--;) EEPROM_READ(dummy); // Ki, Kd, Kc
           }
+		  printf("\nKd:%.2f\n",PID_PARAM(Kd, 0));
         }
       #else // !PIDTEMP
         // 4 x 4 = 16 slots for PID parameters
@@ -1846,11 +1949,12 @@ void MarlinSettings::reset() {
     #endif
     {
       PID_PARAM(Kp, e) = float(DEFAULT_Kp);
-      PID_PARAM(Ki, e) = scalePID_i(DEFAULT_Ki);
-      PID_PARAM(Kd, e) = scalePID_d(DEFAULT_Kd);
+      PID_PARAM(Ki, e) = float(DEFAULT_Ki);//scalePID_i(DEFAULT_Ki);
+      PID_PARAM(Kd, e) = float(DEFAULT_Kd);//scalePID_d(DEFAULT_Kd);
       #if ENABLED(PID_EXTRUSION_SCALING)
         PID_PARAM(Kc, e) = DEFAULT_Kc;
       #endif
+	  printf("\nreset PIDkp:%0.2f\n",PID_PARAM(Kd, e));
     }
     #if ENABLED(PID_EXTRUSION_SCALING)
       thermalManager.lpq_len = 20; // default last-position-queue size

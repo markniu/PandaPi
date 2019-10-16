@@ -566,7 +566,60 @@ class Temperature {
           #if ENABLED(PID_EXTRUSION_SCALING)
             last_e_position = 0;
           #endif
+		   ////////////////
+		  char tmp_data[32],cmd_buf[64];
+		  int cn=0;
+		 char e=0;
+		 //////////P
+		 sprintf(tmp_data,"K%.2f;",PID_PARAM(Kp, e));
+		 printf(tmp_data);printf("\n");
+		 for(int i=0;i<strlen(tmp_data);i++)
+		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+		  unsigned int kk=millis();
+		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+		  {
+			 delay(0);
+			 if((millis()-kk)>2000)
+				break;
+			 if(cn>=64) break;
+		  }
+		  printf(cmd_buf);
+		  printf("\n");
+		///////////////////
+		 //////////I
+		 sprintf(tmp_data,"I%.2f;",PID_PARAM(Ki, e));
+		 printf(tmp_data);printf("\n");
+		 for(int i=0;i<strlen(tmp_data);i++)
+		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+		  kk=millis();
+		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+		  {
+			 delay(0);
+			 if((millis()-kk)>2000)
+				break;
+			 if(cn>=64) break;
+		  }
+		  printf(cmd_buf);
+		  printf("\n");
+		///////////////////	D
+		
+		 sprintf(tmp_data,"D%.2f;",PID_PARAM(Kd, e));
+		 printf(tmp_data);printf("\n");
+		 for(int i=0;i<strlen(tmp_data);i++)
+		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+		  kk=millis();
+		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+		  {
+			 delay(0);
+			 if((millis()-kk)>2000)
+				break;
+			 if(cn>=64) break;
+		  }
+		  printf(cmd_buf);
+		  printf("\n");
+		///////////////////		
         }
+	  
       #endif
 
     #endif
