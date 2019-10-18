@@ -24,7 +24,7 @@ facebook:https://www.facebook.com/groups/380795976169477/
 https://github.com/markniu/PandaPi/wiki
 
 ## Hardware resources
-RaspberryPi | Pi 4/3B/3B+ | .
+RaspberryPi | Pi 3B/3B+(the software will compatible with Pi 4 soon) | .
 --- | --- | --- 
 Extruders | 	1 | 	 
 Controlled Fans | 	3	 |  1 board self controlled
