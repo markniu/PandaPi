@@ -412,7 +412,7 @@ char  EEPROM_START(char *wr)
 
   void MarlinSettings::write_data(int &pos, const uint8_t *value, uint16_t size, uint16_t *crc) {
     if (eeprom_error) { pos += size; return; }
-#if ENABLED(USE_WATCHDOG)//robert
+#if ENABLED(USE_WATCHDOG)// 
 	   // Reset the watchdog after we know we have a temperature measurement.
 	   watchdog_reset();
  #endif

@@ -319,7 +319,7 @@ FORCE_INLINE void serialprintPGM(const char* str) {
 	
 }
 
-//robert
+//mark
 void _delay_ms(int ms)
 {
 
@@ -333,7 +333,7 @@ void delay(int ms)
 	usleep(ms);
 
 }*/
-//robert
+//mark
 int analogInputToDigitalPin(int p)
 {
   return p;// 
@@ -872,7 +872,7 @@ extern "C" {
       free_memory = ((int)&free_memory) - ((int)&__bss_end);
     else
       free_memory = ((int)&free_memory) - ((int)__brkval);
-   *///robert
+   */// 
     return free_memory;
   }
 }
@@ -993,7 +993,7 @@ void setup_powerhold() {
 }
 
 void suicide() {
-  exit(0); //robert
+  exit(0); // 
   #if HAS_SUICIDE
     OUT_WRITE(SUICIDE_PIN, LOW);
   #endif
@@ -3384,7 +3384,7 @@ void gcode_get_destination() {
     feedrate_mm_s = MMM_TO_MMS(parser.value_feedrate());
 
   #if ENABLED(PRINTCOUNTER)
-  //robert  if (!DEBUGGING(DRYRUN))
+  //   if (!DEBUGGING(DRYRUN))
       print_job_timer.incFilamentUsed(destination[E_AXIS] - current_position[E_AXIS]);
   #endif
 
@@ -5233,7 +5233,7 @@ void home_all_axes() { gcode_G28(true); }
               if (!position_is_reachable_by_probe(xProbe, yProbe)) continue;
             #endif
 
-         //robert   measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
+         //    measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
             measured_z = faux ? 0.001 * (random()%100) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
 
             if (isnan(measured_z)) {
@@ -5271,7 +5271,7 @@ void home_all_axes() { gcode_G28(true); }
           // Retain the last probe position
           xProbe = points[i].x;
           yProbe = points[i].y;
-  //robert        measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
+  //         measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
           measured_z = faux ? 0.001 * (random()%100) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
           if (isnan(measured_z)) {
             set_bed_leveling_enabled(abl_should_enable);
@@ -6955,7 +6955,7 @@ inline void gcode_M17() {
       SERIAL_ECHOLNPGM("//action:" ACTION_ON_PAUSE);
     #endif
 
-    if (/* robert!DEBUGGING(DRYRUN) && */unload_length && thermalManager.targetTooColdToExtrude(active_extruder)) {
+    if (/*  !DEBUGGING(DRYRUN) && */unload_length && thermalManager.targetTooColdToExtrude(active_extruder)) {
       SERIAL_ERROR_START();
       SERIAL_ERRORLNPGM(MSG_HOTEND_TOO_COLD);
 
@@ -7389,7 +7389,7 @@ inline void gcode_M31() {
  * Sensitive pin test for M42, M226
  */
 static bool pin_is_protected(const pin_t pin) {
-  /*robert
+  /*mark
   static const pin_t sensitive_pins[] PROGMEM = SENSITIVE_PINS;
   for (uint8_t i = 0; i < COUNT(sensitive_pins); i++)
     if (pin == (pin_t)pgm_read_byte(&sensitive_pins[i])) return true;
@@ -8197,7 +8197,7 @@ inline void gcode_M105() {
 inline void gcode_M109() {
 
   if (get_target_extruder_from_command(109)) return;
- //robert if (DEBUGGING(DRYRUN)) return;
+ //mark if (DEBUGGING(DRYRUN)) return;
 
   #if ENABLED(SINGLENOZZLE)
     if (target_extruder != active_extruder) return;
@@ -8373,7 +8373,7 @@ inline void gcode_M109() {
    *       Rxxx Wait for bed current temp to reach target temp. Waits when heating and cooling
    */
   inline void gcode_M190() {
-   //robert if (DEBUGGING(DRYRUN)) return;
+   //mark if (DEBUGGING(DRYRUN)) return;
 
     const bool no_wait_for_cooling = parser.seenval('S');
     if (no_wait_for_cooling || parser.seenval('R')) {
@@ -13776,7 +13776,7 @@ void prepare_move_to_destination() {
 
   #if ENABLED(PREVENT_COLD_EXTRUSION) || ENABLED(PREVENT_LENGTHY_EXTRUDE)
 
-    //robertif (!DEBUGGING(DRYRUN))
+    //markif (!DEBUGGING(DRYRUN))
 		{
       if (destination[E_AXIS] != current_position[E_AXIS]) {
         #if ENABLED(PREVENT_COLD_EXTRUSION)
@@ -14626,7 +14626,7 @@ void setup() {
   
 
   // Check startup - does nothing if bootloader sets MCUSR to 0
-  byte mcu = 0;// robert MCUSR;
+  byte mcu = 0;// mark MCUSR;
   if (mcu &  1) SERIAL_ECHOLNPGM(MSG_POWERUP);
   if (mcu &  2) SERIAL_ECHOLNPGM(MSG_EXTERNAL_RESET);
   if (mcu &  4) SERIAL_ECHOLNPGM(MSG_BROWNOUT_RESET);
@@ -14679,7 +14679,7 @@ void setup() {
   endstops.init();          // Init endstops and pullups
 
   stepper.init();           // Init stepper. This enables interrupts!
-  step_motor_init(stepper.isr); //robert
+  step_motor_init(stepper.isr); //mark
   
   
   servo_init();             // Initialize all servos, stow servo probe
@@ -14830,7 +14830,7 @@ void setup() {
   #if ENABLED(PIDTEMP)
     thermalManager.updatePID();
   #endif
- //  tmper_init_stm32(thermalManager.isr);//robert
+ //  tmper_init_stm32(thermalManager.isr);//mark
   printf("setup19\n");
 
   #if ENABLED(USE_WATCHDOG)

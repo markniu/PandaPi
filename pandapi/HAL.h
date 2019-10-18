@@ -52,9 +52,9 @@
   #define CRITICAL_SECTION_END    SREG = _sreg
 #endif
 
-#define ISRS_ENABLED() 0 //robertTEST(SREG, SREG_I)
-#define ENABLE_ISRS()  //robertsei()
-#define DISABLE_ISRS() //robert cli()
+#define ISRS_ENABLED() 0 // TEST(SREG, SREG_I)
+#define ENABLE_ISRS()  // sei()
+#define DISABLE_ISRS() //  cli()
 
 // --------------------------------------------------------------------------
 // Types
@@ -105,9 +105,9 @@ inline uint8_t HAL_get_reset_source(void) { return MCUSR; }
 #define PULSE_TIMER_PRESCALE   STEPPER_TIMER_PRESCALE
 #define PULSE_TIMER_TICKS_PER_US STEPPER_TIMER_TICKS_PER_US
 
-#define ENABLE_STEPPER_DRIVER_INTERRUPT()  //robert SBI(TIMSK1, OCIE1A)
-#define DISABLE_STEPPER_DRIVER_INTERRUPT() //robert CBI(TIMSK1, OCIE1A)
-#define STEPPER_ISR_ENABLED()           1 //robert TEST(TIMSK1, OCIE1A)
+#define ENABLE_STEPPER_DRIVER_INTERRUPT()  //  SBI(TIMSK1, OCIE1A)
+#define DISABLE_STEPPER_DRIVER_INTERRUPT() //  CBI(TIMSK1, OCIE1A)
+#define STEPPER_ISR_ENABLED()           1 //  TEST(TIMSK1, OCIE1A)
 
 #define ENABLE_TEMPERATURE_INTERRUPT()     SBI(TIMSK0, OCIE0B)
 #define DISABLE_TEMPERATURE_INTERRUPT()    CBI(TIMSK0, OCIE0B)
@@ -286,7 +286,7 @@ void TIMER0_COMPB_vect_bottom(void)
 #ifdef DIDR2
   #define HAL_ANALOG_SELECT(pin) do{ if (pin < 8) SBI(DIDR0, pin); else SBI(DIDR2, pin & 0x07); }while(0)
 #else
-  #define HAL_ANALOG_SELECT(pin) pinModeAlt(pin,INPUT)// robert do{ SBI(DIDR0, pin); }while(0)
+  #define HAL_ANALOG_SELECT(pin) pinModeAlt(pin,INPUT)//   do{ SBI(DIDR0, pin); }while(0)
 
 #endif
 
