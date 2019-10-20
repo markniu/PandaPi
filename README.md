@@ -2,7 +2,7 @@
 ### 3d printer firmware run on raspberryPi and control printer directly. increasing your print speed and smooth. 
 control 3D printer directly,except the temperature control which is just to maintain the temperature.
 
-![](https://cdn.hackaday.io/images/3231351570359643839.jpg)
+![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/connector.jpg)
 
 1. the GPIO being able to signal at 10+ Mhz for the 2B+ as compared to 8/32bit MCU limit of about 10Khz/200khz for steps.
 Here is the test results:
