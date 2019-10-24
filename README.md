@@ -1,4 +1,5 @@
-# PandaPi integrates Marlin & Octoprint into the Raspberry Pi. Improve print speed and smoothness
+# PandaPi 
+## Integrates Marlin & Octoprint into the Raspberry Pi. Improve print speed and smoothness
 ### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
 
 
