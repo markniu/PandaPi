@@ -42,9 +42,12 @@ Spacer screw   | 	Nylon spacer screw	 |
 filament detect pin    | 	  reuse the SWD pin   | 	
 Bed leveling    | 	  BLtouch/Proximity sensor 3.3v  | 	
 
-
+## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
+
+## Case for ender3 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
+
 
 [youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA)     [facebook](https://www.facebook.com/groups/380795976169477/)
 
