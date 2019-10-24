@@ -18,7 +18,7 @@ Here is the test results:
 5. use browser to edit instead of Arduino IDE tool
 
 
-##   ![Guides](https://github.com/markniu/PandaPi/wiki) 
+##   ![Guides link](https://github.com/markniu/PandaPi/wiki) 
 
 
 ## Hardware resources
