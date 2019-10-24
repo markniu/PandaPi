@@ -1,6 +1,6 @@
-# PandaPi
-### 3d printer firmware run on raspberryPi and control printer directly. increasing your print speed and smooth. 
-control 3D printer directly,except the temperature control which is just to maintain the temperature.
+# PandaPi integrates Marlin & Octoprint into the Raspberry Pi. Improve print speed and smoothness
+### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
+
 
 ![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/main_octo.jpg)
 
@@ -13,15 +13,13 @@ Here is the test results:
 
 3. opensource. 
 
-4. ### based on Octoprint and marlin.
+4. based on Octoprint and marlin.
 
 5. use browser to edit instead of Arduino IDE tool
 
-[youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA)
 
-facebook:https://www.facebook.com/groups/380795976169477/ 
-## How to start ?  [Wiki](https://github.com/markniu/PandaPi/wiki) 
-https://github.com/markniu/PandaPi/wiki
+##   ![Guides](https://github.com/markniu/PandaPi/wiki) 
+
 
 ## Hardware resources
 RaspberryPi | Pi 3B/3B+(the software will compatible with Pi 4 soon) | .
