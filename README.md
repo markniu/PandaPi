@@ -41,7 +41,7 @@ LCD   | 	Graphic128*64/LCD2004	 |
 on board FAN   | 	silent 24V self auto controlled	 | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
-Bed leveling    | 	  BLtouch/Proximity sensor   | 	
+Bed leveling    | 	  BLtouch/Proximity sensor 3.3v  | 	
 
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
