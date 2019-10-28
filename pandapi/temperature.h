@@ -114,10 +114,15 @@ enum ADCSensorState : char {
   #define PID_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (F_CPU / 64.0f / 256.0f))
 
   // Apply the scale factors to the PID values
-  #define scalePID_i(i)   ( (i) * float(PID_dT) )
-  #define unscalePID_i(i) ( (i) / float(PID_dT) )
-  #define scalePID_d(d)   ( (d) / float(PID_dT) )
-  #define unscalePID_d(d) ( (d) * float(PID_dT) )
+//#define scalePID_i(i)	( (i) * float(PID_dT) )
+//#define unscalePID_i(i) ( (i) / float(PID_dT) )
+//#define scalePID_d(d)	( (d) / float(PID_dT) )
+//#define unscalePID_d(d) ( (d) * float(PID_dT) )
+///////////
+#define scalePID_i(i)	i
+#define unscalePID_i(i) i
+#define scalePID_d(d)	d
+#define unscalePID_d(d) d
 #endif
 
 class Temperature {
