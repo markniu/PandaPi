@@ -29,13 +29,13 @@ Extruders | 	1 |
 Controlled Fans | 	3	 |  1 board self controlled
 Heaters   | 	2	 |  
 Endstops   | 	3	 | 
-Temp sens   | 	2	 | 
+Temp sens   | 	2	 |  100K NTC (thermal resistance)	
 SWD   | 	1	 | STlinkV2
 Serial port chip   | 	CH340G	 | 
 stepper driver   |  4*(TMC2209/TMC2208/A4988/TMC2130)	 | Modular, replaceable,no uart/SPI
 Input   | 	7~35V 20A max	 | 
 heater Output   | 	15Amax	 | 
-MCU   | 	stm32	 | 
+MCU   | 	stm32	 |  
 LCD   | 	Graphic128*64/LCD2004	 | 
 on board FAN   | 	silent 24V self auto controlled	 | 
 Spacer screw   | 	Nylon spacer screw	 | 
