@@ -49,7 +49,7 @@ Bed leveling    | 	  BLtouch  |
 ## where to buy?
 <a href="https://www.tindie.com/stores/niujl123/?ref=offsite_badges&utm_source=sellers_niujl123&utm_medium=badges&utm_campaign=badge_medium"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-mediums.png" alt="I sell on Tindie" width="150" height="78"></a>
 
-[Tindie](https://www.tindie.com/products/17947/) The 50 pcs will be arrived November 1st .
+[Tindie](https://www.tindie.com/products/17947/)  
 
 
 
