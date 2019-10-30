@@ -80,7 +80,7 @@ void safe_delay(millis_t ms);
     char* ftostr4sign(const float &fx);
   #else
     // Convert float to rj string with 1234, _123, -123, __12, _-12, ___1, or __-1 format
-    FORCE_INLINE char *ftostr4sign(const float &x);//robert { return itostr4sign((int)x); }
+    FORCE_INLINE char *ftostr4sign(const float &x);//PANDAPI  { return itostr4sign((int)x); }
   #endif
 
 #endif // ULTRA_LCD || (DEBUG_LEVELING_FEATURE && (MESH_BED_LEVELING || (HAS_ABL && !ABL_PLANAR)))

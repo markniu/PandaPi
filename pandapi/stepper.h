@@ -195,7 +195,6 @@
 #include "language.h"
 #include "types.h"
 
-//robert
 #define MultiU24X32toH16(longIn1, longIn2)  (longIn1 * longIn2 >> 24)
 
 // intRes = intIn1 * intIn2 >> 16

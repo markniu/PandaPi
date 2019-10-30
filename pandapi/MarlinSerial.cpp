@@ -184,7 +184,6 @@
     #endif
 
     // Read the character from the USART
-    //robert uint8_t c = M_UDRx;
 
     #if ENABLED(EMERGENCY_PARSER)
       emergency_parser.update(c);
@@ -374,7 +373,6 @@
   #endif // TX_BUFFER_SIZE
 
   #ifdef M_USARTx_RX_vect
-   //robert  ISR(M_USARTx_RX_vect) { store_rxd_char(); }
   
   #endif
 
@@ -390,7 +388,7 @@
       // 8U2 on the Uno and Mega 2560.
       if (baud == 57600) useU2X = false;
     #endif
-#if PANDAPI 	//robert
+#if PANDAPI 	// 
     Serial_PC(baud,&store_rxd_char); return;
 #else
     if (useU2X) {

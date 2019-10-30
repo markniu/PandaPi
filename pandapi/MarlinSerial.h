@@ -49,7 +49,7 @@ void store_rxd_char(char rec_c);
 
 // These are macros to build serial port register names for the selected SERIAL_PORT (C preprocessor
 // requires two levels of indirection to expand macro values properly)
-#define SERIAL_REGNAME(registerbase,number,suffix) 10//robert SERIAL_REGNAME_INTERNAL(registerbase,number,suffix)
+#define SERIAL_REGNAME(registerbase,number,suffix) 10//PANDAPI SERIAL_REGNAME_INTERNAL(registerbase,number,suffix)
 #if SERIAL_PORT == 0 && (!defined(UBRR0H) || !defined(UDR0)) // use un-numbered registers if necessary
   #define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##suffix
 #else
@@ -149,7 +149,6 @@ void store_rxd_char(char rec_c);
 
       FORCE_INLINE static void write(const char* str) { while (*str) write(*str++); }
       FORCE_INLINE static void write(const uint8_t* buffer, size_t size) { while (size--) write(*buffer++); }
-     //robert FORCE_INLINE static void print(const String& s) { for (int i = 0; i < (int)s.length(); i++) write(s[i]); }
       FORCE_INLINE static void print(const char* str) { write(str); }
 
       static void print(char, int = BYTE);
@@ -160,7 +159,6 @@ void store_rxd_char(char rec_c);
       static void print(unsigned long, int = DEC);
       static void print(double, int = 2);
 
-  //robert    static void println(const String& s);
       static void println(const char[]);
       static void println(char, int = BYTE);
       static void println(unsigned char, int = BYTE);

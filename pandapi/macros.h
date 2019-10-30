@@ -50,7 +50,6 @@
 #define u16 uint16_t//unsigned short
 #define u32 uint32_t//unsigned int
 #define PROGMEM
-//robert
 #define pgm_read_byte(b)  *b
 #define pgm_read_byte_near(b)  *b
 #define pgm_read_ptr(b) *b
@@ -78,7 +77,6 @@
 //#define  pgm_read_word_near 1
 
 //#define millis()  100
-// robert #define constexpr  const
 
 
 #define SET_STEP_DIR(x) 

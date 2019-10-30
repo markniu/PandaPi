@@ -203,11 +203,8 @@ class Temperature {
     FORCE_INLINE static bool targetHotEnoughToExtrude(const uint8_t e) { return !targetTooColdToExtrude(e); }
     void ISR_temperature(void) {  isr(); }
   private:
-///////////////////robert
-
 		static void  Temperature_Handler(void);
-		 static float Get_Temperature(u8 hot_heat_num);
-///////////////////////
+		static float Get_Temperature(u8 hot_heat_num);
 
     static volatile bool temp_meas_ready;
     static uint16_t raw_temp_value[MAX_EXTRUDERS];

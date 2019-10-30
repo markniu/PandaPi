@@ -36,7 +36,7 @@
 
 #include "SdFatConfig.h"
 #include "SdVolume.h"
-#define PGM_P  char *  //robert
+#define PGM_P  char *  //PANDAPI
 #include <stdint.h>
 
 /**

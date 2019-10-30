@@ -1011,7 +1011,7 @@ void Temperature::manage_heater() {
 ***Description: Get target current temperature
 ***Input:  
 ***Output: 
-***Return:robert
+***Return:PANDAPI
 ***********************************************************/
 
 float Temperature::Get_Temperature(u8 hot_heat_num)
@@ -1454,7 +1454,7 @@ void Temperature::init() {
     }
 
   #ifdef HEATER_0_MINTEMP
- //robert  TEMP_MIN_ROUTINE(0);
+ //PANDAPI  TEMP_MIN_ROUTINE(0);
   #endif
   #ifdef HEATER_0_MAXTEMP
 
@@ -1462,7 +1462,7 @@ void Temperature::init() {
   #endif
   #if HOTENDS > 1
     #ifdef HEATER_1_MINTEMP
-    //robert   TEMP_MIN_ROUTINE(1);
+    //   TEMP_MIN_ROUTINE(1);
     #endif
     #ifdef HEATER_1_MAXTEMP
       TEMP_MAX_ROUTINE(1);
@@ -1495,7 +1495,7 @@ void Temperature::init() {
 
   #if HAS_HEATED_BED
     #ifdef BED_MINTEMP
-  /*robert      while (analog2tempBed(bed_minttemp_raw) < BED_MINTEMP) {
+  /* PANDAPI     while (analog2tempBed(bed_minttemp_raw) < BED_MINTEMP) {
         #if HEATER_BED_RAW_LO_TEMP < HEATER_BED_RAW_HI_TEMP
           bed_minttemp_raw += OVERSAMPLENR;
         #else

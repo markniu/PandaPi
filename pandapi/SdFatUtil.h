@@ -28,7 +28,7 @@
  */
 #ifndef _SDFATUTIL_H_
 #define _SDFATUTIL_H_
-#define PGM_P  char *  //robert
+#define PGM_P  char *  //PANDAPI
 
 /**
  * \file

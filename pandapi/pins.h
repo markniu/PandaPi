@@ -488,7 +488,6 @@
   #define MAX_EXTRUDERS 5
 #endif
 
-//robert
 int analogInputToDigitalPin(int p);
 //
 // Assign auto fan pins if needed

@@ -72,6 +72,7 @@ void Endstops::init() {
 
   #if HAS_X_MIN
     #if ENABLED(ENDSTOPPULLUP_XMIN)
+	
       SET_INPUT_PULLUP(X_MIN_PIN);
     #else
       SET_INPUT(X_MIN_PIN);
