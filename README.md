@@ -1,5 +1,5 @@
 # PandaPi for 3D printer
-##  use Raspberry Pi as brain, Integrates Marlin & Octoprint into the Raspberry Pi. Improve print speed and smoothness
+##  Use Raspberry Pi as a brain that run the Marlin&Octoprint on Raspberry Pi directly. Improve print speed and smoothness
 ### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
 
 
