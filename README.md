@@ -12,7 +12,7 @@
 3. Easy to edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
 
 
-##   ![Guides link](https://github.com/markniu/PandaPi/wiki) 
+##   [Guides link](https://github.com/markniu/PandaPi/wiki) 
 
 
 ## Hardware resources v1.0 
@@ -40,7 +40,7 @@ Bed leveling    | 	  BLtouch  |
 ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 
-##   ![Case for ender3](https://www.thingiverse.com/thing:3857748) 
+##   [Case for ender3](https://www.thingiverse.com/thing:3857748) 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/65609.jpg)
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/lion.jpg)
