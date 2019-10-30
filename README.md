@@ -41,7 +41,7 @@ Bed leveling    | 	  BLtouch  |
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 
 ## Case for ender3 
-![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/case.jpg)
+![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/65609.jpg)
 
 
 [youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA)     [facebook](https://www.facebook.com/groups/380795976169477/)
