@@ -23,7 +23,7 @@ Here is the test results:
 
 
 ## Hardware resources
-RaspberryPi | Pi 3B/3B+(the software will compatible with Pi 4 soon) | .
+RaspberryPi | Pi 4B/3B/3B+  | .
 --- | --- | --- 
 Extruders | 	1 | 	 
 Controlled Fans | 	3	 |  1 board self controlled
