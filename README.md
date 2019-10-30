@@ -1,28 +1,23 @@
-# PandaPi 
-## Integrates Marlin & Octoprint into the Raspberry Pi. Improve print speed and smoothness
+# PandaPi for 3D printer
+##  use Raspberry Pi as brain, Integrates Marlin & Octoprint into the Raspberry Pi. Improve print speed and smoothness
 ### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
 
 
 ![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/main_octo.jpg)
 
-1. the GPIO being able to signal at 10+ Mhz for the 2B+ as compared to 8/32bit MCU limit of about 10Khz/200khz for steps.
-Here is the test results:
-3.5Mhz GPIO test on RPi3+
-750Khz run marlin on RPi3+
+1. High process speed.
 
-2. Real Time linux kernel
+2. Octoprint + marlin.
 
-3. opensource. 
-
-4. based on Octoprint and marlin.
-
-5. use browser to edit instead of Arduino IDE tool
+3. Easy to edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
 
 
 ##   ![Guides link](https://github.com/markniu/PandaPi/wiki) 
 
 
-## Hardware resources
+## Hardware resources v1.0 
+you can drop in creality Ender3 printer with this shield+Raspberry Pi ,just need to print one case for it.
+
 RaspberryPi | Pi 4B/3B/3B+  | .
 --- | --- | --- 
 Extruders | 	1 | 	 
