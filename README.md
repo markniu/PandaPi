@@ -57,7 +57,9 @@ Bed leveling    | 	  BLtouch  |
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/lion.jpg)
 
-[youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA)     [facebook](https://www.facebook.com/groups/380795976169477/)
+[youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA) 
+
+<a href="https://www.facebook.com/groups/380795976169477/"><img src="https://raw.githubusercontent.com/markniu/PandaPi/master/doc/Facebook.png" alt="facebook group" width="100" height="100"></a>
 
 ## where to buy?
 <a href="https://www.tindie.com/stores/niujl123/?ref=offsite_badges&utm_source=sellers_niujl123&utm_medium=badges&utm_campaign=badge_medium"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-mediums.png" alt="I sell on Tindie" width="150" height="78"></a>
