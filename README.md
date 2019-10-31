@@ -1,7 +1,7 @@
 # PandaPi for 3D printer
 ##  Use Raspberry Pi as a brain that run the Marlin&Octoprint on Raspberry Pi directly. Improve print speed and smoothness
 ### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
-
+you can drop in creality Ender3 printer with this shield+Raspberry Pi ,just need to print one case for it.
 
 ![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/main_octo.jpg)
 
@@ -14,23 +14,22 @@
 ##  FAQ：
 1. what's the difference from Klipper
 
-PandaPi: use RPi to control 3D printer directly,except the temperature control which is just to maintain the temperature.
+    PandaPi: use RPi to control 3D printer directly,except the temperature control which is just to maintain the temperature.
 
-Klipper: uses a RPi to parse G-code,map out curves,set accelerations,and then send the motor command to the MCU via uart.
+    Klipper: uses a RPi to parse G-code,map out curves,set accelerations,and then send the motor command to the MCU via uart.
 
 2. Why is there a mcu?
 
-RPi has not enough GPIO pin for handle all the motors,hotend,bed,endstop,LCD,auto bed level,run out sensor.
+   RPi has not enough GPIO pin for handle all the motors,hotend,bed,endstop,LCD,auto bed level,run out sensor.
 
 3. how do this assure the real time control?
-about the real-time, I do a [test](https://hackaday.io/project/166466-3dprinter-firmware-run-on-raspberrypi/log/167122-upgrade-to-real-time-linux) . it is not real time actually,but we guarantee motor coordination. and the RPi is more than fast enough that it is not a problem.and I test it with pi4 the cpu speed is quickly than pi3! BTW I test it with all the function like camera octoprint,they are used a lot of RAM but little CPU.
+
+   about the real-time, I do a [test](https://hackaday.io/project/166466-3dprinter-firmware-run-on-raspberrypi/log/167122-upgrade-to-real-time-linux) . it is not real time actually,but we guarantee motor coordination. and the RPi is more than fast enough that it is not a problem.and I test it with pi4 the cpu speed is quickly than pi3! BTW I test it with all the function like camera octoprint,they are used a lot of RAM but little CPU.
 
 ##   [Guides link](https://github.com/markniu/PandaPi/wiki) 
 
 
 ## Hardware resources v1.0 
-you can drop in creality Ender3 printer with this shield+Raspberry Pi ,just need to print one case for it.
-
 RaspberryPi | Pi 4B/3B/3B+  | .
 --- | --- | --- 
 Extruders | 	1 | 	 
