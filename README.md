@@ -9,6 +9,8 @@ If you want to run PandaPi on RPi, you need one following hardware board that ca
 
 2. Octoprint + marlin.
 
+    the marlin code is very stable and are familiar with us, if we have a good idea or control algorithm, we can change it easily. 
+    
 3. Easy to edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
 
 * ##  FAQ：
@@ -17,6 +19,8 @@ If you want to run PandaPi on RPi, you need one following hardware board that ca
     PandaPi: use RPi to control 3D printer directly,except the temperature control which is just to maintain the temperature.
 
     Klipper: uses a RPi to parse G-code,map out curves,set accelerations,and then send the motor command to the MCU via uart.
+
+     the obvious difference is that PandaPi control the motor directly.the gpio on the RPi speed being able to signal at 10+ Mhz as compared to 8/32bit MCU limit of about 10Khz/200khz for steps.that is one of my main reason to explore this project. although the <100Khz speed is enough for our FDM printer now.
 
 2. Why is there a mcu?
 
