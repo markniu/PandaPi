@@ -64,7 +64,6 @@ Bed leveling    | 	  BLtouch  |
 [youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA) 
 
 * ###  Facebook group
-join this support group can get discount code.  
 <a href="https://www.facebook.com/groups/380795976169477/"><img src="https://raw.githubusercontent.com/markniu/PandaPi/master/doc/Facebook.png" alt="facebook group" width="100" height="100"></a>
 
 * ##  where to buy?
