@@ -1563,11 +1563,9 @@ float Planner::get_axis_position_mm(const AxisEnum axis) {
  * Block until all buffered steps are executed / cleaned
  */
 void Planner::synchronize() { 
-	printf("synchronize0===%d,%d  \n",has_blocks_queued(),cleaning_buffer_counter);
 
 while (has_blocks_queued() || cleaning_buffer_counter) 
 	idle();
-printf("synchronize1===%d,%d  \n",has_blocks_queued(),cleaning_buffer_counter);
 
 }
 

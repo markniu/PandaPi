@@ -5066,6 +5066,8 @@ void lcd_init() {
 
 int16_t utf8_strlen(const char* s) {
   int16_t i = 0, j = 0;
+  if(s==0)
+  	return 0;// Pandapi
   while (s[i]) {
     if (START_OF_UTF8_CHAR(s[i])) j++;
     i++;
@@ -5075,6 +5077,8 @@ int16_t utf8_strlen(const char* s) {
 
 int16_t utf8_strlen_P(const char* s) {
   int16_t j = 0;
+  if(s==0)
+  	return 0;// Pandapi
   while (pgm_read_byte(s)) {
     if (START_OF_UTF8_CHAR(pgm_read_byte(s))) j++;
     s++;

@@ -39,6 +39,8 @@
 #if ENABLED(PID_EXTRUSION_SCALING)
   #include "stepper.h"
 #endif
+#include "wiringPi.h"
+#include "wiringPiI2C.h"
 
 #ifndef SOFT_PWM_SCALE
   #define SOFT_PWM_SCALE 0
@@ -114,15 +116,16 @@ enum ADCSensorState : char {
   #define PID_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (F_CPU / 64.0f / 256.0f))
 
   // Apply the scale factors to the PID values
-//#define scalePID_i(i)	( (i) * float(PID_dT) )
-//#define unscalePID_i(i) ( (i) / float(PID_dT) )
-//#define scalePID_d(d)	( (d) / float(PID_dT) )
-//#define unscalePID_d(d) ( (d) * float(PID_dT) )
+#define scalePID_i(i)	( (i) * float(PID_dT) )
+#define unscalePID_i(i) ( (i) / float(PID_dT) )
+#define scalePID_d(d)	( (d) / float(PID_dT) )
+#define unscalePID_d(d) ( (d) * float(PID_dT) )
 ///////////
-#define scalePID_i(i)	i
+/*#define scalePID_i(i)	i
 #define unscalePID_i(i) i
 #define scalePID_d(d)	d
 #define unscalePID_d(d) d
+*/
 #endif
 
 class Temperature {
@@ -573,7 +576,7 @@ class Temperature {
 		  int cn=0;
 		 char e=0;
 		 //////////P
-		 sprintf(tmp_data,"K%.2f;",PID_PARAM(Kp, e));
+		 sprintf(tmp_data,"K%.5f;",PID_PARAM(Kp, e));
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
@@ -589,7 +592,7 @@ class Temperature {
 		  printf("\n");
 		///////////////////
 		 //////////I
-		 sprintf(tmp_data,"I%.2f;",PID_PARAM(Ki, e));
+		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e));
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
@@ -605,7 +608,7 @@ class Temperature {
 		  printf("\n");
 		///////////////////	D
 		
-		 sprintf(tmp_data,"D%.2f;",PID_PARAM(Kd, e));
+		 sprintf(tmp_data,"D%.5f;",PID_PARAM(Kd, e));
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);

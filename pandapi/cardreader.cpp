@@ -426,7 +426,6 @@ void CardReader::startFileprint() {
     #if SD_RESORT
       flush_presort();
     #endif
-	printf("startFileprint===\n");
   }
   else
   	printf("cardError===\n");
@@ -482,7 +481,6 @@ void CardReader::openFile(char * const path, const bool read, const bool subcall
   if (!cardOK) return;
   
    
-   printf("openFile=0==\n");
 
   uint8_t doing = 0;
   if (isFileOpen()) {                     // Replacing current file or doing a subroutine
@@ -524,18 +522,15 @@ void CardReader::openFile(char * const path, const bool read, const bool subcall
     SERIAL_ECHOLNPAIR(" file: ", path);
   }
   
-printf("openFile=1==\n");
   stopSDPrint();
 
   SdFile *curDir;
   const char * const fname = diveToFile(curDir, path, false);
   if (!fname) return;
-  printf("openFile==2=\n");
    
 
   if (read) {
   	
-	printf("openFile=4==\n");
   	sprintf(pa_data,"%s/%s",root_path,fname);
 
    // if (file.open(curDir, fname, O_READ))
@@ -1106,7 +1101,6 @@ void CardReader::printingHasFinished() {
   bool CardReader::jobRecoverFileExists() {
     const bool exists = jobRecoveryFile.open(&root, job_recovery_file_name, O_READ);
     if (exists) jobRecoveryFile.close();
-	printf("exists===%d\n",exists);
     return exists;
   }
 
@@ -1125,7 +1119,6 @@ void CardReader::printingHasFinished() {
 
   void CardReader::removeJobRecoveryFile() {
     job_recovery_info.valid_head = job_recovery_info.valid_foot = job_recovery_commands_count = 0;
-	printf("removeJobRecoveryFile===\n",);
 
 	if (jobRecoverFileExists()) {
       closefile();

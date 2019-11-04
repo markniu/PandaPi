@@ -828,6 +828,33 @@ void Temperature::manage_heater() {
 		// Periodically call the planner timer
 	 //	planner.tick();
 	}
+	
+	/////////check target temperature.
+	static int16_t target_temperature_old[3],target_temperature_bed_old=0,fanSpeeds_old[FAN_COUNT];
+	if(target_temperature_old[0]!=target_temperature[0])
+	{
+		target_temperature_old[0]=target_temperature[0];
+		setTargetHotend(target_temperature[0],0);
+	}
+	if(target_temperature_bed_old!=target_temperature_bed)
+	{
+		target_temperature_bed_old=target_temperature_bed;
+		setTargetBed(target_temperature_bed);
+	}
+	//setTargetFan
+	if(fanSpeeds_old[0]!=fanSpeeds[0])
+	{
+		fanSpeeds_old[0]=fanSpeeds[0];
+		setTargetFan(fanSpeeds[0],0);
+	}
+	// set board Fan
+	//if(digitalRead(X_ENABLE_PIN)==0)
+	if(fanSpeeds_old[2]!=digitalRead(X_ENABLE_PIN))
+	{
+		fanSpeeds_old[2]=digitalRead(X_ENABLE_PIN);
+		setTargetFan(!fanSpeeds_old[2],2);
+		
+	}
   return;
 
 
@@ -885,7 +912,6 @@ void Temperature::manage_heater() {
     #endif
 
   } // HOTEND_LOOP
- // printf("manage_heater2\n");
 
   #if HAS_AUTO_FAN
     if (ELAPSED(ms, next_auto_fan_check_ms)) { // only need to check fan state very infrequently
@@ -1669,19 +1695,16 @@ void Temperature::init() {
 #endif // THERMAL_PROTECTION_HOTENDS || THERMAL_PROTECTION_BED
 
 void Temperature::disable_all_heaters() {
-	printf("disable_all_heaters0\n");
 
   #if ENABLED(AUTOTEMP)
     planner.autotemp_enabled = false;
   #endif
 
   HOTEND_LOOP() setTargetHotend(0, e);
-  printf("disable_all_heaters1\n");
 
   #if HAS_HEATED_BED
     setTargetBed(0);
   #endif
-  printf("disable_all_heaters2\n");
 
   // Unpause and reset everything
   #if ENABLED(PROBING_HEATERS_OFF)
@@ -1690,7 +1713,6 @@ void Temperature::disable_all_heaters() {
 
   // If all heaters go down then for sure our print job has stopped
   print_job_timer.stop();
-  printf("disable_all_heaters3\n");
 
   #define DISABLE_HEATER(NR) { \
     setTargetHotend(0, NR); \
@@ -2077,7 +2099,7 @@ HAL_TEMP_TIMER_ISR {
 
 void Temperature::isr() {
 		///////////////
-	char cn=0,cmd_buf[64], out[64];
+	char cn=0,cmd_buf[128], out[128];
 	  int k=0;
 	//printf("get_i2c_temperature===\n");
 	//sprintf(cmd_buf,"g;")
@@ -2128,29 +2150,21 @@ void Temperature::isr() {
 			parse_string(cmd_buf,"B:","",out,&k);	
 		    f= atof(out);
 			current_temperature_bed=f;
+
+			static int old_h=-6;
+			parse_string(cmd_buf,"h","T",out,&k);	
+		    k= atoi(out);
+			if(old_h!=k)
+			{
+				old_h=k;
+				printf("run out sensor:%d\n",k);
+				SERIAL_ECHOLNPAIR("Dropped bytes: ", k);
+			}
 		}
-	//  	printf("current_temperature:%.2f,bed:%.2f\n",current_temperature[0],current_temperature_bed);
 		////////////////////////////////
+	 
 	
-	
-	/////////check target temperature.
-	static int16_t target_temperature_old[3],target_temperature_bed_old=0,fanSpeeds_old[FAN_COUNT];
-	if(target_temperature_old[0]!=target_temperature[0])
-	{
-		target_temperature_old[0]=target_temperature[0];
-		setTargetHotend(target_temperature[0],0);
-	}
-	if(target_temperature_bed_old!=target_temperature_bed)
-	{
-		target_temperature_bed_old=target_temperature_bed;
-		setTargetBed(target_temperature_bed);
-	}
-	//setTargetFan
-	if(fanSpeeds_old[0]!=fanSpeeds[0])
-	{
-		fanSpeeds_old[0]=fanSpeeds[0];
-		setTargetFan(fanSpeeds[0],0);
-	}
+		
 
 	return;
 	

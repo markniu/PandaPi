@@ -538,10 +538,8 @@ void lcd_printPGM_utf(const char *str, uint8_t n=LCD_WIDTH) {
   }
 
   void lcd_bootscreen() {
-  	printf("lcd_bootscreen0\n");
     lcd_set_custom_characters(CHARSET_BOOT);
     lcd.clear();
-	printf("lcd_bootscreen1\n");
 
     #define LCD_EXTRA_SPACE (LCD_WIDTH-8)
 

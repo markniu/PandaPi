@@ -291,6 +291,7 @@
   int DDRJ,PINJ1,DDRD,PIND3,PIND,PIND7,PINF2,PINK,PORTK,PINK0,REFS0,ADMUX,ADCSRB,PINH5,PORTH,PINH,DDRA,PINC7,PINJ;
 
 
+int read_version();
 
 
 //byte digitalRead(byte pin){ _READ(pin);}
@@ -3019,7 +3020,6 @@ void clean_up_after_endstop_or_probe_move() {
  */
 static void do_homing_move(const AxisEnum axis, const float distance, const float fr_mm_s=0) {
 	status_printer=1;
-printf("distanc==%0.2f; mms=%.2f\n",distance,fr_mm_s);
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> do_homing_move(", axis_codes[axis]);
@@ -7186,7 +7186,6 @@ inline void gcode_M17() {
     SERIAL_PROTOCOLLNPGM(MSG_BEGIN_FILE_LIST);
     card.ls();
     SERIAL_PROTOCOLLNPGM(MSG_END_FILE_LIST);
-	printf("gcode_M20\n");
   }
 
   /**
@@ -7210,7 +7209,6 @@ inline void gcode_M17() {
     for (char *fn = parser.string_arg; *fn; ++fn) 
 		if (*fn == ' ') *fn = '\0';
     card.openFile(parser.string_arg, true);
-printf("gcode_M23===\n");
   }
 
   /**
@@ -8081,8 +8079,6 @@ inline void gcode_M104() {
 inline void gcode_M105() {
 	if (get_target_extruder_from_command(105)) return;
 	///////////////
-	//thermalManager.get_i2c_temperature(0);
-	//printf("current_temperature105:%.2f,bed:%.2f\n",thermalManager.current_temperature[0],thermalManager.current_temperature_bed);
 
   #if HAS_TEMP_SENSOR
     SERIAL_PROTOCOLPGM(MSG_OK);
@@ -9822,7 +9818,6 @@ inline void gcode_M226() {
       if (parser.seen('P'))
       {
 	  	PID_PARAM(Kp, e) = parser.value_float();
-		printf("gcode_M301===%.1f\n",PID_PARAM(Kp, e));
       }
       if (parser.seen('I')) PID_PARAM(Ki, e) = scalePID_i(parser.value_float());
       if (parser.seen('D')) PID_PARAM(Kd, e) = scalePID_d(parser.value_float());
@@ -10198,13 +10193,11 @@ inline void gcode_M400() { planner.synchronize(); }
 void quickstop_stepper() {
   planner.quick_stop();
   
-  printf("quickstop_stepper1\n");
   planner.cleaning_buffer_counter=0;
   planner.tick();
 
   planner.synchronize();
   
-  printf("quickstop_stepper2\n");
   set_current_from_steppers_for_axis(ALL_AXES);
   
   SYNC_PLAN_POSITION_KINEMATIC();
@@ -14679,9 +14672,16 @@ void setup() {
   endstops.init();          // Init endstops and pullups
 
   stepper.init();           // Init stepper. This enables interrupts!
-  step_motor_init(stepper.isr); //mark
-  
-  
+  int pi_n=read_version();//GetIniKeyInt("VER","PI","/home/pi/Config_panda.ini");
+  if(pi_n==-4)//pi4b
+  	step_motor_init(stepper.isr,4*8); //mark
+  else if(pi_n==3)//pi3+
+  	step_motor_init(stepper.isr,12); //mark
+  else //if(pi_n==-3)//pi3b
+  	step_motor_init(stepper.isr,8); //mark
+  printf("pi_num===%d\n",pi_n);
+  SERIAL_PROTOCOLPGM("Pi version:");
+  SERIAL_PROTOCOLLN(pi_n);
   servo_init();             // Initialize all servos, stow servo probe
 
   #if HAS_PHOTOGRAPH
@@ -14831,7 +14831,6 @@ void setup() {
     thermalManager.updatePID();
   #endif
  //  tmper_init_stm32(thermalManager.isr);//mark
-  printf("setup19\n");
 
   #if ENABLED(USE_WATCHDOG)
     watchdog_init();
@@ -15012,7 +15011,7 @@ int mcp23017Setup (const int pinBase, const int i2cAddress)
 
 
 int
-main2(int argc, char *argv[])
+test(int argc, char *argv[])
 {
 
 	   int i2c_fe;
@@ -15068,22 +15067,48 @@ main2(int argc, char *argv[])
 
 }
 
+int read_version()
+{
+		system("gpio -v | grep \"Type:\" > /home/pi/version");
+		delay(1000);
+        int fd = open("/home/pi/version", O_RDONLY);
+        if(fd == -1) {
+                printf("error is %s\n", strerror(errno));
+                return 3;
+        }
+        char buf[100];
+        memset(buf, 0, sizeof(buf));
+        while(read(fd, buf, sizeof(buf) - 1) > 0) {
+               // printf("%s\n", buf);             
+        }
+        printf("%s\n", buf);
+		if(strncmp(buf,"  Type: Pi 4B,",strlen("  Type: Pi 4B,"))==0)
+			return -4;
+		else if(strncmp(buf,"  Type: Pi 3+,",strlen("  Type: Pi 3+,"))==0)
+			return 3;
+		else if(strncmp(buf,"  Type: Pi 3B+,",strlen("  Type: Pi 3B+,"))==0)
+			return 3;
+		else
+			return -3;
+        close(fd);
+	 
+}
 
 
 ////////////// 
 int main(int argc, char* argv[])
  {
-
-	int iCatAge;
+/* test
+	int pi_num;
 	char szCatName[32];
 	
-	iCatAge = GetIniKeyInt("CAT","age","/media/usb/Config_panda.ini");
-	char *a = GetIniKeyString("CAT4","name","/media/usb/Config_panda.ini");
-	printf("%d\r\n",iCatAge);
+	pi_num = GetIniKeyInt("VER","PI","/home/pi/Config_panda.ini");
+	char *a = GetIniKeyString("CAT4","name","/home/pi/Config_panda.ini");
+	printf("Board Pi%d\r\n",pi_num);
 	printf("%s\r\n",a);
+*/
 
 	setup() ;
-	 
 	printf("main0\n");
 
 	// while(1) sleep(1);
@@ -15114,7 +15139,6 @@ int main(int argc, char* argv[])
       if (abort_sd_printing) {
         abort_sd_printing = false;
 		
-		printf("stopSDPrint0\n");
         card.stopSDPrint(
           #if SD_RESORT
             true
