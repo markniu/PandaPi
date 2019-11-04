@@ -2158,7 +2158,8 @@ void Temperature::isr() {
 			{
 				old_h=k;
 				printf("run out sensor:%d\n",k);
-				SERIAL_ECHOLNPAIR("Dropped bytes: ", k);
+				SERIAL_PROTOCOLPGM("run out sensor:");
+  				SERIAL_PROTOCOLLN(k);
 			}
 		}
 		////////////////////////////////
