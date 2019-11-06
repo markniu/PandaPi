@@ -33,24 +33,24 @@ If you want to run PandaPi on RPi, you need one following hardware board that ca
 * ##   [Guides link](https://github.com/markniu/PandaPi/wiki) 
 1. **Quick start guide**：
  
-  * [Flashing RaspberrPi img](https://github.com/markniu/PandaPi/wiki/How-to-Flash-img-&-WIFI-setup)
+   [Flashing RaspberrPi img](https://github.com/markniu/PandaPi/wiki/How-to-Flash-img-&-WIFI-setup)
 
-  * [Wiring](https://github.com/markniu/PandaPi/wiki/How-to-wire)
+   [Wiring](https://github.com/markniu/PandaPi/wiki/How-to-wire)
 
 2. **Advanced topics:**
 
-  * [How to Edit Marlin code](https://github.com/markniu/PandaPi/wiki/How-to-Edit-Marlin-code)
+   [How to Edit Marlin code](https://github.com/markniu/PandaPi/wiki/How-to-Edit-Marlin-code)
 
-  * [How to Find Raspberry IP](https://github.com/markniu/PandaPi/wiki/How-to-Find-Raspberry-IP)
+   [How to Find Raspberry IP](https://github.com/markniu/PandaPi/wiki/How-to-Find-Raspberry-IP)
 
-  * [How to run OctoPrint](https://github.com/markniu/PandaPi/wiki/How-to-run-OctoPrint)
+   [How to run OctoPrint](https://github.com/markniu/PandaPi/wiki/How-to-run-OctoPrint)
 
 
-  * [where to download board case](https://github.com/markniu/PandaPi/wiki/where-to-download--board-case)
+   [where to download board case](https://github.com/markniu/PandaPi/wiki/where-to-download--board-case)
 
-  * [How to flash MCU firmware](https://github.com/markniu/PandaPi/wiki/How-to-flash-MCU-firmware)
+   [How to flash MCU firmware](https://github.com/markniu/PandaPi/wiki/How-to-flash-MCU-firmware)
 
-  * [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
+   [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
 
 * ## Hardware resources v1.0 
 RaspberryPi | Pi 4B/3B/3B+  | .
