@@ -31,7 +31,26 @@ If you want to run PandaPi on RPi, you need one following hardware board that ca
    about the real-time, I did a [test](https://hackaday.io/project/166466-3dprinter-firmware-run-on-raspberrypi/log/167122-upgrade-to-real-time-linux) . it is not real time actually,but we guarantee motor coordination. and the RPi is more than fast enough that it is not a problem.and I test it with pi4 the cpu speed is quickly than pi3! BTW I test it with all the function like camera octoprint,they are used a lot of RAM but little CPU.
 
 * ##   [Guides link](https://github.com/markniu/PandaPi/wiki) 
+1. **Quick start guide**：
+ 
+  * [Flashing RaspberrPi img](https://github.com/markniu/PandaPi/wiki/How-to-Flash-img-&-WIFI-setup)
 
+  * [Wiring](https://github.com/markniu/PandaPi/wiki/How-to-wire)
+
+2. **Advanced topics:**
+
+  * [How to Edit Marlin code](https://github.com/markniu/PandaPi/wiki/How-to-Edit-Marlin-code)
+
+  * [How to Find Raspberry IP](https://github.com/markniu/PandaPi/wiki/How-to-Find-Raspberry-IP)
+
+  * [How to run OctoPrint](https://github.com/markniu/PandaPi/wiki/How-to-run-OctoPrint)
+
+
+  * [where to download board case](https://github.com/markniu/PandaPi/wiki/where-to-download--board-case)
+
+  * [How to flash MCU firmware](https://github.com/markniu/PandaPi/wiki/How-to-flash-MCU-firmware)
+
+  * [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
 
 * ## Hardware resources v1.0 
 RaspberryPi | Pi 4B/3B/3B+  | .
