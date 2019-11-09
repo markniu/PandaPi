@@ -3,7 +3,7 @@
 ### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
 If you want to run PandaPi on RPi, you need one following hardware board that can be droppd in creality Ender3 printer with this shield+Raspberry Pi ,just need to print one case for it.
 
-![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/main_octo.jpg)
+![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/91109225253.jpg)
 
 1. High process speed.
 
