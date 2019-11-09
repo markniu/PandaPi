@@ -66,7 +66,7 @@ stepper driver   |  4*(TMC2209/TMC2208/A4988/TMC2130)	 | Modular, replaceable,no
 Input   | 	7~35V 20A max	 | 
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
-LCD   | 	Graphic128*64/LCD2004	 | 
+LCD   | 	Graphic128*64/realityLCD128*64	 | 
 on board FAN   | 	silent 24V self auto controlled	 | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
