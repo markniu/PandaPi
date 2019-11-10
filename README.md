@@ -5,13 +5,16 @@ If you want to run PandaPi on RPi, you need one following hardware board that ca
 
 ![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/91109225253.jpg)
 
-1. High process speed.
+1. ### High process speed.
 
-2. Octoprint + marlin.
+2. ### Octoprint + marlin.
 
     the marlin code is very stable and are familiar with us, if we have a good idea or control algorithm, we can change it easily. 
     
-3. Easy to edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
+3. ### Easy to do
+
+    just wiring & flashing the img. 
+    edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
 
 * ##  FAQ：
 1. what's the difference from Klipper
