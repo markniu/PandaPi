@@ -80,7 +80,7 @@ Bed leveling    | 	  BLtouch  |
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 
-* ##   [Case for ender3](https://www.thingiverse.com/thing:3857748) 
+* ###   Printing quality
 
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/xyz.jpg)
