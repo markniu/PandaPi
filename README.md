@@ -13,7 +13,7 @@ If you want to run PandaPi on RPi, you need one following hardware board that ca
 
     the marlin code is very stable and are familiar with us, if we have a good idea or control algorithm, we can change it easily. 
     
-3. ### Easy to do
+3. ### Easy to use
 
     just wiring & flashing the img. 
     edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
