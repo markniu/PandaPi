@@ -55,6 +55,8 @@
 
 #if HAS_SERVOS
 extern int i2c_fd ; 
+#include "wiringPi.h"
+#include "wiringPiI2C.h"
 
 //#include <avr/interrupt.h>
 //#include <Arduino.h>
