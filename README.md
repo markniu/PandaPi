@@ -68,7 +68,7 @@ Temp sens   | 	2	 |  100K NTC (thermal resistance)
 SWD   | 	1	 | STlinkV2
 Serial port chip   | 	CH340G	 | 
 stepper driver   |  4*(TMC2209/TMC2208/A4988/TMC2130)	 | Modular, replaceable,no uart/SPI
-Input   | 	7~35V 20A max	 | 
+Input   | 	9~35V 20A max	 | power both the board and the Raspberry Pi
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
 LCD   | 	Graphic128*64/realityLCD128*64/HDMI	 | 
@@ -76,6 +76,7 @@ on board FAN   | 	silent 24V self auto controlled	 |
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
 Bed leveling    | 	  BLtouch  | 	
+Protection    | 	 4 fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
