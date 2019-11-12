@@ -76,7 +76,7 @@ on board FAN   | 	silent 24V self auto controlled	 |
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
 Bed leveling    | 	  BLtouch  | 	
-Protection    | 	 4 fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
+Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
