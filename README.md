@@ -34,7 +34,7 @@
 
    about the real-time, I did a [test](https://hackaday.io/project/166466-3dprinter-firmware-run-on-raspberrypi/log/167122-upgrade-to-real-time-linux) . it is not real time actually,but we guarantee motor coordination. and the RPi is more than fast enough that it is not a problem.and I test it with pi4 the cpu speed is quickly than pi3! BTW I test it with all the function like camera octoprint,they are used a lot of RAM but little CPU.
 
-* ##   [Guides link](https://github.com/markniu/PandaPi/wiki) 
+* ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
 1. **Quick start guide**：
  
    [Flashing RaspberrPi img](https://github.com/markniu/PandaPi/wiki/How-to-Flash-img-&-WIFI-setup)
