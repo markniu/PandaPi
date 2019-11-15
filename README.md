@@ -89,7 +89,7 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 * ###  Facebook group
 <a href="https://www.facebook.com/groups/380795976169477/"><img src="https://raw.githubusercontent.com/markniu/PandaPi/master/doc/Facebook.png" alt="facebook group" width="100" height="100"></a>
 
- [Tindie store](https://www.tindie.com/stores/niujl123/17947/)
+ [Tindie store](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/)
 
 
 
