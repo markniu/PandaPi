@@ -1,7 +1,6 @@
 # PandaPi is a software for 3D printer
 ##  Use Raspberry Pi as a brain that run the Marlin&Octoprint on Raspberry Pi directly. Improve print speed and smoothness
-### Standing on the shoulders of giants, there will be more possibilities in the 3D printing world.
-If you want to run PandaPi on RPi, you need one following extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
+   If you want to run PandaPi on RPi, you need one following extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 
 ![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/91109225253.jpg)
 
@@ -86,7 +85,6 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/xyz.jpg)
 
-[youtube](https://www.youtube.com/channel/UCXq9t12N4FJ8aEGx7SY5bcA) 
 
 * ###  Facebook group
 <a href="https://www.facebook.com/groups/380795976169477/"><img src="https://raw.githubusercontent.com/markniu/PandaPi/master/doc/Facebook.png" alt="facebook group" width="100" height="100"></a>
