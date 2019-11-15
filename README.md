@@ -93,7 +93,7 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 * ##  where to buy?
 <a href="https://www.tindie.com/stores/niujl123/?ref=offsite_badges&utm_source=sellers_niujl123&utm_medium=badges&utm_campaign=badge_medium"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-mediums.png" alt="I sell on Tindie" width="150" height="78"></a>
-
+thank you for your support, here is the discount code:19898C7E
 [Tindie](https://www.tindie.com/products/17947/)  
 
 
