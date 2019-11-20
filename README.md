@@ -66,11 +66,11 @@ Endstops   | 	3	 |
 Temp sens   | 	2	 |  100K NTC (thermal resistance)	
 SWD   | 	1	 | STlinkV2
 Serial port chip   | 	CH340G	 | 
-stepper driver   |  4*(TMC2209/TMC2208/A4988/TMC2130)	 | Modular, replaceable,no uart/SPI
+stepper driver   |  4*(TMC2209/TMC2208/A4988/TMC2130)	 | Modular, replaceable,uart for TMC2209 sensorless endstop
 Input   | 	9~35V 20A max	 | power both the board and the Raspberry Pi
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
-LCD   | 	Graphic128*64/realityLCD128*64/HDMI	 | 
+LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
 on board FAN   | 	silent 24V self auto controlled	 | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
