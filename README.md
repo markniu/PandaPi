@@ -20,7 +20,7 @@
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 
-[**Hardware resources**](https://github.com/markniu/PandaPi/wiki/Hardware-resources)
+* ##   [Hardware resources](https://github.com/markniu/PandaPi/wiki/Hardware-resources) 
 
 * ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
 1. **Quick start guide**：
