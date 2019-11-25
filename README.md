@@ -20,6 +20,8 @@
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 
+[**Hardware resources**](https://github.com/markniu/PandaPi/wiki/Hardware-resources)
+
 * ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
 1. **Quick start guide**：
  
@@ -42,26 +44,6 @@
 
    [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
 
-* ## Hardware resources v1.0 
-RaspberryPi | Pi 4B/3B/3B+  | .
---- | --- | --- 
-Extruders | 	1 | 	 
-Controlled Fans | 	3	 |  1 board self controlled
-Heaters   | 	2	 |  
-Endstops   | 	3	 | 
-Temp sens   | 	2	 |  100K NTC (thermal resistance)	
-SWD   | 	1	 | STlinkV2
-Serial port chip   | 	CH340G	 | 
-stepper driver   |  4*(TMC2209/TMC2208/A4988/TMC2130)	 | Modular, replaceable,uart for TMC2209 sensorless endstop
-Input   | 	9~35V 20A max	 | power both the board and the Raspberry Pi
-heater Output   | 	15Amax	 | 
-MCU   | 	stm32	 |  
-LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
-on board FAN   | 	silent 24V self auto controlled	 | 
-Spacer screw   | 	Nylon spacer screw	 | 
-filament detect pin    | 	  reuse the SWD pin   | 	
-Bed leveling    | 	  BLtouch  | 	
-Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 
 * ##  FAQ：
