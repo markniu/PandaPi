@@ -84,7 +84,7 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 [Facebook](https://www.facebook.com/groups/380795976169477/)
 
-[Support](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/)
+[Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/)
 
 
 
