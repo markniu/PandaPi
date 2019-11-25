@@ -80,11 +80,6 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
 
-* ###   Printing quality
-
-
-![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/xyz.jpg)
-
 
 * ###  Facebook group
 <a href="https://www.facebook.com/groups/380795976169477/"><img src="https://raw.githubusercontent.com/markniu/PandaPi/master/doc/Facebook.png" alt="facebook group" width="100" height="100"></a>
