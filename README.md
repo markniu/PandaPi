@@ -4,7 +4,7 @@
 
 ![](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/91109225253.jpg)
 
-1. ### High process speed and more smoothly.
+1. ###  better prints at faster speeds
  
      If you want to do more higher speed or print some short line or corner the higher process speed is very important,otherwise there will be some slight on the surface. so 32 bit MCU is better,but if you want add more function like web camera,HDMI LCD... little space,for friendly easy to use this PandaPi runs on the powerful Raspberry Pi is the best. 
 
@@ -14,8 +14,9 @@
     
 3. ### Easy to use
 
-    just wiring & flashing the img. 
-    edit/compile/run (use web browser to edit instead of Arduino IDE/platformio)
+    just wiring & flashing the RPI img. 
+    Edit marlin code online with web browser
+    No external power required for Raspberry Pi
 
 * ## Block diagram
 ![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/dlg.png)
