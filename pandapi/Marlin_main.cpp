@@ -3021,9 +3021,9 @@ void clean_up_after_endstop_or_probe_move() {
  * Home an individual linear axis
  */
 static void do_homing_move(const AxisEnum axis, const float distance, const float fr_mm_s=0) {
-
+#if HAS_DRIVER(TMC2209)
    Motor_Sensorless(axis,ENABLE);
-    
+#endif    
    status_printer=1;
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -3111,8 +3111,9 @@ static void do_homing_move(const AxisEnum axis, const float distance, const floa
     }
   #endif
   status_printer=0;
-  
+#if HAS_DRIVER(TMC2209)  
   Motor_Sensorless(axis,DISABLE);
+#endif
 }
 
 /**

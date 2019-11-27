@@ -39,6 +39,7 @@
 #define TMC26X_STANDALONE   0x00A
 #define TMC2660             0x10B
 #define TMC2660_STANDALONE  0x00B
+#define TMC2209             TMC2208
 
 #define AXIS_DRIVER_TYPE(A,T) ( defined(A##_DRIVER_TYPE) && (A##_DRIVER_TYPE == T) )
 
