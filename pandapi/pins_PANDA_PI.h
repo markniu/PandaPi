@@ -63,6 +63,33 @@
  */
 
 #if HAS_DRIVER(TMC2208)
+ // #define X_HARDWARE_SERIAL  Serial1
+ //  #define X2_HARDWARE_SERIAL Serial1
+ //  #define Y_HARDWARE_SERIAL  Serial1
+ //  #define Y2_HARDWARE_SERIAL Serial1
+ // #define Z_HARDWARE_SERIAL  Serial1
+  // #define Z2_HARDWARE_SERIAL Serial1
+ // #define E0_HARDWARE_SERIAL Serial1
+  //#define E1_HARDWARE_SERIAL Serial1
+  //#define E2_HARDWARE_SERIAL Serial1
+  //#define E3_HARDWARE_SERIAL Serial1
+  //#define E4_HARDWARE_SERIAL Serial1
+#define X_SERIAL_TX_PIN    0
+#define X_SERIAL_RX_PIN    0
+#define X2_SERIAL_TX_PIN   -1
+#define X2_SERIAL_RX_PIN   -1
+
+#define Y_SERIAL_TX_PIN    0
+#define Y_SERIAL_RX_PIN    0
+#define Y2_SERIAL_TX_PIN   -1
+#define Y2_SERIAL_RX_PIN   -1
+
+#define Z_SERIAL_TX_PIN    0
+#define Z_SERIAL_RX_PIN    0
+#define Z2_SERIAL_TX_PIN   -1
+#define Z2_SERIAL_RX_PIN   -1
+
+
 
 #endif
 

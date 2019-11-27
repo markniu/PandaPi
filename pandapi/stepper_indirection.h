@@ -59,10 +59,11 @@
 #endif
 
 #if HAS_DRIVER(TMC2208)
-  #include "TMC2208Stepper/TMC2208Stepper.h"
+  #include "TMC2208Stepper.h"
   void tmc2208_serial_begin();
   void tmc2208_init_to_defaults();
 #endif
+typedef enum {DISABLE = 0, ENABLE = !DISABLE};
 
 // L6470 has STEP on normal pins, but DIR/ENABLE via SPI
 #if HAS_DRIVER(L6470)
@@ -73,7 +74,7 @@
 
 void restore_stepper_drivers();  // Called by PSU_ON
 void reset_stepper_drivers();    // Called by settings.load / settings.reset
-
+void Motor_Sensorless(char axis, char enabled);
 #define delay_step() \
 {\
 	int jj=130;	/* A4988: 130(1us) ;TMC2208: 0(200ns) ;*/ \
@@ -109,7 +110,14 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define X_DIR_READ READ(X_DIR_PIN)
 #endif
 #define X_STEP_INIT SET_OUTPUT(X_STEP_PIN)
+
+#if AXIS_DRIVER_TYPE(X, A4988)
 #define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);delay_step();}
+#else
+
+#define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);}
+#endif
+
 #define X_STEP_READ READ(X_STEP_PIN)
 
 // Y Stepper
@@ -142,7 +150,14 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define Y_DIR_READ READ(Y_DIR_PIN)
 #endif
 #define Y_STEP_INIT SET_OUTPUT(Y_STEP_PIN)
+
+#if AXIS_DRIVER_TYPE(Y, A4988)
 #define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);delay_step();}
+#else
+
+#define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);}
+#endif
+
 #define Y_STEP_READ READ(Y_STEP_PIN)
 
 // Z Stepper

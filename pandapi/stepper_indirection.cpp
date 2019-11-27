@@ -34,7 +34,7 @@
 #include "stepper_indirection.h"
 
 #include "MarlinConfig.h"
-
+void tmc2208_init(TMC2208Stepper &st, const uint16_t mA, const uint16_t microsteps, const uint32_t thrs, const float spmm) ;
 //
 // TMC26X Driver objects and inits
 //
@@ -280,7 +280,7 @@
   #undef HardwareSerial_h // undo Marlin trickery
   //#include <SoftwareSerial.h>
   //#include "HardwareSerial.h"
-  #include "TMC2208Stepper/TMC2208Stepper.h"
+  #include "TMC2208Stepper.h"
   #include "planner.h"
 
 #include "MarlinSerial.h"
@@ -422,10 +422,53 @@ MarlinSerial customizedSerial5;
 #endif
   }
 
+
+
+  void Motor_Sensorless(char axis, char enabled)
+  {
+  
+
+  	if(enabled)
+  	{
+
+#if AXIS_DRIVER_TYPE(X, TMC2209)		
+		if(axis==X_AXIS) 
+			tmc2208_init(stepperX, 180, 8, X_HYBRID_THRESHOLD, 0);
+#endif	
+#if AXIS_DRIVER_TYPE(Y, TMC2209)
+		if(axis==Y_AXIS)
+			tmc2208_init(stepperY, 350, 8, Y_HYBRID_THRESHOLD, 0);
+#endif		
+  	}
+	else		
+  	{
+#if AXIS_DRIVER_TYPE(X, TMC2209)	
+		if(axis==X_AXIS) 
+			tmc2208_init(stepperX, X_CURRENT, X_MICROSTEPS, X_HYBRID_THRESHOLD, 0);
+#endif		
+#if AXIS_DRIVER_TYPE(Y, TMC2209)
+		if(axis==Y_AXIS)
+			tmc2208_init(stepperY, Y_CURRENT, Y_MICROSTEPS, Y_HYBRID_THRESHOLD, 0);
+#endif		
+  	}
+  }
+
+
   // Use internal reference voltage for current calculations. This is the default.
   // Following values from Trinamic's spreadsheet with values for a NEMA17 (42BYGHW609)
   void tmc2208_init(TMC2208Stepper &st, const uint16_t mA, const uint16_t microsteps, const uint32_t thrs, const float spmm) {
-    st.pdn_disable(true); // Use UART
+
+#if AXIS_DRIVER_TYPE(X, TMC2209)
+	  stepperX.chip_addr=X_ADDRESS;
+#endif
+#if AXIS_DRIVER_TYPE(Y, TMC2209)
+		stepperY.chip_addr=Y_ADDRESS;
+#endif
+#if AXIS_DRIVER_TYPE(Z, TMC2209)
+		stepperZ.chip_addr=Z_ADDRESS;
+#endif
+
+	st.pdn_disable(true); // Use UART
     st.mstep_reg_select(true); // Select microsteps with UART
     st.I_scale_analog(false);
      st.rms_current(mA, HOLD_MULTIPLIER, R_SENSE);
@@ -440,14 +483,15 @@ MarlinSerial customizedSerial5;
     #if ENABLED(STEALTHCHOP)
       st.pwm_lim(12);
       st.pwm_reg(8);
-      st.pwm_autograd(1);
+      st.pwm_autograd(0);
       st.pwm_autoscale(1);
       st.pwm_freq(1);
       st.pwm_grad(14);
       st.pwm_ofs(36);
       st.en_spreadCycle(false);
-      #if ENABLED(HYBRID_THRESHOLD)
-        st.TPWMTHRS(12650000UL*microsteps/(256*thrs*spmm));
+      #if 1//ENABLED(HYBRID_THRESHOLD)
+       // st.TPWMTHRS(12650000UL*microsteps/(256*thrs*spmm));
+	  	st.TPWMTHRS(1);
       #else
         UNUSED(thrs);
         UNUSED(spmm);

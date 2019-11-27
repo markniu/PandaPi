@@ -47,7 +47,7 @@
  *
  * G0   -> G1
  * G1   - Coordinated Movement X Y Z E
- * G2   - CW ARC
+ * G2   - CW ARC  
  * G3   - CCW ARC
  * G4   - Dwell S<seconds> or P<milliseconds>
  * G5   - Cubic B-spline with XYZE destination and IJPQ offsets
@@ -276,6 +276,8 @@
 #include <termios.h>		//Used for UART
 #include <string.h>
 #include "ini_file.h"
+#include "Configuration_adv.h"
+#include "stepper_indirection.h"
 
 
 
@@ -314,7 +316,7 @@ FORCE_INLINE void serialprintPGM(const char* str) {
 	//while (char ch = pgm_read_byte((char *)str++)) 
 //	while (char ch = pgm_read_byte((char *)str++)) 
      // customizedSerial.write(str);
-	Serial_send(str);
+//	Serial_send(str);
 //	printf(str);
   //  while (*str) Serial5_send(*str++);
 	
@@ -3019,7 +3021,11 @@ void clean_up_after_endstop_or_probe_move() {
  * Home an individual linear axis
  */
 static void do_homing_move(const AxisEnum axis, const float distance, const float fr_mm_s=0) {
-	status_printer=1;
+
+   Motor_Sensorless(axis,ENABLE);
+    
+   status_printer=1;
+
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> do_homing_move(", axis_codes[axis]);
@@ -3105,6 +3111,8 @@ static void do_homing_move(const AxisEnum axis, const float distance, const floa
     }
   #endif
   status_printer=0;
+  
+  Motor_Sensorless(axis,DISABLE);
 }
 
 /**
@@ -4154,6 +4162,7 @@ inline void gcode_G4() {
  *
  */
 inline void gcode_G28(const bool always_home_all) {
+	
 
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
@@ -4384,6 +4393,8 @@ inline void gcode_G28(const bool always_home_all) {
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< G28");
   #endif
+  
+  
 } // G28
 
 void home_all_axes() { gcode_G28(true); }
@@ -14987,17 +14998,17 @@ int mcp23017Setup (const int pinBase, const int i2cAddress)
 {
   /*  int fd ;
     struct wiringPiNodeStruct *node ;
-    // ³õÊ¼»¯I2CÉè±¸
+    // ï¿½ï¿½Ê¼ï¿½ï¿½I2Cï¿½è±¸
     if ((fd = wiringPiI2CSetup (i2cAddress)) < 0)
     return fd ;
  
-    // ¸½¼Ó²Ù×÷£¬ÉèÖÃMCP23017Éè±¸ I2C²Ù×÷µØÖ·²»×Ô¶¯µÝÔö
+    // ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MCP23017ï¿½è±¸ I2Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
     wiringPiI2CWriteReg8 (fd, MCP23x17_IOCON, IOCON_INIT) ;
  
-    // MCP23017¼ÓÈëÁ´±í
+    // MCP23017ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     node = wiringPiNewNode (pinBase, 16) ;
  
-    // ¸³ÖµÏàÓ¦µÄ²Ù×÷º¯Êý my¿ªÍ·µÄº¯Êý¾ùÎ»ÓÚmcp23017.cÎÄ¼þÖÐ
+    // ï¿½ï¿½Öµï¿½ï¿½Ó¦ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ myï¿½ï¿½Í·ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½mcp23017.cï¿½Ä¼ï¿½ï¿½ï¿½
     node->fd = fd ;
     node->pinMode = myPinMode ;
     node->pullUpDnControl = myPullUpDnControl ;

@@ -68,7 +68,7 @@
 #include "ultralcd.h"
 #include "language.h"
 #include "parser.h"
-
+#include "endstops.h"
 #include "Marlin.h"
 
 #if ENABLED(MESH_BED_LEVELING)
@@ -751,7 +751,7 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
           // Steps between acceleration and deceleration, if any
   int32_t plateau_steps = block->step_event_count - accelerate_steps - decelerate_steps;
 
-  // Does accelerate_steps + decelerate_steps exceed step_event_count?
+  // Does accelerate_steps + decelerate_steps exceed step_event_count?  
   // Then we can't possibly reach the nominal rate, there will be no cruising.
   // Use intersection_distance() to calculate accel / braking time in order to
   // reach the final_rate exactly at the end of this block.
@@ -918,7 +918,7 @@ void Planner::reverse_pass() {
 
   // If there was a race condition and block_buffer_planned was incremented
   //  or was pointing at the head (queue empty) break loop now and avoid
-  //  planning already consumed blocks
+  //  planning already consumed blocks   
   if (planned_block_index == block_buffer_head) return;
 
   // Reverse Pass: Coarsely maximize all possible deceleration curves back-planning from the last
@@ -1566,7 +1566,7 @@ void Planner::synchronize() {
 
 while (has_blocks_queued() || cleaning_buffer_counter) 
 	idle();
-
+//endstops.update();
 }
 
 /**

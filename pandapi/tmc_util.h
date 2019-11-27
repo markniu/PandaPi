@@ -30,7 +30,7 @@
 #endif
 
 #if HAS_DRIVER(TMC2208)
-  #include "TMC2208Stepper/TMC2208Stepper.h"
+  #include "TMC2208Stepper.h"
 #endif
 
 extern bool report_tmc_status;
