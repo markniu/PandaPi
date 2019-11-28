@@ -34,7 +34,6 @@
 #include "stepper_indirection.h"
 
 #include "MarlinConfig.h"
-void tmc2208_init(TMC2208Stepper &st, const uint16_t mA, const uint16_t microsteps, const uint32_t thrs, const float spmm) ;
 //
 // TMC26X Driver objects and inits
 //
@@ -422,6 +421,7 @@ MarlinSerial customizedSerial5;
 #endif
   }
 
+  void tmc2208_init(TMC2208Stepper &st, const uint16_t mA, const uint16_t microsteps, const uint32_t thrs, const float spmm) ;
 
 
   void Motor_Sensorless(char axis, char enabled)
