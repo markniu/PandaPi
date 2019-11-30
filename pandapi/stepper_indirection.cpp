@@ -433,11 +433,11 @@ MarlinSerial customizedSerial5;
 
 #if AXIS_DRIVER_TYPE(X, TMC2209)		
 		if(axis==X_AXIS) 
-			tmc2208_init(stepperX, 180, 8, X_HYBRID_THRESHOLD, 0);
+			tmc2208_init(stepperX, X_STALLGUARD_CURRENT, 8, X_HYBRID_THRESHOLD, 0);
 #endif	
 #if AXIS_DRIVER_TYPE(Y, TMC2209)
 		if(axis==Y_AXIS)
-			tmc2208_init(stepperY, 350, 8, Y_HYBRID_THRESHOLD, 0);
+			tmc2208_init(stepperY, Y_STALLGUARD_CURRENT, 8, Y_HYBRID_THRESHOLD, 0);
 #endif		
   	}
 	else		
