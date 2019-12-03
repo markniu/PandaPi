@@ -19,6 +19,8 @@
 
 * ##   [Hardware resources](https://github.com/markniu/PandaPi/wiki/Hardware-resources) 
 
+![Opensource](https://raw.githubusercontent.com/markniu/PandaPi/master/doc/image/pandapi_gpio.jpg)
+
 * ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
 1. **Quick start guide**：
  
