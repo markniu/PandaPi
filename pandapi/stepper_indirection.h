@@ -115,7 +115,7 @@ void Motor_Sensorless(char axis, char enabled);
 #define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);delay_step();}
 #else
 
-#define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);}
+#define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);delay_step();}
 #endif
 
 #define X_STEP_READ READ(X_STEP_PIN)
@@ -155,7 +155,7 @@ void Motor_Sensorless(char axis, char enabled);
 #define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);delay_step();}
 #else
 
-#define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);}
+#define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);delay_step();}
 #endif
 
 #define Y_STEP_READ READ(Y_STEP_PIN)
