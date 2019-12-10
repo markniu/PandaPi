@@ -427,21 +427,29 @@ MarlinSerial customizedSerial5;
   void Motor_Sensorless(char axis, char enabled)
   {
   
-
+        delay(100);
   	if(enabled)
   	{
+#if HAS_DRIVER(TMC2209)
+	
+//		Serial_PC(9600,NULL); 	
+#endif
 
 #if AXIS_DRIVER_TYPE(X, TMC2209)		
 		if(axis==X_AXIS) 
-			tmc2208_init(stepperX, X_STALLGUARD_CURRENT, 8, X_HYBRID_THRESHOLD, 0);
+			tmc2208_init(stepperX,X_STALLGUARD_CURRENT, 16, X_HYBRID_THRESHOLD, 0);
 #endif	
 #if AXIS_DRIVER_TYPE(Y, TMC2209)
 		if(axis==Y_AXIS)
-			tmc2208_init(stepperY, Y_STALLGUARD_CURRENT, 8, Y_HYBRID_THRESHOLD, 0);
+			tmc2208_init(stepperY, Y_STALLGUARD_CURRENT, 16, Y_HYBRID_THRESHOLD, 0);
 #endif		
   	}
 	else		
   	{
+#if HAS_DRIVER(TMC2209)
+//		Serial_PC(BAUDRATE,NULL);	
+#endif
+  	
 #if AXIS_DRIVER_TYPE(X, TMC2209)	
 		if(axis==X_AXIS) 
 			tmc2208_init(stepperX, X_CURRENT, X_MICROSTEPS, X_HYBRID_THRESHOLD, 0);
@@ -451,6 +459,7 @@ MarlinSerial customizedSerial5;
 			tmc2208_init(stepperY, Y_CURRENT, Y_MICROSTEPS, Y_HYBRID_THRESHOLD, 0);
 #endif		
   	}
+	delay(20);
   }
 
 

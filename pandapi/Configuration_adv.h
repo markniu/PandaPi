@@ -377,8 +377,20 @@
 // @section homing
 
 // Homing hits each endstop, retracts by these distances, then does a slower bump.
+
+#if AXIS_DRIVER_TYPE(X, TMC2209)&&TMC2209_SENSORLESS_HOMING
+#define X_HOME_BUMP_MM 0
+#else
 #define X_HOME_BUMP_MM 5
+#endif
+
+#if AXIS_DRIVER_TYPE(Y, TMC2209)&&TMC2209_SENSORLESS_HOMING
+#define Y_HOME_BUMP_MM 0
+#else
 #define Y_HOME_BUMP_MM 5
+#endif
+
+
 #define Z_HOME_BUMP_MM 2
 #define HOMING_BUMP_DIVISOR { 2, 2, 4 }  // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 //#define QUICK_HOME                     // If homing includes X and Y, do a diagonal move initially
