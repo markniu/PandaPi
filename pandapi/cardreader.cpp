@@ -48,27 +48,35 @@ char tmp_dir[1024];
 
 int read_u_path(void)
 {
+
+
 	system("df | grep \"/dev/sd\" > /home/pi/U_path");
 	delay(1000);
+	root_path[0]=0;
 	int fd = open("/home/pi/U_path", O_RDONLY);
 	if(fd == -1) {
 			printf("error is %s\n", strerror(errno));
 			return 3;
 	}
-	 
+	 printf("read_u_path02\n");
 	memset(tmp_dir, 0, sizeof(tmp_dir));
 	while(read(fd, tmp_dir, sizeof(tmp_dir) - 1) > 0) {
 		   // printf("%s\n", buf);			   
 	}
-	for(int i=0;i<strlen(tmp_dir)-3;i++)
+	if(strlen(tmp_dir)>3)
 	{
-		if(tmp_dir[i]=='%'&&tmp_dir[i+1]==' '&&tmp_dir[i+2]=='/')
-			strcpy(root_path,tmp_dir+i+2);
+		for(int i=0;i<strlen(tmp_dir)-3;i++)
+		{
+			if(tmp_dir[i]=='%'&&tmp_dir[i+1]==' '&&tmp_dir[i+2]=='/')
+				strcpy(root_path,tmp_dir+i+2);
+		}
 	}
+	printf("read_u_path03\n");
 	root_path[strlen(root_path)-1]=0;
 	printf("u disk path:%s\n", root_path);
 	close(fd);
- 
+    if(root_path[0]==0)
+		sprintf(root_path,"/media/usb/");
  	memset(tmp_dir, 0, sizeof(tmp_dir));
 }
 
@@ -135,6 +143,10 @@ void CardReader::lsDive(const char *prepend, const char * parent, const char * c
 	dir_t p;
 	DIR    *dir;
 	struct	 dirent    *ptr;
+	//if(parent[0]==0)
+	 // sprintf(root_path,"/media/usb/");
+	 printf("lsDive:000\n");
+	 printf("lsDive:%s\n",root_path);
 	dir = opendir(parent);
 	while((ptr = readdir(dir)) != NULL)
 	{
@@ -284,6 +296,7 @@ void CardReader::ls() {
    lsAction = LS_SerialPrint;
  // root.rewind();
  // read_u_path();
+  printf("lsDive:001\n");
   lsDive(NULL, root_path,NULL);
 }
 
