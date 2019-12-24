@@ -31,10 +31,46 @@
 #include "language.h"
 #include "printcounter.h"
 #include "serial.h"
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   #include "power_loss_recovery.h"
 #endif
+
+char root_path[100];//  "/media/usb/"
+char tmp_dir[1024];
+
+int read_u_path(void)
+{
+	system("df | grep \"/dev/sd\" > /home/pi/U_path");
+	delay(1000);
+	int fd = open("/home/pi/U_path", O_RDONLY);
+	if(fd == -1) {
+			printf("error is %s\n", strerror(errno));
+			return 3;
+	}
+	 
+	memset(tmp_dir, 0, sizeof(tmp_dir));
+	while(read(fd, tmp_dir, sizeof(tmp_dir) - 1) > 0) {
+		   // printf("%s\n", buf);			   
+	}
+	for(int i=0;i<strlen(tmp_dir)-3;i++)
+	{
+		if(tmp_dir[i]=='%'&&tmp_dir[i+1]==' '&&tmp_dir[i+2]=='/')
+			strcpy(root_path,tmp_dir+i+2);
+	}
+	root_path[strlen(root_path)-1]=0;
+	printf("u disk path:%s\n", root_path);
+	close(fd);
+ 
+ 	memset(tmp_dir, 0, sizeof(tmp_dir));
+}
 
 CardReader::CardReader() {
   #if ENABLED(SDCARD_SORT_ALPHA)
@@ -62,7 +98,6 @@ CardReader::CardReader() {
     OUT_WRITE(SDPOWER, HIGH);
   #endif
 }
-char tmp_dir[1024];
 
 char *createFilename(char *buffer, const dir_t &p) { //buffer > 12characters
   char *pos = buffer;
@@ -100,24 +135,9 @@ void CardReader::lsDive(const char *prepend, const char * parent, const char * c
 	dir_t p;
 	DIR    *dir;
 	struct	 dirent    *ptr;
-	
-    
-	/*
-	dir = opendir("/media/usb/");
-	
-	while((ptr = readdir(dir)) != NULL)
-		printf("d_name: %s\n", ptr->d_name);
-	
-	closedir(dir);
-
-     return;*/
-	//	printf("lsDive: %s\n",parent); 
-	//dir = opendir(parent);
 	dir = opendir(parent);
 	while((ptr = readdir(dir)) != NULL)
 	{
-	 	
-		 
 		if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0) ///current dir OR parrent dir 
 			continue; 
 		else if(ptr->d_type == 8) ///file 
@@ -132,13 +152,9 @@ void CardReader::lsDive(const char *prepend, const char * parent, const char * c
 			 {
 			 	if(ptr->d_name[ii+1]!='G'&&ptr->d_name[ii+1]!='g')
 			 		continue;
-			 }
-			 
+			 }			 
 		 	 strcpy(p.name,ptr->d_name);
-			 p.name[strlen(ptr->d_name)]=0;
-			 
-
-			//result.push_back(std::string(ptr->d_name));
+			 p.name[strlen(ptr->d_name)]=0;			 
 			 switch (lsAction) {  // 1 based file count
 		        case LS_Count:
 		          nrFiles++;
@@ -148,15 +164,11 @@ void CardReader::lsDive(const char *prepend, const char * parent, const char * c
 		            // createFilename(filename, p);
 					  strcpy(filename,ptr->d_name);
 		     //    printf("d_name:/%s\n",ptr->d_name); 
-		          if (prepend) SERIAL_PROTOCOL(prepend);
-				  
-		          	SERIAL_PROTOCOL(filename);
-				 
+		          if (prepend) SERIAL_PROTOCOL(prepend);				  
+		          	SERIAL_PROTOCOL(filename);				 
 		         	SERIAL_PROTOCOLCHAR(' ');
-					sprintf(tmp_dir,"%s/%s",parent,filename);
-					 
-          			SERIAL_PROTOCOLLN(get_file_size(tmp_dir));
-		          
+					sprintf(tmp_dir,"%s/%s",parent,filename);					 
+          			SERIAL_PROTOCOLLN(get_file_size(tmp_dir));		          
 		          break;
 
 		        case LS_GetFilename:
@@ -183,16 +195,7 @@ void CardReader::lsDive(const char *prepend, const char * parent, const char * c
 		//	result.push_back(std::string(ptr->d_name)); 
 		//	readFileList(base); 
 		}
-
-
-     
-
     }
-//	   printf("%s\n", ptr->d_name);
-
-
-
-	
 	closedir(dir);
 
 #if 0	
@@ -280,6 +283,7 @@ void CardReader::ls() {
 	 
    lsAction = LS_SerialPrint;
  // root.rewind();
+ // read_u_path();
   lsDive(NULL, root_path,NULL);
 }
 
@@ -370,6 +374,7 @@ void CardReader::printFilename() {
 
 void CardReader::initsd() {
  // system("sudo mount /dev/sda1 /media/usb -o uid=pi,gid=pi");	
+   read_u_path();
    cardOK = true;
     SERIAL_ECHO_START();
     SERIAL_ECHOLNPGM(MSG_SD_CARD_OK);
@@ -476,7 +481,7 @@ void CardReader::getAbsFilename(char *t) {
 
 void CardReader::openFile(char * const path, const bool read, const bool subcall/*=false*/) {
 
-  char pa_data[128]; 
+  char pa_data[1280]; 
   cardOK=true;
   if (!cardOK) return;
   
@@ -702,6 +707,8 @@ void CardReader::getfilename(uint16_t nr, const char * const match/*=NULL*/) {
   nrFile_index = nr;
   workDir.rewind();
 // mark  lsDive(NULL, workDir, match);
+//  read_u_path();
+
   lsDive(NULL, root_path, match);
 }
 
@@ -710,6 +717,7 @@ uint16_t CardReader::getnrfilenames() {
   nrFiles = 0;
  // workDir.rewind();
  //mark lsDive(NULL, workDir);
+// read_u_path();
  lsDive(NULL, root_path,NULL);
   //SERIAL_ECHOLN(nrFiles);
 //  printf("nrFiles===%d\n",nrFiles);

@@ -175,7 +175,7 @@
  * M250 - Set LCD contrast: "M250 C<contrast>" (0-63). (Requires LCD support)
  * M260 - i2c Send Data (Requires EXPERIMENTAL_I2CBUS)
  * M261 - i2c Request Data (Requires EXPERIMENTAL_I2CBUS)
- * M280 - Set servo position absolute: "M280 P<index> S<angle|绾板>". (Requires servos)
+ * M280 - Set servo position absolute: "M280 P<index> S<angle|纰宻>". (Requires servos)
  * M290 - Babystepping (Requires BABYSTEPPING)
  * M300 - Play beep sound S<frequency Hz> P<duration ms>
  * M301 - Set PID parameters P I and D. (Requires PIDTEMP)
@@ -2806,7 +2806,7 @@ void clean_up_after_endstop_or_probe_move() {
     //                                : ((c < b) ? b : (a < c) ? a : c);
   }
 
-  //Enable this if your SCARA uses 180閹猴拷 of total area
+  //Enable this if your SCARA uses 180鎺� of total area
   //#define EXTRAPOLATE_FROM_EDGE
 
   #if ENABLED(EXTRAPOLATE_FROM_EDGE)
@@ -9305,7 +9305,7 @@ inline void gcode_M204() {
 /**
  * M205: Set Advanced Settings
  *
- *    B = Min Segment Time (绾板)
+ *    B = Min Segment Time (纰宻)
  *    S = Min Feed Rate (units/s)
  *    T = Min Travel Feed Rate (units/s)
  *    X = Max X Jerk (units/sec^2)
@@ -14578,16 +14578,16 @@ void stop() {
  *  - Print startup messages and diagnostics
  *  - Get EEPROM or default settings
  *  - Initialize managers for:
- *    闁炽儻鎷?temperature
- *    闁炽儻鎷?planner
- *    闁炽儻鎷?watchdog
- *    闁炽儻鎷?stepper
- *    闁炽儻鎷?photo pin
- *    闁炽儻鎷?servos
- *    闁炽儻鎷?LCD controller
- *    闁炽儻鎷?Digipot I2C
- *    闁炽儻鎷?Z probe sled
- *    闁炽儻鎷?status LEDs
+ *    閳ワ拷 temperature
+ *    閳ワ拷 planner
+ *    閳ワ拷 watchdog
+ *    閳ワ拷 stepper
+ *    閳ワ拷 photo pin
+ *    閳ワ拷 servos
+ *    閳ワ拷 LCD controller
+ *    閳ワ拷 Digipot I2C
+ *    閳ワ拷 Z probe sled
+ *    閳ワ拷 status LEDs
  */
 void setup() {
  // asm("CPSID  I"); 
@@ -15003,17 +15003,17 @@ int mcp23017Setup (const int pinBase, const int i2cAddress)
 {
   /*  int fd ;
     struct wiringPiNodeStruct *node ;
-    // 锟斤拷始锟斤拷I2C锟借备
+    // ��ʼ��I2C�豸
     if ((fd = wiringPiI2CSetup (i2cAddress)) < 0)
     return fd ;
  
-    // 锟斤拷锟接诧拷锟斤拷锟斤拷锟斤拷锟斤拷MCP23017锟借备 I2C锟斤拷锟斤拷锟斤拷址锟斤拷锟皆讹拷锟斤拷锟斤拷
+    // ���Ӳ���������MCP23017�豸 I2C������ַ���Զ�����
     wiringPiI2CWriteReg8 (fd, MCP23x17_IOCON, IOCON_INIT) ;
  
-    // MCP23017锟斤拷锟斤拷锟斤拷锟斤拷
+    // MCP23017��������
     node = wiringPiNewNode (pinBase, 16) ;
  
-    // 锟斤拷值锟斤拷应锟侥诧拷锟斤拷锟斤拷锟斤拷 my锟斤拷头锟侥猴拷锟斤拷锟斤拷位锟斤拷mcp23017.c锟侥硷拷锟斤拷
+    // ��ֵ��Ӧ�Ĳ������� my��ͷ�ĺ�����λ��mcp23017.c�ļ���
     node->fd = fd ;
     node->pinMode = myPinMode ;
     node->pullUpDnControl = myPullUpDnControl ;
@@ -15083,6 +15083,10 @@ test(int argc, char *argv[])
 
 }
 
+
+
+
+
 int read_version()
 {
 		system("gpio -v | grep \"Type:\" > /home/pi/version");
@@ -15126,6 +15130,7 @@ int main(int argc, char* argv[])
 
 	setup() ;
 	printf("main0\n");
+	enqueue_and_echo_commands_P("M21");
 
 	// while(1) sleep(1);
 	enqueue_and_echo_commands_P("M20");

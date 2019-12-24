@@ -217,7 +217,7 @@ void TMC2208Stepper::sendDatagram(uint8_t addr, uint32_t regVal, uint8_t len) {
 			bytesWritten ++;//= HWSerial->write(datagram[i]);
 			delayMS(5);
 		}
-		printf("\n");
+		//printf("\n");
 	}
  	delayMS(replyDelay);
 }

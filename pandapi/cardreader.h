@@ -38,7 +38,7 @@
 
 #include "SdFile.h"
 
-#define root_path  "/media/usb/"
+
 
 
 class CardReader {

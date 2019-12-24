@@ -104,8 +104,8 @@
 #endif
 
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
-#define X_MIN_ENDSTOP_INVERTING  false//true // set to true to invert the logic of the endstop.
-#define Y_MIN_ENDSTOP_INVERTING  false//true // set to true to invert the logic of the endstop.
+#define X_MIN_ENDSTOP_INVERTING   false // set to true to invert the logic of the endstop.
+#define Y_MIN_ENDSTOP_INVERTING  false // set to true to invert the logic of the endstop.
 #define Z_MIN_ENDSTOP_INVERTING   false//true // set to true to invert the logic of the endstop.
 
 #define X_MAX_ENDSTOP_INVERTING true//false // set to true to invert the logic of the endstop.
@@ -138,7 +138,7 @@
  * This allows the connection of wireless adapters (for instance) to non-default port pins.
  * Serial port 0 is always used by the Arduino bootloader regardless of this setting.
  *
- * :[0, 1, 2, 3, 4, 5, 6, 7]
+ * :[0]
  */
 #define SERIAL_PORT 0
 
@@ -149,7 +149,7 @@
  * you commonly experience drop-outs during host printing.
  * You may try up to 1000000 to speed up SD file transfer.
  *
- * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
+ * :[9600, 19200, 38400, 57600, 115200, 230400, 500000, 576000, 1000000,1500000,2000000,2500000]
  */
 #define BAUDRATE 115200
 
@@ -553,9 +553,62 @@
 //#define E3_DRIVER_TYPE A4988
 //#define E4_DRIVER_TYPE A4988
 
+
 // Enable this feature if all enabled endstop pins are interrupt-capable.
 // This will remove the need to poll the interrupt pins, saving many CPU cycles.
 //#define ENDSTOP_INTERRUPTS_FEATURE
+
+//#define DELTA
+#if ENABLED(DELTA)
+
+  // Make delta curves from many straight lines (linear interpolation).
+  // This is a trade-off between visible corners (not enough segments)
+  // and processor overload (too many expensive sqrt calls).
+  #define DELTA_SEGMENTS_PER_SECOND 200
+
+  // NOTE NB all values for DELTA_* values MUST be floating point, so always have a decimal point in them
+
+  // Center-to-center distance of the holes in the diagonal push rods.
+  #define DELTA_DIAGONAL_ROD 120.8 // mm
+
+  // Horizontal offset from middle of printer to smooth rod center.
+//  #define DELTA_SMOOTH_ROD_OFFSET 108 // mm
+
+  // Horizontal offset of the universal joints on the end effector.
+//  #define DELTA_EFFECTOR_OFFSET 27.0 // mm
+
+  // Horizontal offset of the universal joints on the carriages.
+//  #define DELTA_CARRIAGE_OFFSET 16.0 // mm
+
+  // Horizontal distance bridged by diagonal push rods when effector is centered.
+//  #define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-(DELTA_EFFECTOR_OFFSET)-(DELTA_CARRIAGE_OFFSET))
+//  #define DELTA_RADIUS 63.25
+//	#define DELTA_RADIUS 63.90
+	#define DELTA_RADIUS 63.00
+
+	#define DELTA_ENDSTOP_ADJ_X 0.0
+	#define DELTA_ENDSTOP_ADJ_Y 0.0
+	#define DELTA_ENDSTOP_ADJ_Z 0.0
+
+  // Trim adjustments for individual towers
+  // tower angle corrections for X and Y tower / rotate XYZ so Z tower angle = 0
+  // measured in degrees anticlockwise looking from above the printer
+  #define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 } // get these values from auto calibrate
+
+  // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
+  #define DELTA_PRINTABLE_RADIUS 60.0
+  #define DELTA_PROBEABLE_RADIUS (DELTA_PRINTABLE_RADIUS - 5)
+  // Delta calibration menu
+  // uncomment to add three points calibration menu option.
+  // See http://minow.blogspot.com/index.html#4918805519571907051
+  // If needed, adjust the X, Y, Z calibration coordinates
+  // in ultralcd.cpp@lcd_delta_calibrate_menu()
+  //#define DELTA_CALIBRATION_MENU
+
+#endif
+
+
+
 
 /**
  * Endstop Noise Filter
@@ -718,7 +771,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
- //#define BLTOUCH
+// #define BLTOUCH
 #if ENABLED(BLTOUCH)||ENABLED(FIX_MOUNTED_PROBE)
   // #define BLTOUCH_DELAY 375   // (ms) Enable and increase if needed
 #endif

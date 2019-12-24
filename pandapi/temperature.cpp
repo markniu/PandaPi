@@ -823,10 +823,6 @@ void Temperature::manage_heater() {
 	if((time_s-time_1ms)>=1000)
 	{
 		time_1ms=time_s;
-		// Poll endstops state, if required
-	 //   endstops.poll();	
-		// Periodically call the planner timer
-	 //	planner.tick();
 	}
 	
 	/////////check target temperature.

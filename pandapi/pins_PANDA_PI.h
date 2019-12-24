@@ -11,11 +11,12 @@
 
 //
 #define X_MIN_PIN           1//0xE5
+//#define X_MAX_PIN           1//0xE5
 
 #define Y_MIN_PIN          4//0xE3
-//#define Y_MAX_PIN          //0xBD//0xE2
+//#define Y_MAX_PIN          4//0xBD//0xE2
 
-//#define Z_MAX_PIN          // 0xB8//0xE0
+//#define Z_MAX_PIN          11// 0xB8//0xE0
 
 #if ENABLED(BLTOUCH)
 #define Z_MIN_PIN          11//0xE1
