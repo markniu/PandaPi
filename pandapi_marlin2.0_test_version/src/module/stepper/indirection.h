@@ -47,6 +47,11 @@
 void restore_stepper_drivers();  // Called by PSU_ON
 void reset_stepper_drivers();    // Called by settings.load / settings.reset
 
+#define delay_step() \
+{\
+	int jj=130;	/* A4988: 130(1us) ;TMC2208: 0(200ns) ;*/ \
+	while(jj--);\
+}
 // X Stepper
 #ifndef X_ENABLE_INIT
   #define X_ENABLE_INIT SET_OUTPUT(X_ENABLE_PIN)
@@ -60,7 +65,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define X_STEP_INIT SET_OUTPUT(X_STEP_PIN)
 #ifndef X_STEP_WRITE
-  #define X_STEP_WRITE(STATE) WRITE(X_STEP_PIN,STATE)
+#define X_STEP_WRITE(STATE) {WRITE(X_STEP_PIN,STATE);delay_step();}
 #endif
 #define X_STEP_READ READ(X_STEP_PIN)
 
@@ -77,7 +82,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define Y_STEP_INIT SET_OUTPUT(Y_STEP_PIN)
 #ifndef Y_STEP_WRITE
-  #define Y_STEP_WRITE(STATE) WRITE(Y_STEP_PIN,STATE)
+#define Y_STEP_WRITE(STATE) {WRITE(Y_STEP_PIN,STATE);delay_step();}
 #endif
 #define Y_STEP_READ READ(Y_STEP_PIN)
 
@@ -94,7 +99,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define Z_STEP_INIT SET_OUTPUT(Z_STEP_PIN)
 #ifndef Z_STEP_WRITE
-  #define Z_STEP_WRITE(STATE) WRITE(Z_STEP_PIN,STATE)
+#define Z_STEP_WRITE(STATE){ WRITE(Z_STEP_PIN,STATE);delay_step();}
 #endif
 #define Z_STEP_READ READ(Z_STEP_PIN)
 
@@ -193,7 +198,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E0_STEP_INIT SET_OUTPUT(E0_STEP_PIN)
 #ifndef E0_STEP_WRITE
-  #define E0_STEP_WRITE(STATE) WRITE(E0_STEP_PIN,STATE)
+#define E0_STEP_WRITE(STATE) {WRITE(E0_STEP_PIN,STATE);delay_step();}
 #endif
 #define E0_STEP_READ READ(E0_STEP_PIN)
 
@@ -210,7 +215,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E1_STEP_INIT SET_OUTPUT(E1_STEP_PIN)
 #ifndef E1_STEP_WRITE
-  #define E1_STEP_WRITE(STATE) WRITE(E1_STEP_PIN,STATE)
+#define E1_STEP_WRITE(STATE) {WRITE(E1_STEP_PIN,STATE);delay_step();}
 #endif
 #define E1_STEP_READ READ(E1_STEP_PIN)
 
