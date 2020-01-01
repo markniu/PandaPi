@@ -441,7 +441,7 @@ class Temperature {
 	  unsigned int kk=millis();
 	   while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 	   {
-	 	  delay(0);
+	 	  usleep(100);
 		  if((millis()-kk)>2000)
 			break;
 		  if(cn>=64) break;
@@ -463,7 +463,7 @@ class Temperature {
 		unsigned int kk=millis();
 		while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		{
-		  delay(0);
+		   usleep(100);
 		  if((millis()-kk)>2000)
 			break;
 		  if(cn>=64) break;
@@ -519,7 +519,7 @@ class Temperature {
 		  unsigned int kk=millis();
 		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		  {
-			 delay(0);
+			  usleep(100);
 			 if((millis()-kk)>2000)
 				break;
 			 if(cn>=64) break;
@@ -583,7 +583,7 @@ class Temperature {
 		  unsigned int kk=millis();
 		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		  {
-			 delay(0);
+			  usleep(100);
 			 if((millis()-kk)>2000)
 				break;
 			 if(cn>=64) break;
@@ -599,7 +599,7 @@ class Temperature {
 		  kk=millis();
 		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		  {
-			 delay(0);
+			  usleep(100);
 			 if((millis()-kk)>2000)
 				break;
 			 if(cn>=64) break;
@@ -615,7 +615,7 @@ class Temperature {
 		  kk=millis();
 		  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		  {
-			 delay(0);
+			 usleep(100);
 			 if((millis()-kk)>2000)
 				break;
 			 if(cn>=64) break;
