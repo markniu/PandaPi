@@ -12,7 +12,7 @@ _OBJ =  SdBaseFile.o  SdFatUtil.o  SdFile.o  SdVolume.o Sd2Card.o blinkm.o  card
 	TMC2208Stepper/source/TMC2208Stepper.o TMC2208Stepper/source/TMC2208Stepper_CHOPCONF.o TMC2208Stepper/source/TMC2208Stepper_DRVSTATUS.o TMC2208Stepper/source/TMC2208Stepper_GCONF.o  TMC2208Stepper/source/TMC2208Stepper_OTP_READ.o TMC2208Stepper/source/TMC2208Stepper_PWMCONF.o 
 OBJ = $(patsubst %,%,$(_OBJ))
  
-INC = -I./  -I/home/pi/src/CMSIS -I/home/pi/src/utility -ITMC2208Stepper -I/home/pi/src/CMSIS-W -Wall -g0
+INC = -I./  -I./CMSIS -I/home/pi/src/utility -ITMC2208Stepper -I./CMSIS-W -Wall -g0
 CFLAGS = -O0 -c     -std=c++11
 LIBS = -lpi -lwiringPi -lpthread -L ./
 
