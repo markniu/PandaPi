@@ -43,7 +43,7 @@
 
    [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
 
-   [How-to-run-TMC2209-&-Sensorless-homing](https://github.com/markniu/PandaPi/wiki/How-to-run-TMC2209-&-Sensorless-homing)
+   [How-to-run-TMC2209-&-Sensorless-homing](https://github.com/markniu/PandaPi/wiki/How-to-run-TMC2209-&-Sensorless-homing(V2.0))
 
 
 * ##  FAQ：
