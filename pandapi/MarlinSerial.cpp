@@ -389,7 +389,7 @@
       if (baud == 57600) useU2X = false;
     #endif
 #if PANDAPI 	// 
-    Serial_PC(baud,&store_rxd_char); return;
+    Serial_PC(baud,BAUDRATE_TNT,&store_rxd_char); return;
 #else
     if (useU2X) {
       M_UCSRxA = _BV(M_U2Xx);

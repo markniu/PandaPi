@@ -183,6 +183,7 @@
  || ENABLED(RIGIDBOT_PANEL)                   \
  || ENABLED(ULTI_CONTROLLER)
   #define ULTIPANEL
+  
 #endif
 
 #if ENABLED(REPRAPWORLD_KEYPAD)

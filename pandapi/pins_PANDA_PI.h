@@ -31,9 +31,9 @@
 //
 // Z Probe (when not Z_MIN_PIN)
 //
-//#ifndef Z_MIN_PROBE_PIN
-//  #define Z_MIN_PROBE_PIN  7
-//#endif
+ #ifndef Z_MIN_PROBE_PIN
+   #define Z_MIN_PROBE_PIN  11
+ #endif
 
 //
 // Steppers
@@ -55,9 +55,13 @@
 #define E0_DIR_PIN         6//0xBB
 #define E0_ENABLE_PIN      0//0xC4
 
-//#define E1_STEP_PIN        12
-//#define E1_DIR_PIN         12
-//#define E1_ENABLE_PIN      12
+#define E1_STEP_PIN        26
+#define E1_DIR_PIN         25
+#define E1_ENABLE_PIN      0
+
+#define E2_STEP_PIN       31
+#define E2_DIR_PIN         21
+#define E2_ENABLE_PIN      0
 
 /**
  * Default pins for TMC software SPI
@@ -142,12 +146,15 @@
 #define TEMP_BED_PIN      25
 #define TEMP_BOARD_PIN  25
 
-/*
+
 
 #if EXTRUDERS > 1
-#define HEATER_1_PIN     10
+#define HEATER_1_PIN      255
+#define TEMP_1_PIN      255
+
 #endif
-#define FAN_PIN         10
+
+/*#define FAN_PIN         10
 #define FAN1_PIN        14
 #define FAN2_PIN        11
 #define FAN3_PIN        12

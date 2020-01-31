@@ -2146,6 +2146,9 @@ void Temperature::isr() {
 			parse_string(cmd_buf,"B:","",out,&k);	
 		    f= atof(out);
 			current_temperature_bed=f;
+			parse_string(cmd_buf,"T1:","",out,&k);	
+			f= atof(out);
+			current_temperature[1]=f;
 
 			static int old_h=-6;
 			parse_string(cmd_buf,"h","T",out,&k);	

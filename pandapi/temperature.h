@@ -433,7 +433,10 @@ class Temperature {
         start_watching_heater(HOTEND_INDEX);
       #endif
 	  ////////////////
-	  sprintf(tmp_data,"t%d;",celsius);
+	  if(e==0)
+	  	sprintf(tmp_data,"t%d;",celsius);
+	  else if(e==1)
+	  	sprintf(tmp_data,"T%d;",celsius);
 	  printf(tmp_data);printf("\n");
 	  for(int i=0;i<strlen(tmp_data);i++)
 	  	wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);

@@ -51,7 +51,7 @@ typedef signed int int32_t;
 
 void test_api(void);
 extern	 __IO  u16 Read_ADC_Raw[32][4] ;
-void Serial_PC(const long baud,void (*rx_process)(char) );
+void Serial_PC(const long usb_serial_baud,const long octo_serial_baud,void (*rx_process)(char) );
 void USART1_IRQHandler(void);
 
 void tmper_init_stm32(void(*termal_isr)(void));

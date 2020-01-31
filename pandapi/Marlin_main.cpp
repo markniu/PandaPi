@@ -3321,7 +3321,7 @@ static void homeaxis(const AxisEnum axis) {
   #endif
   
 #if HAS_DRIVER(TMC2209)&&TMC2209_SENSORLESS_HOMING
-        Serial_PC(BAUDRATE,NULL);	
+        Serial_PC(BAUDRATE,BAUDRATE_TNT,NULL);	
 	Motor_Sensorless(axis,DISABLE);
 #endif    
 } // homeaxis()
@@ -8175,7 +8175,33 @@ inline void gcode_M105() {
   /**
    * M108: Stop the waiting for heaters in M109, M190, M303. Does not affect the target temperature.
    */
-  inline void gcode_M108() { wait_for_heatup = false; }
+  inline void gcode_M108() { 
+
+	 ////////////////
+	char tmp_data[32],cmd_buf[64];
+	int cn=0;
+   char e=0;
+   //////////P
+   sprintf(tmp_data,"M108");
+   printf(tmp_data);printf("\n");
+   for(int i=0;i<strlen(tmp_data);i++)
+	 wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+	unsigned int kk=millis();
+	while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+	{
+		usleep(100);
+	   if((millis()-kk)>2000)
+		  break;
+	   if(cn>=64) break;
+	}
+	printf(cmd_buf);
+	printf("\n");
+  ///////////////////
+
+  wait_for_heatup = false;
+  
+
+}
 
 
   /**
@@ -9989,8 +10015,45 @@ inline void gcode_M303() {
     #if DISABLED(BUSY_WHILE_HEATING)
       KEEPALIVE_STATE(NOT_BUSY);
     #endif
+	   ////////////////
+	 char tmp_data[32],cmd_buf[64],tmpe_k;
+	 int cn=0;
+	// char e=0;
+	 //////////P
+	 sprintf(tmp_data,"a E%d,C%d,U%d,S%d;\n",e,c,u,temp);
+	 printf(tmp_data);printf("\n");
+	 for(int i=0;i<strlen(tmp_data);i++)
+	   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+	 unsigned int kk=millis();
+          cmd_buf[0]=0;   
+	 while(1 )           
+	 {
+             tmpe_k=wiringPiI2CReadReg8(i2c_fd,8);
+            if(tmpe_k!=0)
+                   cmd_buf[cn++]=tmpe_k;
+            else
+            {
+              wiringPiI2CWriteReg8(i2c_fd, 8, '.');
+              
+             }
+             if(tmpe_k=='\r')
+             {
+              printf(cmd_buf);
+              cn=0;
+              }
+			// if(cmd_buf[cn-2])
+            if(cn>60)
+              cn=0;
+	    delay(0);
+  
+	 }
+	 printf(cmd_buf);cn=0;
+	 
 
-    thermalManager.PID_autotune(temp, e, c, u);
+	  
+	///////////////////
+
+   // thermalManager.PID_autotune(temp, e, c, u);
 
     #if DISABLED(BUSY_WHILE_HEATING)
       KEEPALIVE_STATE(IN_HANDLER);
@@ -15129,6 +15192,10 @@ int main(int argc, char* argv[])
 */
 
 	setup() ;
+	wiringPiI2CWriteReg8(i2c_fd, 8, 'r');
+	wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+
+
 	printf("main0\n");
 	enqueue_and_echo_commands_P("M21");
 
