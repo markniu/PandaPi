@@ -286,7 +286,8 @@
   // Public Methods
   template<typename Cfg>
   void MarlinSerial<Cfg>::begin(const long baud) {
-	  Serial_PC(baud,&store_rxd_char); 
+	  
+	  Serial_PC(baud,BAUDRATE_TNT,&store_rxd_char);
 
   }
 

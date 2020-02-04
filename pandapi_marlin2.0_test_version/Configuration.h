@@ -125,6 +125,7 @@
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
 #define BAUDRATE 115200//250000
+#define BAUDRATE_TNT  BAUDRATE//500000  // for octoprint serial
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -476,7 +477,7 @@
                                   // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
-
+  
   // Ultimaker
   #define DEFAULT_Kp 20
   #define DEFAULT_Ki 0.002//1.08
