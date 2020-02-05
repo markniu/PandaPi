@@ -113,7 +113,7 @@ enum ADCSensorState : char {
 
 #if HAS_PID_HEATING
   #define PID_K2 (1.0f-PID_K1)
-  #define PID_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (F_CPU / 64.0f / 256.0f))
+  #define PID_dT 1// mark ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (F_CPU / 64.0f / 256.0f))
 
   // Apply the scale factors to the PID values
 #define scalePID_i(i)	( (i) * float(PID_dT) )
@@ -595,7 +595,7 @@ class Temperature {
 		  printf("\n");
 		///////////////////
 		 //////////I
-		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e));
+		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e)/1000.0);
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);

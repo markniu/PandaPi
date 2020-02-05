@@ -2105,7 +2105,7 @@ void Temperature::isr() {
 		unsigned int kk=millis();
 		while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		{
-			delay(0);
+			usleep(1);
 			if((millis()-kk)>2000)
 			{
 				cn=0;
@@ -2124,7 +2124,7 @@ void Temperature::isr() {
 		cn=0;
 		while((out[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 		{
-			delay(0);
+			usleep(1);
 			if((millis()-kk)>2000)
 			{
 				cn=0;

@@ -10002,13 +10002,14 @@ inline void gcode_M226() {
  *       C<cycles>
  *       U<bool> with a non-zero value will apply the result to current settings
  */
+
 inline void gcode_M303() {
   #if HAS_PID_HEATING
     const int e = parser.intval('E'), c = parser.intval('C', 5);
     const bool u = parser.boolval('U');
 
     int16_t temp = parser.celsiusval('S', e < 0 ? 70 : 150);
-
+   
     if (WITHIN(e, 0, HOTENDS - 1))
       target_extruder = e;
 
@@ -10018,14 +10019,21 @@ inline void gcode_M303() {
 	   ////////////////
 	 char tmp_data[32],cmd_buf[64],tmpe_k;
 	 int cn=0;
+         unsigned int time_s_old=0;
 	// char e=0;
+         memset(tmp_data,0,sizeof(tmp_data));
+         
 	 //////////P
 	 sprintf(tmp_data,"a E%d,C%d,U%d,S%d;\n",e,c,u,temp);
 	 printf(tmp_data);printf("\n");
 	 for(int i=0;i<strlen(tmp_data);i++)
 	   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
 	 unsigned int kk=millis();
-          cmd_buf[0]=0;   
+           
+          memset(cmd_buf,0,sizeof(cmd_buf)); 
+  
+         SERIAL_PROTOCOLPGM("PID autotune start\n");
+                   
 	 while(1 )           
 	 {
              tmpe_k=wiringPiI2CReadReg8(i2c_fd,8);
@@ -10036,15 +10044,42 @@ inline void gcode_M303() {
               wiringPiI2CWriteReg8(i2c_fd, 8, '.');
               
              }
-             if(tmpe_k=='\r')
-             {
-              printf(cmd_buf);
-              cn=0;
-              }
+              
+             
+	unsigned int time_s=millis();
+	if((time_s-time_s_old)>5000)// 2 second
+	{
+               thermalManager.manage_heater();
+	       thermalManager.print_heaterstates();
+                SERIAL_EOL();
+		time_s_old=time_s;
+	}
+             
+              if(tmpe_k=='\n'||tmpe_k=='\r')
+              {
+                
+              //  printf(cmd_buf);
+                if(cn>10)
+                {
+                 if(cmd_buf[cn-2]=='h'&&(cmd_buf[0]=='A'||cmd_buf[0]=='U'||cmd_buf[cn-3]=='h'||tmpe_k=='\r'))
+                 {
+                   SERIAL_PROTOCOLPGM(cmd_buf);
+                   SERIAL_EOL();
+                    printf("tmpe_k===h\n");
+                   cn=0;
+                   
+                   break;
+                 }
+                }
+                memset(cmd_buf,0,sizeof(cmd_buf));
+                cn=0;
+               }
 			// if(cmd_buf[cn-2])
             if(cn>60)
               cn=0;
-	    delay(0);
+            	
+
+	     usleep(1);
   
 	 }
 	 printf(cmd_buf);cn=0;
