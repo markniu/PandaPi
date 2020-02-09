@@ -595,7 +595,7 @@ class Temperature {
 		  printf("\n");
 		///////////////////
 		 //////////I
-		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e)/800.0);
+		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e)/670.0);
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
