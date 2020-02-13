@@ -1265,6 +1265,7 @@ void MarlinSettings::postprocess() {
     #if ENABLED(EXTENSIBLE_UI)
       ExtUI::onConfigurationStoreWritten(!eeprom_error);
     #endif
+	persistentStore.write_from_cache();
 
     return !eeprom_error;
   }
@@ -1276,6 +1277,7 @@ void MarlinSettings::postprocess() {
     uint16_t working_crc = 0;
 
     EEPROM_START();
+	persistentStore.load_to_cache();
 
     char stored_ver[4];
     EEPROM_READ_ALWAYS(stored_ver);

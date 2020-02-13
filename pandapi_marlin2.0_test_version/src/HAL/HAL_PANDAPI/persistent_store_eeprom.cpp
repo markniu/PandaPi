@@ -19,13 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifdef __AVR__
+#ifdef PANDAPI// __AVR__
 
 #include "../../inc/MarlinConfig.h"
 
 #if EITHER(EEPROM_SETTINGS, SD_FIRMWARE_UPDATE)
 
 #include "../shared/persistent_store_api.h"
+#include <stdio.h>
+
+FILE *fd_e2;
+
+//int eeprom_index = EEPROM_OFFSET;
+uint8_t e2p_cache[1024*20];
+
 
 bool PersistentStore::access_start() { return true; }
 bool PersistentStore::access_finish() { return true; }
@@ -36,13 +43,16 @@ bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, ui
     uint8_t v = *value;
     // EEPROM has only ~100,000 write cycles,
     // so only write bytes that have changed!
+    /*
     if (v != eeprom_read_byte(p)) {
       eeprom_write_byte(p, v);
       if (eeprom_read_byte(p) != v) {
         SERIAL_ECHO_MSG(MSG_ERR_EEPROM_WRITE);
         return true;
       }
-    }
+    }*/// mark
+    e2p_cache[pos]=v;
+    
     crc16(crc, &v, 1);
     pos++;
     value++;
@@ -50,9 +60,55 @@ bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, ui
   return false;
 }
 
+
+
+  void PersistentStore:: load_to_cache()
+  {
+	if((fd_e2=fopen("./e2prom","rb"))==NULL)  
+	{
+	  SERIAL_ECHO_MSG("open e2prom failed!");
+	  return ;
+	}
+	  
+	// fseek(fd_e2,EEPROM_OFFSET,SEEK_SET);
+			
+	unsigned int n = fread(e2p_cache,sizeof(char),sizeof(e2p_cache),fd_e2);
+
+	fclose(fd_e2);
+//	for(int i=0;i<700;i++)
+//		printf("0x%x,",e2p_cache[i]);
+	
+    printf("\nload_to_cache()===\n");
+
+  }
+
+void  PersistentStore::write_from_cache()
+{
+  if((fd_e2=fopen("./e2prom","wb"))==NULL)	
+  {
+	SERIAL_ECHO_MSG("open e2prom failed!");
+	return ;
+  }
+	
+  // fseek(fd_e2,EEPROM_OFFSET,SEEK_SET);
+  fwrite(e2p_cache,sizeof(char),sizeof(e2p_cache),fd_e2);	  
+  //unsigned int n = fread(&sd_char,sizeof(char),sizeof(e2p_cache),fd_e2);
+
+  fclose(fd_e2);
+  //for(int i=0;i<700;i++)
+  //	  printf("0x%x,",e2p_cache[i]);
+	  
+	
+
+  printf("\nwrite_from_cache()===\n");
+}
+
+
+
 bool PersistentStore::read_data(int &pos, uint8_t* value, size_t size, uint16_t *crc, const bool writing/*=true*/) {
   do {
-    uint8_t c = eeprom_read_byte((uint8_t*)pos);
+  //mark  uint8_t c = eeprom_read_byte((uint8_t*)pos);
+    uint8_t c = e2p_cache[pos];
     if (writing) *value = c;
     crc16(crc, &c, 1);
     pos++;
@@ -60,6 +116,8 @@ bool PersistentStore::read_data(int &pos, uint8_t* value, size_t size, uint16_t 
   } while (--size);
   return false;  // always assume success for AVR's
 }
+
+#define E2END 0x2FFF // 12KB
 
 size_t PersistentStore::capacity() { return E2END + 1; }
 
