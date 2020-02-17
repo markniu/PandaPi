@@ -64,7 +64,7 @@ bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, ui
 
   void PersistentStore:: load_to_cache()
   {
-	if((fd_e2=fopen("./e2prom","rb"))==NULL)  
+	if((fd_e2=fopen("/home/pi/e2prom","rb"))==NULL)  
 	{
 	  SERIAL_ECHO_MSG("open e2prom failed!");
 	  return ;
@@ -84,7 +84,7 @@ bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, ui
 
 void  PersistentStore::write_from_cache()
 {
-  if((fd_e2=fopen("./e2prom","wb"))==NULL)	
+  if((fd_e2=fopen("/home/pi/e2prom","wb"))==NULL)	
   {
 	SERIAL_ECHO_MSG("open e2prom failed!");
 	return ;
