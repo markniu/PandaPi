@@ -359,7 +359,7 @@ char  EEPROM_START(char *wr)
 	return 0;
 
 	//////////
-	if((fd_e2=fopen("./e2prom",wr))!=NULL)  
+	if((fd_e2=fopen("/home/pi/e2prom",wr))!=NULL)  
 	{
 		return 0;
 	}
@@ -466,7 +466,7 @@ char  EEPROM_START(char *wr)
 
   void load_to_cache()
   {
-	if((fd_e2=fopen("./e2prom","rb"))==NULL)  
+	if((fd_e2=fopen("/home/pi/e2prom","rb"))==NULL)  
 	{
 	  SERIAL_PROTOCOLLNPGM("open e2prom failed!");
 	  return ;
@@ -485,7 +485,7 @@ char  EEPROM_START(char *wr)
   }
   void  write_from_cache()
   {
-	if((fd_e2=fopen("./e2prom","wb"))==NULL)  
+	if((fd_e2=fopen("/home/pi/e2prom","wb"))==NULL)  
 	{
 	  SERIAL_PROTOCOLLNPGM("open e2prom failed!");
 	  return ;
@@ -499,9 +499,9 @@ char  EEPROM_START(char *wr)
 	//for(int i=0;i<700;i++)
 	//		printf("0x%x,",e2p_cache[i]);
 		
-	  
+	 system("sync");  
 
-	printf("\nwrite_from_cache()===\n");
+	printf("\nwrite_from_cache()=sync==\n");
   }
 
   /**
