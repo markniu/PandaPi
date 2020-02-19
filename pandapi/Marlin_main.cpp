@@ -15236,6 +15236,7 @@ int main(int argc, char* argv[])
 
 	// while(1) sleep(1);
 	enqueue_and_echo_commands_P("M20");
+    enqueue_and_echo_commands_P("M301");
 
 	
 	
