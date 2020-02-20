@@ -28,6 +28,8 @@
 
 #ifndef _SANITYCHECK_H_
 #define _SANITYCHECK_H_
+#include <stdio.h>
+#include <string.h>
 
 /**
  * Require gcc 4.7 or newer (first included with Arduino 1.6.8) for C++11 features.

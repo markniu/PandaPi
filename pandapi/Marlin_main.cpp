@@ -880,7 +880,7 @@ extern "C" {
   }
 }
 #endif // !SDSUPPORT
-
+ 
 
  // Preinstantiate
 extern MarlinSerial customizedSerial;
@@ -14361,9 +14361,10 @@ void disable_all_steppers() {
 void manage_inactivity(const bool ignore_stepper_queue/*=false*/) {
 
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    runout.run();
-  #endif
-
+    runout.run(); 
+  
+  #endif 
+ 
   if (commands_in_queue < BUFSIZE) get_available_commands();
 
   const millis_t ms = millis();
@@ -15236,7 +15237,7 @@ int main(int argc, char* argv[])
 
 	// while(1) sleep(1);
 	enqueue_and_echo_commands_P("M20");
-    enqueue_and_echo_commands_P("M301");
+	enqueue_and_echo_commands_P("M301");
 
 	
 	

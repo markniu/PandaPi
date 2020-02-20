@@ -154,6 +154,12 @@
 
 #endif
 
+
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN    255
+#endif
+
+
 /*#define FAN_PIN         10
 #define FAN1_PIN        14
 #define FAN2_PIN        11

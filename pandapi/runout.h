@@ -39,32 +39,42 @@
 class FilamentRunoutSensor {
   public:
     FilamentRunoutSensor() {}
+	  int runout_pin[2]={1,1};
 
-    static void setup();
+    FORCE_INLINE   void reset() { runout_count = 0; filament_ran_out = false; }
+      void setup();
 
-    FORCE_INLINE static void reset() { runout_count = 0; filament_ran_out = false; }
-
-    FORCE_INLINE static void run() {
+    FORCE_INLINE   void run() {
       if ((IS_SD_PRINTING || print_job_timer.isRunning()) && check() && !filament_ran_out) {
         filament_ran_out = true;
         enqueue_and_echo_commands_P(PSTR(FILAMENT_RUNOUT_SCRIPT));
         planner.synchronize();
+		printf("run out.h run \n");
       }
     }
   private:
     static bool filament_ran_out;
     static uint8_t runout_count;
 
-    FORCE_INLINE static bool check() {
+    FORCE_INLINE   bool check() {
       #if NUM_RUNOUT_SENSORS < 2
         // A single sensor applying to all extruders
-        const bool is_out = READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING;
+	  //const bool is_out = READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING;
+	  const bool is_out = runout_pin[0] == FIL_RUNOUT_INVERTING;
+	  static bool is_out_tmp=0;
+	  if(is_out_tmp!=is_out)
+	  	{
+	   printf("is_out00__%d\n",is_out);
+	   is_out_tmp=is_out;
+	  	}
       #else
         // Read the sensor for the active extruder
         bool is_out;
         switch (active_extruder) {
-          case 0: is_out = READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING; break;
-          case 1: is_out = READ(FIL_RUNOUT2_PIN) == FIL_RUNOUT_INVERTING; break;
+		//	case 0: is_out = READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING; break;
+		//	case 1: is_out = READ(FIL_RUNOUT2_PIN) == FIL_RUNOUT_INVERTING; break;
+		  case 0: is_out = runout_pin[0]== FIL_RUNOUT_INVERTING; printf("is_out0__%d\n",is_out); break;
+          case 1: is_out = runout_pin[1] == FIL_RUNOUT_INVERTING; printf("is_out0__%d\n",is_out); break;
           #if NUM_RUNOUT_SENSORS > 2
             case 2: is_out = READ(FIL_RUNOUT3_PIN) == FIL_RUNOUT_INVERTING; break;
             #if NUM_RUNOUT_SENSORS > 3

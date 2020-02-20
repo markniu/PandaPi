@@ -50,6 +50,9 @@
 #if ENABLED(EMERGENCY_PARSER)
   #include "emergency_parser.h"
 #endif
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#include "runout.h"
+#endif
 
 #if HOTEND_USES_THERMISTOR
   #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
@@ -2159,6 +2162,14 @@ void Temperature::isr() {
 				printf("run out sensor:%d\n",k);
 				SERIAL_PROTOCOLPGM("run out sensor:");
   				SERIAL_PROTOCOLLN(k);
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)			
+               if(current_temperature[0]>130||current_temperature[0]>130)
+               	{
+				 	runout.runout_pin[0]=((k>>1)&0x01);
+					runout.runout_pin[1]=(k&0x01);
+					printf("runout_pin[0,1]:%d,%d\n",runout.runout_pin[0],runout.runout_pin[1]);
+               	}
+#endif
 			}
 		}
 		////////////////////////////////

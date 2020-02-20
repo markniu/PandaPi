@@ -26,10 +26,10 @@
 
 #include "MarlinConfig.h"
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
-
-#include "runout.h"
-
+#if 1//ENABLED(FILAMENT_RUNOUT_SENSOR)
+   
+#include "runout.h" 
+  
 FilamentRunoutSensor runout;
 
 bool FilamentRunoutSensor::filament_ran_out; // = false
@@ -57,5 +57,5 @@ void FilamentRunoutSensor::setup() {
     #endif
   #endif
 }
-
+ 
 #endif // FILAMENT_RUNOUT_SENSOR
