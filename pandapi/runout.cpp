@@ -26,7 +26,7 @@
 
 #include "MarlinConfig.h"
 
-#if 1//ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
    
 #include "runout.h" 
   

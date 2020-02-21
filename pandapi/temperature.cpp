@@ -2159,11 +2159,11 @@ void Temperature::isr() {
 			if(old_h!=k)
 			{
 				old_h=k;
-				printf("run out sensor:%d\n",k);
+				printf("=== %s \n",cmd_buf);
 				SERIAL_PROTOCOLPGM("run out sensor:");
   				SERIAL_PROTOCOLLN(k);
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)			
-               if(current_temperature[0]>130||current_temperature[0]>130)
+               if((current_temperature[0]>130||current_temperature[1]>130)&&(IS_SD_PRINTING || print_job_timer.isRunning()))
                	{
 				 	runout.runout_pin[0]=((k>>1)&0x01);
 					runout.runout_pin[1]=(k&0x01);
