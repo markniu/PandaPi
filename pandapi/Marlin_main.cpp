@@ -15228,8 +15228,6 @@ int main(int argc, char* argv[])
 */
 
 	setup() ;
-	wiringPiI2CWriteReg8(i2c_fd, 8, 'r');
-	wiringPiI2CWriteReg8(i2c_fd, 8, ';');
 
 
 	printf("main0\n");

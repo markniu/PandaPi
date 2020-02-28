@@ -344,6 +344,7 @@ class Temperature {
      */
     static void readings_ready();
     static void isr();
+    static int read_with_check();
 
     /**
      * Call periodically to manage heaters
