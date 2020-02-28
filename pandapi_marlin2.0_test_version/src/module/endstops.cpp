@@ -32,6 +32,10 @@
 #include "temperature.h"
 #include "../lcd/ultralcd.h"
 
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#include "runout.h"
+#endif
+
 #if ENABLED(ENDSTOP_INTERRUPTS_FEATURE)
   #include HAL_PATH(../HAL, endstop_interrupts.h)
 #endif

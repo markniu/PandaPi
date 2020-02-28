@@ -449,7 +449,7 @@ void manage_inactivity(const bool ignore_stepper_queue/*=false*/) {
 
   #if HAS_FILAMENT_SENSOR
     runout.run();
-  #endif
+  #endif 
 
   if (queue.length < BUFSIZE) queue.get_available_commands();
 
@@ -1196,7 +1196,11 @@ void setup() {
  */
 int main() {
 	setup();
-	  queue.enqueue_now_P("M20");
+	queue.enqueue_now_P("M21");
+	queue.enqueue_now_P("M20");
+//	wiringPiI2CWriteReg8(i2c_fd, 8, 'r');
+//	wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+	queue.enqueue_now_P("M301");
 
   for (;;) {
 

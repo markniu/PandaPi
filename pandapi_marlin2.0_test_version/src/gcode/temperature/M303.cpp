@@ -59,8 +59,85 @@ void GcodeSuite::M303() {
   #if DISABLED(BUSY_WHILE_HEATING)
     KEEPALIVE_STATE(NOT_BUSY);
   #endif
+	 ////////////////
+	char tmp_data[32],cmd_buf[64],tmpe_k;
+	int cn=0;
+	unsigned int time_s_old=0;
+	// char e=0;
+	memset(tmp_data,0,sizeof(tmp_data));
 
-  thermalManager.PID_autotune(temp, e, c, u);
+	//////////P
+	sprintf(tmp_data,"a E%d,C%d,U%d,S%d;\n",e,c,u,temp);
+	printf(tmp_data);printf("\n");
+	for(int i=0;i<strlen(tmp_data);i++)
+		wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
+	unsigned int kk=millis();
+
+	memset(cmd_buf,0,sizeof(cmd_buf)); 
+
+	SERIAL_ECHOPGM("PID autotune start\n");
+				 
+   while(1 )		   
+	{
+		tmpe_k=wiringPiI2CReadReg8(i2c_fd,8);
+		if(tmpe_k!=0)
+			cmd_buf[cn++]=tmpe_k;
+		else
+		{
+			wiringPiI2CWriteReg8(i2c_fd, 8, '.');
+
+		}
+
+		   
+		unsigned int time_s=millis();
+		if((time_s-time_s_old)>5000)// 2 second
+		{
+			thermalManager.manage_heater();
+		//	thermalManager.print_heaterstates();
+			thermalManager.print_heater_states(e
+#if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
+			, parser.boolval('R')
+#endif
+			);
+	  
+			SERIAL_EOL();
+			time_s_old=time_s;
+		}
+		   
+		if(tmpe_k=='\n'||tmpe_k=='\r')
+		{
+
+			//	printf(cmd_buf);
+			if(cn>10)
+			{
+				if(cmd_buf[cn-2]=='h'&&(cmd_buf[0]=='A'||cmd_buf[0]=='U'||cmd_buf[cn-3]=='h'||tmpe_k=='\r'))
+				{
+					 SERIAL_ECHOPGM(cmd_buf);
+					 SERIAL_EOL();
+					  printf("tmpe_k===h\n");
+					 cn=0;
+					 
+					 break;
+				}
+			}
+			memset(cmd_buf,0,sizeof(cmd_buf));
+			cn=0;
+		}
+		  // if(cmd_buf[cn-2])
+		if(cn>60)
+			cn=0;
+			  
+
+		usleep(1);
+
+	}
+   printf(cmd_buf);cn=0;
+   
+  
+	
+  ///////////////////
+
+ // thermalManager.PID_autotune(temp, e, c, u);
 }
 
 #endif // HAS_PID_HEATING

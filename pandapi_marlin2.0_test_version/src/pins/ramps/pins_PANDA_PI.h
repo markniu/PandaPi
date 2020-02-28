@@ -30,6 +30,10 @@
 
 #endif
 
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN    255
+#endif
+
 
 
 //

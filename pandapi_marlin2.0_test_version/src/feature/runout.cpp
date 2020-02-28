@@ -29,6 +29,7 @@
 #if HAS_FILAMENT_SENSOR
 
 #include "runout.h"
+int runout_pin[2]={1,1};
 
 FilamentMonitor runout;
 

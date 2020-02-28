@@ -1641,6 +1641,17 @@ void Temperature::updateTemperaturesFromRawValues() {
 void Temperature::init() {
 	i2c_fd=-1;
 	i2c_fd = wiringPiI2CSetup(0x3c);
+	//////////reboot the MCU
+	wiringPiI2CWriteReg8(i2c_fd, 8, 'r');
+	wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+	int ii=20;
+	while(ii--)
+	{
+		usleep(50);
+		wiringPiI2CReadReg8(i2c_fd,8);
+	}
+	
+/////////////////// 
 
   #if ENABLED(MAX6675_IS_MAX31865)
     max31865.begin(MAX31865_2WIRE); // MAX31865_2WIRE, MAX31865_3WIRE, MAX31865_4WIRE
@@ -2483,6 +2494,71 @@ public:
   #endif
 };
 
+int old_h=-6;
+int Temperature::read_with_check()
+{
+	char cn=0,cmd_buf[128], out[128];
+	int k=0,ret=0;
+	memset(cmd_buf,0,sizeof(cmd_buf));
+	memset(out,0,sizeof(out));
+
+	wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
+	wiringPiI2CWriteReg8(i2c_fd, 8, ';');
+	unsigned int kk=millis();
+	while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+	{
+		usleep(1);
+		if((millis()-kk)>200)
+		{
+		cn=0;
+		break;
+		}
+		if(cn>=64)
+		{
+		cn=0;
+		break;
+		}
+	}
+	parse_string(cmd_buf,"T:","B",out,&k);	
+	float f= atof(out);
+	if(fabs(temp_hotend[0].celsius-f)<20)
+		temp_hotend[0].celsius=f;
+	else
+	{
+		printf("\n f0=%f\n",fabs(temp_hotend[0].celsius-f));
+		ret=1;
+	}
+	parse_string(cmd_buf,"B:","",out,&k);	
+	f= atof(out);
+	if(fabs(temp_bed.celsius-f)<20)
+		temp_bed.celsius=f;
+	else
+	{
+		printf("\n f1=%f\n",fabs(temp_bed.celsius-f));
+		ret=1;
+	};
+	parse_string(cmd_buf,"T1:","",out,&k);	
+	f= atof(out);
+	if(fabs(temp_hotend[0].celsius-f)<20)
+		temp_hotend[1].celsius=f;
+	else 
+	{
+		printf("\n f2=%f\n",fabs(temp_hotend[1].celsius-f));
+		ret=1;
+	}
+
+	parse_string(cmd_buf,"h","T",out,&k);	
+	k= atoi(out);
+	if(old_h!=k)
+	{
+		ret=1;
+
+	}
+
+
+	return ret;
+}
+
 /**
  * Handle various ~1KHz tasks associated with temperature
  *  - Heater PWM (~1KHz with scaler)
@@ -2494,82 +2570,80 @@ public:
  */
 void Temperature::tick() {
 
-	  /////////////// luojin
-    char cn=0,cmd_buf[128], out[128];
-	int k=0;
-  // printf("get_i2c_temperature===\n");
-  //sprintf(cmd_buf,"g;")
-  	  if(i2c_fd==-1)
-	  	i2c_fd = wiringPiI2CSetup(0x3c);
+  ///////////////
+  char cn=0,cmd_buf[128], out[128];
+  int k=0;
+  memset(cmd_buf,0,sizeof(cmd_buf));
+  memset(out,0,sizeof(out));
+
+  int ret=read_with_check();
+  if(ret==1)
+	  ret=read_with_check();
+  if(ret==1)
+	  ret=read_with_check();
+
+  ////////////////////////////////
+  if(ret==1)
+  {
+	  printf("%s  |   \n",cmd_buf);
+	  memset(cmd_buf,0,sizeof(cmd_buf));
 	  wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
 	  wiringPiI2CWriteReg8(i2c_fd, 8, ';');
-	  memset(cmd_buf,0,sizeof(cmd_buf));
 	  unsigned int kk=millis();
+	  cn=0;
 	  while((cmd_buf[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
 	  {
-		  delay(0);
-		  if((millis()-kk)>1000)
+		  usleep(1);
+		  if((millis()-kk)>200)
 		  {
 			  cn=0;
-			  printf("i2c timeout\n");
 			  break;
 		  }
-		  if(cn>=32)
+		  if(cn>=64)
 		  {
 			  cn=0;
 			  break;
 		  }
 	  }
+	  printf("%s  +   \n",cmd_buf);
+	  parse_string(cmd_buf,"T:","B",out,&k);  
+	  float f= atof(out); 
+	  temp_hotend[0].celsius=f;    
 
-	  ///
-	  wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
-	  wiringPiI2CWriteReg8(i2c_fd, 8, ';');
-	  kk=millis();
-	  cn=0;
-	  while((out[cn++]=wiringPiI2CReadReg8(i2c_fd,8))!='\0')
+	  parse_string(cmd_buf,"B:","",out,&k);   
+	  f= atof(out);
+	  temp_bed.celsius=f;
+
+	  parse_string(cmd_buf,"T1:","",out,&k);  
+	  f= atof(out);
+	  temp_hotend[1].celsius=f;
+
+
+	  parse_string(cmd_buf,"h","T",out,&k);   
+	  k= atoi(out);
+	  if(old_h!=k)
 	  {
-		  delay(0);
-		  if((millis()-kk)>1000)
+			
+		  old_h=k;
+		  printf("run out sensor:%d\n",k);
+		  SERIAL_ECHOPGM("run out sensor:");
+		  SERIAL_ECHO(k);
+		  
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)			
+		  if((temp_hotend[0].celsius>130||temp_hotend[1].celsius>130)&&(IS_SD_PRINTING() || print_job_timer.isRunning()))
 		  {
-			  cn=0;
-			  break;
+			   runout_pin[0]=((k>>1)&0x01);
+			   runout_pin[1]=(k&0x01);
+			  printf("runout_pin[0,1]:%d,%d\n", runout_pin[0], runout_pin[1]);
 		  }
-		  if(cn>=32)
-		  {
-			  cn=0;
-			  break;
-		  }
+#endif
 	  }
-  
-	  /////
-	  if(strcmp(cmd_buf,out)==0)
-	  {
-		  parse_string(cmd_buf,"T:","B",out,&k);  
-		  float f= atof(out);
-		  //current_temperature[0]=f;
-		  temp_hotend[0].celsius=f;
-		  parse_string(cmd_buf,"B:","",out,&k);   
-		  f= atof(out);
-		  temp_bed.celsius=f;
-  
-		  static int old_h=-6;
-		  parse_string(cmd_buf,"h","T",out,&k);   
-		  k= atoi(out);
-		  if(old_h!=k)
-		  {
-			  old_h=k;
-			  printf("run out sensor:%d\n",k);
-			  SERIAL_ECHOPGM("run out sensor:");
-			  SERIAL_ECHO(k);
-			  
-			  
-		  }
-	  }
-	  ////////////////////////////////
-   
-  
-	  
-  
+  }
+
+
+
+
+
   return;
 	  
 

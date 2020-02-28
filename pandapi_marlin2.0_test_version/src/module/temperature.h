@@ -24,8 +24,15 @@
 /**
  * temperature.h - temperature controller
  */
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include <unistd.h>
 
 #include "thermistor/thermistors.h"
+#if HAS_FILAMENT_SENSOR
+  #include "feature/runout.h"
+#endif
 
 #include "../inc/MarlinConfig.h"
 #include "wiringPi.h"
@@ -160,7 +167,7 @@ enum ADCSensorState : char {
 
 #if HAS_PID_HEATING
   #define PID_K2 (1-float(PID_K1))
-  #define PID_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / TEMP_TIMER_FREQUENCY)
+  #define PID_dT 1// mark ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / TEMP_TIMER_FREQUENCY)
 
   // Apply the scale factors to the PID values
   #define scalePID_i(i)  i// ( float(i) * PID_dT )
@@ -288,7 +295,7 @@ class Temperature {
       #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
         #define HOTEND_TEMPS (HOTENDS + 1)
       #else
-        #define HOTEND_TEMPS HOTENDS
+        #define HOTEND_TEMPS HOTENDS+1
       #endif
       static hotend_info_t temp_hotend[HOTEND_TEMPS];
     #endif
@@ -529,6 +536,7 @@ class Temperature {
      */
     static void readings_ready();
     static void tick();
+    static int read_with_check();
 
     /**
      * Call periodically to manage heaters
@@ -786,7 +794,7 @@ class Temperature {
 		  printf("\n");
 		///////////////////
 		 //////////I
-		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e));
+		 sprintf(tmp_data,"I%.5f;",PID_PARAM(Ki, e)/670.0);
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
