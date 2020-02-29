@@ -1,4 +1,4 @@
-# Using Raspberry Pi as a motherboard for 3D printer.
+# Not only a 64-bit 3D printer controller.
 ## Run Marlin & Octoprint on Raspberry Pi directly. Improve print speed and smoothness
    If you want to run PandaPi on RPi, you need one following extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 
