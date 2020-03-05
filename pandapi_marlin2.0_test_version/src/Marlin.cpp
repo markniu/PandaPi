@@ -907,7 +907,7 @@ void setup() {
   printf("setup1===\n");
 
   #if HAS_TMC220x
-    tmc_serial_begin();
+  // mark  tmc_serial_begin();
   #endif
 
   setup_powerhold();
@@ -1183,7 +1183,7 @@ void setup() {
   #if ENABLED(PRUSA_MMU2)
     mmu2.init();
   #endif
-   printf("setup10===\n");
+   printf("setup ok\n");
 }
 
 /**

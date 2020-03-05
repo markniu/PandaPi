@@ -31,9 +31,12 @@
 
 #include "trinamic.h"
 #include "../stepper.h"
+#include "TMCStepper.h"
+#include "tmc_util.h"
 
-#include <HardwareSerial.h>
-#include <SPI.h>
+//#include <HardwareSerial.h>
+ #include "MarlinSerial.h"
+//#include <SPI.h>
 
 enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
 #define _TMC_INIT(ST, STEALTH_INDEX) tmc_init(stepper##ST, ST##_CURRENT, ST##_MICROSTEPS, ST##_HYBRID_THRESHOLD, stealthchop_by_axis[STEALTH_INDEX])
@@ -49,7 +52,8 @@ enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
   #define __TMC_SPI_DEFINE(IC, ST, L, AI) TMCMarlin<IC##Stepper, L, AI> stepper##ST(ST##_CS_PIN, ST##_RSENSE, ST##_CHAIN_POS)
 #endif
 
-#define TMC_UART_HW_DEFINE(IC, ST, L, AI) TMCMarlin<IC##Stepper, L, AI> stepper##ST(&ST##_HARDWARE_SERIAL, ST##_RSENSE, ST##_SLAVE_ADDRESS)
+//#define TMC_UART_HW_DEFINE(IC, ST, L, AI) TMCMarlin<IC##Stepper, L, AI> stepper##ST(&ST##_HARDWARE_SERIAL, ST##_RSENSE, ST##_SLAVE_ADDRESS)
+#define TMC_UART_HW_DEFINE(IC, ST, L, AI) TMCMarlin<IC##Stepper, L, AI> stepper##ST(NULL, ST##_RSENSE, ST##_SLAVE_ADDRESS)
 #define TMC_UART_SW_DEFINE(IC, ST, L, AI) TMCMarlin<IC##Stepper, L, AI> stepper##ST(ST##_SERIAL_RX_PIN, ST##_SERIAL_TX_PIN, ST##_RSENSE, ST##_SLAVE_ADDRESS, ST##_SERIAL_RX_PIN > -1)
 
 #define _TMC_SPI_DEFINE(IC, ST, AI) __TMC_SPI_DEFINE(IC, ST, TMC_##ST##_LABEL, AI)
@@ -439,8 +443,11 @@ enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
   template<char AXIS_LETTER, char DRIVER_ID, AxisEnum AXIS_ID>
   void tmc_init(TMCMarlin<TMC2209Stepper, AXIS_LETTER, DRIVER_ID, AXIS_ID> &st, const uint16_t mA, const uint16_t microsteps, const uint32_t thrs, const bool stealth) {
     TMC2208_n::GCONF_t gconf{0};
+	printf("tmc_init===begin\n");
     gconf.pdn_disable = true; // Use UART
+    
     gconf.mstep_reg_select = true; // Select microsteps with UART
+    
     gconf.i_scale_analog = false;
     gconf.en_spreadcycle = !stealth;
     st.GCONF(gconf.sr);
@@ -461,6 +468,7 @@ enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
     st.microsteps(microsteps);
     st.iholddelay(10);
     st.TPOWERDOWN(128); // ~2s until driver lowers to hold current
+	 
 
     TMC2208_n::PWMCONF_t pwmconf{0};
     pwmconf.pwm_lim = 12;
@@ -480,6 +488,7 @@ enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
 
     st.GSTAT(0b111); // Clear
     delay(200);
+	printf("tmc_init===end\n");
   }
 #endif // TMC2209
 

@@ -1020,7 +1020,7 @@
 #endif // TMC_DEBUG
 
 #if USE_SENSORLESS
-
+/*
   bool tmc_enable_stallguard(TMC2130Stepper &st) {
     bool stealthchop_was_enabled = st.en_pwm_mode();
 
@@ -1035,7 +1035,7 @@
     st.en_pwm_mode(restore_stealth);
     st.diag1_stall(false);
   }
-
+*/
   bool tmc_enable_stallguard(TMC2209Stepper &st) {
     st.TCOOLTHRS(0xFFFFF);
     return true;
@@ -1043,13 +1043,13 @@
   void tmc_disable_stallguard(TMC2209Stepper &st, const bool restore_stealth _UNUSED) {
     st.TCOOLTHRS(0);
   }
-
+/*
   bool tmc_enable_stallguard(TMC2660Stepper) {
     // TODO
     return false;
   }
   void tmc_disable_stallguard(TMC2660Stepper, const bool) {};
-
+*/
 #endif // USE_SENSORLESS
 
 #if TMC_HAS_SPI
