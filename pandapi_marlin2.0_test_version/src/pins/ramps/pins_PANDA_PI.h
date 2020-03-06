@@ -4,6 +4,7 @@
   #define BOARD_NAME "PANDA,PI"
 #endif
 
+#define BOARD_INFO_NAME      "PANDA,PI"
 
 
 

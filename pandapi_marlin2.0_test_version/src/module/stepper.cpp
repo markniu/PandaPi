@@ -2350,7 +2350,7 @@ void Stepper::report_positions() {
   // MUST ONLY BE CALLED BY AN ISR,
   // No other ISR should ever interrupt this!
   void Stepper::babystep(const AxisEnum axis, const bool direction) {
-    cli();
+ //   cli();
 
     switch (axis) {
 
@@ -2442,7 +2442,7 @@ void Stepper::report_positions() {
 
       default: break;
     }
-    sei();
+    //sei();
   }
 
 #endif // BABYSTEPPING
