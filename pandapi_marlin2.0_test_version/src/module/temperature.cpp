@@ -2505,8 +2505,7 @@ int parse_checksum(char* command)
 	  while (count) checksum ^= command[--count];
 	  if (strtol(apos + 1, NULL, 10) != checksum) {
 		//gcode_line_error(PSTR(MSG_ERR_CHECKSUM_MISMATCH));
-		printf("checksum=%d=%d\n",checksum,strtol(apos + 1, NULL, 10));
-		printf("MSG_ERR_CHECKSUM_MISMATCH==\n");
+		printf("checksum mismatch=%d=%d\n",checksum,strtol(apos + 1, NULL, 10));
 		return 1;
 	  }
 	}

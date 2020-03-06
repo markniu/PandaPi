@@ -561,6 +561,51 @@
   #define DEFAULT_DUPLICATION_X_OFFSET 100
 
 #endif // DUAL_X_CARRIAGE
+/**
+ * Use StallGuard2 to home / probe X, Y, Z.
+ *
+ * TMC2130, TMC2160, TMC2209, TMC2660, TMC5130, and TMC5160 only
+ * Connect the stepper driver's DIAG1 pin to the X/Y endstop pin.
+ * X, Y, and Z homing will always be done in spreadCycle mode.
+ *
+ * X/Y/Z_STALL_SENSITIVITY is the default stall threshold.
+ * Use M914 X Y Z to set the stall threshold at runtime:
+ *
+ *	Sensitivity   TMC2209	Others
+ *	  HIGHEST		255 	 -64	(Too sensitive => False positive)
+ *	  LOWEST		 0		  63	(Too insensitive => No trigger)
+ *
+ * It is recommended to set [XYZ]_HOME_BUMP_MM to 0.
+ *
+ * SPI_ENDSTOPS  *** Beta feature! *** TMC2130 Only ***
+ * Poll the driver through SPI to determine load when homing.
+ * Removes the need for a wire from DIAG1 to an endstop pin.
+ *
+ * IMPROVE_HOMING_RELIABILITY tunes acceleration and jerk when
+ * homing and adds a guard period for endstop triggering.
+ *
+ * TMC2209 requires STEALTHCHOP enabled for SENSORLESS_HOMING
+ */
+//#define SENSORLESS_HOMING // StallGuard capable drivers only
+
+/**
+ * Use StallGuard2 to probe the bed with the nozzle.
+ *
+ * CAUTION: This could cause damage to machines that use a lead screw or threaded rod
+ *			to move the Z axis. Take extreme care when attempting to enable this feature.
+ */
+//#define SENSORLESS_PROBING // StallGuard capable drivers only
+
+#if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
+  // TMC2209: 0...255. TMC2130: -64...63
+  #define X_STALL_SENSITIVITY  8
+  #define X2_STALL_SENSITIVITY X_STALL_SENSITIVITY
+  #define Y_STALL_SENSITIVITY  8
+  //#define Z_STALL_SENSITIVITY  8
+  //#define SPI_ENDSTOPS			  // TMC2130 only
+  //#define HOME_USING_SPREADCYCLE
+  //#define IMPROVE_HOMING_RELIABILITY
+#endif
 
 // Activate a solenoid on the active extruder with M380. Disable all with M381.
 // Define SOL0_PIN, SOL1_PIN, etc., for each extruder that has a solenoid.
@@ -569,8 +614,14 @@
 // @section homing
 
 // Homing hits each endstop, retracts by these distances, then does a slower bump.
-#define X_HOME_BUMP_MM 5
-#define Y_HOME_BUMP_MM 5
+#if ENABLED(SENSORLESS_HOMING)
+	#define X_HOME_BUMP_MM 0	
+	#define Y_HOME_BUMP_MM 0
+#else
+	#define X_HOME_BUMP_MM 5
+	#define Y_HOME_BUMP_MM 5
+#endif
+
 #define Z_HOME_BUMP_MM 2
 #define HOMING_BUMP_DIVISOR { 2, 2, 4 }  // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 //#define QUICK_HOME                     // If homing includes X and Y, do a diagonal move initially
@@ -2106,51 +2157,7 @@
   #define E4_HYBRID_THRESHOLD     30
   #define E5_HYBRID_THRESHOLD     30
 
-  /**
-   * Use StallGuard2 to home / probe X, Y, Z.
-   *
-   * TMC2130, TMC2160, TMC2209, TMC2660, TMC5130, and TMC5160 only
-   * Connect the stepper driver's DIAG1 pin to the X/Y endstop pin.
-   * X, Y, and Z homing will always be done in spreadCycle mode.
-   *
-   * X/Y/Z_STALL_SENSITIVITY is the default stall threshold.
-   * Use M914 X Y Z to set the stall threshold at runtime:
-   *
-   *  Sensitivity   TMC2209   Others
-   *    HIGHEST       255      -64    (Too sensitive => False positive)
-   *    LOWEST         0        63    (Too insensitive => No trigger)
-   *
-   * It is recommended to set [XYZ]_HOME_BUMP_MM to 0.
-   *
-   * SPI_ENDSTOPS  *** Beta feature! *** TMC2130 Only ***
-   * Poll the driver through SPI to determine load when homing.
-   * Removes the need for a wire from DIAG1 to an endstop pin.
-   *
-   * IMPROVE_HOMING_RELIABILITY tunes acceleration and jerk when
-   * homing and adds a guard period for endstop triggering.
-   *
-   * TMC2209 requires STEALTHCHOP enabled for SENSORLESS_HOMING
-   */
-  #define SENSORLESS_HOMING // StallGuard capable drivers only
 
-  /**
-   * Use StallGuard2 to probe the bed with the nozzle.
-   *
-   * CAUTION: This could cause damage to machines that use a lead screw or threaded rod
-   *          to move the Z axis. Take extreme care when attempting to enable this feature.
-   */
-  //#define SENSORLESS_PROBING // StallGuard capable drivers only
-
-  #if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
-    // TMC2209: 0...255. TMC2130: -64...63
-    #define X_STALL_SENSITIVITY  8
-    #define X2_STALL_SENSITIVITY X_STALL_SENSITIVITY
-    #define Y_STALL_SENSITIVITY  8
-    //#define Z_STALL_SENSITIVITY  8
-    //#define SPI_ENDSTOPS              // TMC2130 only
-    //#define HOME_USING_SPREADCYCLE
-    //#define IMPROVE_HOMING_RELIABILITY
-  #endif
 
   /**
    * Beta feature!
