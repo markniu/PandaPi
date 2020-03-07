@@ -35,7 +35,6 @@
    #define Z_MIN_PROBE_PIN  11
  #endif
 
-//
 // Steppers
 //
 #define X_STEP_PIN         7//0xE3//0xC6

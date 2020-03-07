@@ -2109,6 +2109,23 @@ HAL_TEMP_TIMER_ISR {
 
 */
 int old_mcu_pins=-6;
+int parse_checksum(char* command)
+{
+	char *apos = strrchr(command, '*');
+	if (apos) {
+	  uint8_t checksum = 0, count = uint8_t(apos-1 - command);
+	  while (count) checksum ^= command[--count];
+	  if (strtol(apos + 1, NULL, 10) != checksum) {
+		//gcode_line_error(PSTR(MSG_ERR_CHECKSUM_MISMATCH));
+		printf("checksum=%d=%d\n",checksum,strtol(apos + 1, NULL, 10));
+		printf("MSG_ERR_CHECKSUM_MISMATCH==\n");
+		return 1;
+	  }
+	}
+	
+
+	return 0;
+}
 int Temperature::read_with_check()
 {
 	char cn=0,cmd_buf[128], out[128];
@@ -2133,6 +2150,9 @@ int Temperature::read_with_check()
 			break;
 		}
 	}
+	//sprintf(cmd_buf,"h1T:28.3B:20.3T1:29.3 *14");
+	if(parse_checksum(cmd_buf))
+		return 1;
 	parse_string(cmd_buf,"T:","B",out,&k);	
 	float f= atof(out);
 	if(fabs(current_temperature[0]-f)<10)
@@ -2163,7 +2183,9 @@ int Temperature::read_with_check()
 
 	parse_string(cmd_buf,"h","T",out,&k);	
 	k= atoi(out);
-	if(old_mcu_pins!=k)
+	if(k>3||k<0)
+		ret=1;
+	else if(old_mcu_pins!=k)
 	{
 		ret=1;
 
@@ -2209,6 +2231,8 @@ void Temperature::isr() {
 			}
 		}
 		printf("%s  +   \n",cmd_buf);
+		if(parse_checksum(cmd_buf))
+			return ;
 		parse_string(cmd_buf,"T:","B",out,&k);	
 		float f= atof(out);   
 		current_temperature[0]=f;    
@@ -2223,7 +2247,7 @@ void Temperature::isr() {
 		
 		parse_string(cmd_buf,"h","T",out,&k);	
 		k= atoi(out);
-		if(old_mcu_pins!=k)
+		if((old_mcu_pins!=k)&&(k>=0&&k<=3))
 		{
 
 			old_mcu_pins=k;
