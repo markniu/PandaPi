@@ -22,28 +22,32 @@
 ![Opensource](https://raw.githubusercontent.com/markniu/doc_test/master/imges/pandapi_gpio.jpg)
 
 * ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
-1. **Quick start guide**：
+**Quick start guide**：
  
-   [Flashing RaspberrPi img](https://github.com/markniu/PandaPi/wiki/How-to-Flash-img-&-WIFI-setup)
+* [Flashing RaspberrPi img](https://github.com/markniu/PandaPi/wiki/How-to-Flash-img-&-WIFI-setup)
 
-   [Wiring](https://github.com/markniu/PandaPi/wiki/How-to-wire)
+* [Wiring](https://github.com/markniu/PandaPi/wiki/How-to-wire)
 
-2. **Advanced topics:**
+**Advanced topics:**
 
-   [How to Edit Marlin code](https://github.com/markniu/PandaPi/wiki/How-to-Edit-Marlin-code)
+* [How to Edit Marlin code](https://github.com/markniu/PandaPi/wiki/How-to-Edit-Marlin-code)
 
-   [How to Find Raspberry IP](https://github.com/markniu/PandaPi/wiki/How-to-Find-Raspberry-IP)
+* [How to Find Raspberry IP](https://github.com/markniu/PandaPi/wiki/How-to-Find-Raspberry-IP)
 
-   [How to run OctoPrint](https://github.com/markniu/PandaPi/wiki/How-to-run-OctoPrint)
+* [How to run OctoPrint](https://github.com/markniu/PandaPi/wiki/How-to-run-OctoPrint)
 
+* [where to download board case](https://github.com/markniu/PandaPi/wiki/where-to-download--board-case)
 
-   [where to download board case](https://github.com/markniu/PandaPi/wiki/where-to-download--board-case)
+* [How to flash MCU firmware](https://github.com/markniu/PandaPi/wiki/How-to-flash-MCU-firmware)
 
-   [How to flash MCU firmware](https://github.com/markniu/PandaPi/wiki/How-to-flash-MCU-firmware)
+* [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
 
-   [How to wire BLtouch](https://github.com/markniu/PandaPi/wiki/How-to-wire-BLtouch)
+* [How-to-install-desktop(HDMI_LCD)](https://github.com/markniu/PandaPi/wiki/How-to-install-desktop(HDMI_LCD))
 
-   [How-to-run-TMC2209-&-Sensorless-homing](https://github.com/markniu/PandaPi/wiki/How-to-run-TMC2209-&-Sensorless-homing(V2.0))
+* [How-to-run-TMC2209-&-Sensorless-homing](https://github.com/markniu/PandaPi/wiki/How-to-run-TMC2209-&-Sensorless-homing(V2.0))
+* [How-to-plugin-OctoPrint-Enclosure](https://github.com/markniu/PandaPi/wiki/How-to-plugin-OctoPrint-Enclosure(DTH11-temperature-humidity-sensor))
+* [How-to-use-PID-auto-tune](https://github.com/markniu/PandaPi/wiki/How-to-use-PID-auto-tune)
+* [How-to-wiring-filament-runout-sensor](https://github.com/markniu/PandaPi/wiki/How-to-wiring-filament-runout-sensor)
 
 
 * ##  FAQ：
