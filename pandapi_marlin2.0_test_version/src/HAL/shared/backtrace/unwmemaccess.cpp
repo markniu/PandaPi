@@ -12,7 +12,7 @@
  * File Description: Utility functions to access memory
  **************************************************************************/
 
-#if 0//defined(__arm__) || defined(__thumb__)
+#if 0//defined(__arm__) || defined(__thumb__)//  PANDAPI
 
 #include "unwmemaccess.h"
 #include "../../../inc/MarlinConfig.h"

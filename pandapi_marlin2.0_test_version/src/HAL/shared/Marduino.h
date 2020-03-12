@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -33,7 +33,7 @@
 #undef CBI            // Redefined by arduino/const_functions.h
 #undef UNUSED         // Redefined by stm32f4xx_hal_def.h
 
-//luojin #include <Arduino.h>  // NOTE: If included earlier then this line is a NOOP
+////  PANDAPI #include <Arduino.h>  // NOTE: If included earlier then this line is a NOOP
 
 #undef DISABLED
 #define DISABLED(V...) DO(DIS,&&,V)

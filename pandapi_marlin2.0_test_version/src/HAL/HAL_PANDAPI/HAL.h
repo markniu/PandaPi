@@ -68,8 +68,8 @@
 // ------------------------
 // Types
 // ------------------------
-
-typedef uint16_t hal_timer_t;
+#define hal_timer_t  uint16_t
+//typedef uint16_t hal_timer_t;
 #define HAL_TIMER_TYPE_MAX 0xFFFF
 
 typedef int8_t pin_t;
@@ -194,8 +194,9 @@ FORCE_INLINE void HAL_timer_start(const uint8_t timer_num, const uint32_t) {
 
 #define _CAT(a,V...) a##V
 #define HAL_timer_set_compare(timer, compare)   motor_next_isr( compare)
-#define HAL_timer_get_compare(timer)  
-#define HAL_timer_get_count(timer)  
+//PANDAPI
+#define HAL_timer_get_compare(timer)   0
+#define HAL_timer_get_count(timer)  0
 
 /**
  * On AVR there is no hardware prioritization and preemption of

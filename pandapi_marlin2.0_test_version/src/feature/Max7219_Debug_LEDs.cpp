@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -45,7 +45,7 @@
 
 #include "../module/planner.h"
 #include "../module/stepper.h"
-#include "../Marlin.h"
+#include "../MarlinCore.h"
 #include "../HAL/shared/Delay.h"
 
 #define HAS_SIDE_BY_SIDE (ENABLED(MAX7219_SIDE_BY_SIDE) && MAX7219_NUMBER_UNITS > 1)
@@ -125,8 +125,8 @@ uint8_t Max7219::led_line[MAX7219_LINES]; // = { 0 };
   #define SIG_DELAY() DELAY_US(1)   // Approximate a 1µs delay on 32-bit ARM
   #undef CRITICAL_SECTION_START
   #undef CRITICAL_SECTION_END
-  #define CRITICAL_SECTION_START NOOP
-  #define CRITICAL_SECTION_END   NOOP
+  #define CRITICAL_SECTION_START() NOOP
+  #define CRITICAL_SECTION_END()   NOOP
 #else
   #define SIG_DELAY() DELAY_NS(188) // Delay for 0.1875µs (16MHz AVR) or 0.15µs (20MHz AVR)
 #endif
@@ -163,7 +163,7 @@ inline uint32_t flipped(const uint32_t bits, const uint8_t n_bytes) {
 }
 
 void Max7219::noop() {
-  CRITICAL_SECTION_START;
+  CRITICAL_SECTION_START();
   SIG_DELAY();
   WRITE(MAX7219_DIN_PIN, LOW);
   for (uint8_t i = 16; i--;) {
@@ -174,11 +174,11 @@ void Max7219::noop() {
     WRITE(MAX7219_CLK_PIN, HIGH);
     SIG_DELAY();
   }
-  CRITICAL_SECTION_END;
+  CRITICAL_SECTION_END();
 }
 
 void Max7219::putbyte(uint8_t data) {
-  CRITICAL_SECTION_START;
+  CRITICAL_SECTION_START();
   for (uint8_t i = 8; i--;) {
     SIG_DELAY();
     WRITE(MAX7219_CLK_PIN, LOW);       // tick
@@ -189,7 +189,7 @@ void Max7219::putbyte(uint8_t data) {
     SIG_DELAY();
     data <<= 1;
   }
-  CRITICAL_SECTION_END;
+  CRITICAL_SECTION_END();
 }
 
 void Max7219::pulse_load() {
@@ -202,12 +202,12 @@ void Max7219::pulse_load() {
 
 void Max7219::send(const uint8_t reg, const uint8_t data) {
   SIG_DELAY();
-  CRITICAL_SECTION_START;
+  CRITICAL_SECTION_START();
   SIG_DELAY();
   putbyte(reg);          // specify register
   SIG_DELAY();
   putbyte(data);         // put data
-  CRITICAL_SECTION_END;
+  CRITICAL_SECTION_END();
 }
 
 // Send out a single native row of bits to just one unit
@@ -455,15 +455,19 @@ void Max7219::register_setup() {
 #ifdef MAX7219_INIT_TEST
 #if MAX7219_INIT_TEST == 2
 
+  #define MAX7219_LEDS (MAX7219_X_LEDS * MAX7219_Y_LEDS)
+
   void Max7219::spiral(const bool on, const uint16_t del) {
-    constexpr int8_t way[] = { 1, 0, 0, 1, -1, 0, 0, -1 };
+    constexpr int8_t way[][2] = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
     int8_t px = 0, py = 0, dir = 0;
-    for (uint8_t i = MAX7219_X_LEDS * MAX7219_Y_LEDS; i--;) {
+    for (IF<(MAX7219_LEDS > 255), uint16_t, uint8_t>::type i = MAX7219_LEDS; i--;) {
       led_set(px, py, on);
       delay(del);
-      const int8_t x = px + way[dir], y = py + way[dir + 1];
-      if (!WITHIN(x, 0, MAX7219_X_LEDS - 1) || !WITHIN(y, 0, MAX7219_Y_LEDS - 1) || BIT_7219(x, y) == on) dir = (dir + 2) & 0x7;
-      px += way[dir]; py += way[dir + 1];
+      const int8_t x = px + way[dir][0], y = py + way[dir][1];
+      if (!WITHIN(x, 0, MAX7219_X_LEDS - 1) || !WITHIN(y, 0, MAX7219_Y_LEDS - 1) || BIT_7219(x, y) == on)
+        dir = (dir + 1) & 0x3;
+      px += way[dir][0];
+      py += way[dir][1];
     }
   }
 
@@ -570,14 +574,14 @@ void Max7219::idle_tasks() {
   #define MAX7219_USE_HEAD (defined(MAX7219_DEBUG_PLANNER_HEAD) || defined(MAX7219_DEBUG_PLANNER_QUEUE))
   #define MAX7219_USE_TAIL (defined(MAX7219_DEBUG_PLANNER_TAIL) || defined(MAX7219_DEBUG_PLANNER_QUEUE))
   #if MAX7219_USE_HEAD || MAX7219_USE_TAIL
-    CRITICAL_SECTION_START;
+    CRITICAL_SECTION_START();
     #if MAX7219_USE_HEAD
       const uint8_t head = planner.block_buffer_head;
     #endif
     #if MAX7219_USE_TAIL
       const uint8_t tail = planner.block_buffer_tail;
     #endif
-    CRITICAL_SECTION_END;
+    CRITICAL_SECTION_END();
   #endif
 
   #if ENABLED(MAX7219_DEBUG_PRINTER_ALIVE)

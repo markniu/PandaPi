@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -42,7 +42,7 @@
   #include "../../feature/power_loss_recovery.h"
 #endif
 
-#include "../../Marlin.h" // for startOrResumeJob
+#include "../../MarlinCore.h" // for startOrResumeJob
 
 /**
  * M24: Start or Resume SD Print
@@ -60,9 +60,8 @@ void GcodeSuite::M24() {
       return;
     }
   #endif
+
   if (card.isFileOpen()) {
-  	 
-	printf("M24=1=\n");
     card.startFileprint();            // SD card will now be read for commands
     startOrResumeJob();               // Start (or resume) the print job timer
     #if ENABLED(POWER_LOSS_RECOVERY)
@@ -75,7 +74,7 @@ void GcodeSuite::M24() {
       host_action_resume();
     #endif
     #if ENABLED(HOST_PROMPT_SUPPORT)
-      host_prompt_open(PROMPT_INFO, PSTR("Resuming SD"), PSTR("Dismiss"));
+      host_prompt_open(PROMPT_INFO, PSTR("Resuming SD"), DISMISS_STR);
     #endif
   #endif
 
@@ -97,6 +96,10 @@ void GcodeSuite::M25() {
     M125();
 
   #else
+
+    #if ENABLED(POWER_LOSS_RECOVERY)
+      if (recovery.enabled) recovery.save(true);
+    #endif
 
     print_job_timer.pause();
     ui.reset_status();

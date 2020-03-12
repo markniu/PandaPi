@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -44,7 +44,7 @@
  *  RAMPS_13 | RAMPS_14
  *         7 | 11
  */
-/*
+
 #ifdef TARGET_LPC1768
   #error "Oops! Set MOTHERBOARD to an LPC1768-based board when building for LPC1768."
 #elif defined(__STM32F1__)
@@ -56,7 +56,7 @@
     #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
   #endif
 #endif
-*/
+
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME "RAMPS 1.4"
 #endif
@@ -169,9 +169,9 @@
 
 // SPI for Max6675 or Max31855 Thermocouple
 #if DISABLED(SDSUPPORT)
-  #define MAX6675_SS_PIN   66   // Don't use 53 if there is even the remote possibility of using Display/SD card
+  #define MAX6675_SS_PIN   66   // Don't use 53 if using Display/SD card
 #else
-  #define MAX6675_SS_PIN   66   // Don't use 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
+  #define MAX6675_SS_PIN   66   // Don't use 49 (SD_DETECT_PIN)
 #endif
 
 //
@@ -390,6 +390,24 @@
   #ifndef E4_SERIAL_RX_PIN
     #define E4_SERIAL_RX_PIN -1
   #endif
+  #ifndef E5_SERIAL_TX_PIN
+    #define E5_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E5_SERIAL_RX_PIN
+    #define E5_SERIAL_RX_PIN -1
+  #endif
+  #ifndef E6_SERIAL_TX_PIN
+    #define E6_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E6_SERIAL_RX_PIN
+    #define E6_SERIAL_RX_PIN -1
+  #endif
+  #ifndef E7_SERIAL_TX_PIN
+    #define E7_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E7_SERIAL_RX_PIN
+    #define E7_SERIAL_RX_PIN -1
+  #endif
 #endif
 
 //
@@ -508,7 +526,9 @@
       #ifndef SD_DETECT_PIN
         #define SD_DETECT_PIN   49
       #endif
-      #define KILL_PIN          41
+      #ifndef KILL_PIN
+        #define KILL_PIN        41
+      #endif
 
       #if ENABLED(BQ_LCD_SMART_CONTROLLER)
         #define LCD_BACKLIGHT_PIN 39
@@ -593,7 +613,7 @@
         //#define LCD_SCREEN_ROT_270
 
         // not connected to a pin
-        #define LCD_BACKLIGHT_PIN 65   // backlight LED on A11/D65
+        #define LCD_BACKLIGHT_PIN -1  // 65 (MKS mini12864 can't adjust backlight by software!)
 
         #define BTN_EN1         31
         #define BTN_EN2         33

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -90,7 +90,7 @@
 // requires jumpers on the SKR V1.1 board as documented here:
 // https://www.facebook.com/groups/505736576548648/permalink/630639874058317/
 #ifndef SDCARD_CONNECTION
-  #if ENABLED(MKS_MINI_12864)
+  #if EITHER(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
     #define SDCARD_CONNECTION LCD
   #else
     #define SDCARD_CONNECTION ONBOARD
@@ -230,4 +230,4 @@
 #endif
 
 // Include common SKR pins
-#include "pins_BTT_SKR.h"
+#include "pins_BTT_SKR_common.h"

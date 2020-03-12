@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,20 +22,25 @@
 
 #include "serial.h"
 #include "language.h"
+#if PANDAPI
 #include "driver_api.h"
-
+#endif
 uint8_t marlin_debug_flags = MARLIN_DEBUG_NONE;
 
 static const char errormagic[] PROGMEM = "Error:";
 static const char echomagic[]  PROGMEM = "echo:";
 
 #if NUM_SERIAL > 1
-  int8_t serial_port_index = SERIAL_PORT;
+  int8_t serial_port_index = 0;
 #endif
 
 void serialprintPGM(PGM_P str) {
-//  while (const char c = pgm_read_byte(str++)) SERIAL_CHAR(c);
+#if PANDAPI
   Serial_send(str);
+#else
+  while (const char c = pgm_read_byte(str++)) SERIAL_CHAR(c);
+
+ #endif 
 }
 void serial_echo_start()  { serialprintPGM(echomagic); }
 void serial_error_start() { serialprintPGM(errormagic); }
@@ -56,16 +61,14 @@ void serial_ternary(const bool onoff, PGM_P const pre, PGM_P const on, PGM_P con
   serialprintPGM(onoff ? on : off);
   if (post) serialprintPGM(post);
 }
-void serialprint_onoff(const bool onoff) { serialprintPGM(onoff ? PSTR(MSG_ON) : PSTR(MSG_OFF)); }
+void serialprint_onoff(const bool onoff) { serialprintPGM(onoff ? PSTR(STR_ON) : PSTR(STR_OFF)); }
 void serialprintln_onoff(const bool onoff) { serialprint_onoff(onoff); SERIAL_EOL(); }
 void serialprint_truefalse(const bool tf) { serialprintPGM(tf ? PSTR("true") : PSTR("false")); }
 
-void print_bin(const uint16_t val) {
-  uint16_t mask = 0x8000;
+void print_bin(uint16_t val) {
   for (uint8_t i = 16; i--;) {
-    if (i && !(i % 4)) SERIAL_CHAR(' ');
-    SERIAL_CHAR((val & mask) ? '1' : '0');
-    mask >>= 1;
+    SERIAL_CHAR('0' + TEST(val, i));
+    if (!(i & 0x3) && i) SERIAL_CHAR(' ');
   }
 }
 

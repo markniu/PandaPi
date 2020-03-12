@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -45,7 +45,7 @@
 #ifndef FILAMENT_RUNOUT_THRESHOLD
   #define FILAMENT_RUNOUT_THRESHOLD 5
 #endif
-extern int runout_pin[2];
+extern int runout_pin[2]; ////  PANDAPI
 
 void event_filament_runout();
 
@@ -131,7 +131,6 @@ class FilamentSensorBase {
     static void filament_present(const uint8_t extruder);
 
   public:
-  	
     static inline void setup() {
       #if ENABLED(FIL_RUNOUT_PULLUP)
         #define INIT_RUNOUT_PIN(P) SET_INPUT_PULLUP(P)
@@ -141,58 +140,29 @@ class FilamentSensorBase {
         #define INIT_RUNOUT_PIN(P) SET_INPUT(P)
       #endif
 
-      INIT_RUNOUT_PIN(FIL_RUNOUT_PIN);
-      #if NUM_RUNOUT_SENSORS > 1
-        INIT_RUNOUT_PIN(FIL_RUNOUT2_PIN);
-        #if NUM_RUNOUT_SENSORS > 2
-          INIT_RUNOUT_PIN(FIL_RUNOUT3_PIN);
-          #if NUM_RUNOUT_SENSORS > 3
-            INIT_RUNOUT_PIN(FIL_RUNOUT4_PIN);
-            #if NUM_RUNOUT_SENSORS > 4
-              INIT_RUNOUT_PIN(FIL_RUNOUT5_PIN);
-              #if NUM_RUNOUT_SENSORS > 5
-                INIT_RUNOUT_PIN(FIL_RUNOUT6_PIN);
-              #endif
-            #endif
-          #endif
-        #endif
-      #endif
+      #define _INIT_RUNOUT(N) INIT_RUNOUT_PIN(FIL_RUNOUT##N##_PIN);
+      REPEAT_S(1, INCREMENT(NUM_RUNOUT_SENSORS), _INIT_RUNOUT)
+      #undef _INIT_RUNOUT
     }
 
     // Return a bitmask of runout pin states
-  static    inline uint8_t poll_runout_pins() {
-      return (
-		//  (READ(FIL_RUNOUT_PIN ) ? _BV(0) : 0)
-		  (runout_pin[0] ? _BV(0) : 0)
-        #if NUM_RUNOUT_SENSORS > 1
-		//| (READ(FIL_RUNOUT2_PIN) ? _BV(1) : 0)
-			| (runout_pin[1] ? _BV(1) : 0)
-          #if NUM_RUNOUT_SENSORS > 2
-            | (READ(FIL_RUNOUT3_PIN) ? _BV(2) : 0)
-            #if NUM_RUNOUT_SENSORS > 3
-              | (READ(FIL_RUNOUT4_PIN) ? _BV(3) : 0)
-              #if NUM_RUNOUT_SENSORS > 4
-                | (READ(FIL_RUNOUT5_PIN) ? _BV(4) : 0)
-                #if NUM_RUNOUT_SENSORS > 5
-                  | (READ(FIL_RUNOUT6_PIN) ? _BV(5) : 0)
-                #endif
-              #endif
-            #endif
-          #endif
+    static inline uint8_t poll_runout_pins() {
+      //#define _OR_RUNOUT(N) | (READ(FIL_RUNOUT##N##_PIN) ? _BV((N) - 1) : 0)
+	  #define _OR_RUNOUT(N) | (runout_pin[##N##] ? _BV((N) - 1) : 0) //PANDA
+      return (0 REPEAT_S(1, INCREMENT(NUM_RUNOUT_SENSORS), _OR_RUNOUT));
+      #undef _OR_RUNOUT
+    }
+
+    // Return a bitmask of runout flag states (1 bits always indicates runout)
+    static inline uint8_t poll_runout_states() {
+      return (poll_runout_pins()
+        #if DISABLED(FIL_RUNOUT_INVERTING)
+          ^ uint8_t(_BV(NUM_RUNOUT_SENSORS) - 1)
         #endif
       );
     }
 
-    // Return a bitmask of runout flag states (1 bits always indicates runout)
-  static    inline uint8_t poll_runout_states() {
-      return poll_runout_pins() ^ uint8_t(
-        #if DISABLED(FIL_RUNOUT_INVERTING)
-          _BV(NUM_RUNOUT_SENSORS) - 1
-        #else
-          0
-        #endif
-      );
-    }
+  #undef INIT_RUNOUT_PIN
 };
 
 #if ENABLED(FILAMENT_MOTION_SENSOR)
@@ -207,7 +177,7 @@ class FilamentSensorBase {
     private:
       static uint8_t motion_detected;
 
-     static   inline void poll_motion_sensor() {
+      static inline void poll_motion_sensor() {
         static uint8_t old_state;
         const uint8_t new_state = poll_runout_pins(),
                       change    = old_state ^ new_state;
@@ -217,7 +187,7 @@ class FilamentSensorBase {
           if (change) {
             SERIAL_ECHOPGM("Motion detected:");
             for (uint8_t e = 0; e < NUM_RUNOUT_SENSORS; e++)
-              if (TEST(change, e)) { SERIAL_CHAR(' '); SERIAL_CHAR('0' + e); }
+              if (TEST(change, e)) SERIAL_CHAR(' ', '0' + e);
             SERIAL_EOL();
           }
         #endif
@@ -247,7 +217,7 @@ class FilamentSensorBase {
    */
   class FilamentSensorSwitch : public FilamentSensorBase {
     private:
-     static   inline bool poll_runout_state(const uint8_t extruder) {
+      static inline bool poll_runout_state(const uint8_t extruder) {
         const uint8_t runout_states = poll_runout_states();
 
         #if NUM_RUNOUT_SENSORS == 1
@@ -274,7 +244,7 @@ class FilamentSensorBase {
     public:
       static inline void block_completed(const block_t* const) {}
 
-     static   inline void run() {
+      static inline void run() {
         const bool out = poll_runout_state(active_extruder);
         if (!out) filament_present(active_extruder);
         #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
@@ -381,5 +351,3 @@ typedef TFilamentMonitor<
 > FilamentMonitor;
 
 extern FilamentMonitor runout;
-
-

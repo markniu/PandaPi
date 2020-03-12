@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -75,8 +75,7 @@ void GcodeSuite::M425() {
     SERIAL_ECHOLNPAIR("  Correction Amount/Fade-out:     F", backlash.get_correction(), " (F1.0 = full, F0.0 = none)");
     SERIAL_ECHOPGM("  Backlash Distance (mm):        ");
     LOOP_XYZ(a) {
-      SERIAL_CHAR(' ');
-      SERIAL_CHAR(axis_codes[a]);
+      SERIAL_CHAR(' ', axis_codes[a]);
       SERIAL_ECHO(backlash.distance_mm[a]);
       SERIAL_EOL();
     }
@@ -89,8 +88,7 @@ void GcodeSuite::M425() {
       SERIAL_ECHOPGM("  Average measured backlash (mm):");
       if (backlash.has_any_measurement()) {
         LOOP_XYZ(a) if (backlash.has_measurement(AxisEnum(a))) {
-          SERIAL_CHAR(' ');
-          SERIAL_CHAR(axis_codes[a]);
+          SERIAL_CHAR(' ', axis_codes[a]);
           SERIAL_ECHO(backlash.get_measurement(AxisEnum(a)));
         }
       }

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -31,12 +31,9 @@
 #define ST7920_DAT_PIN  LCD_PINS_ENABLE
 #define ST7920_CS_PIN   LCD_PINS_RS
 
-//#define PAGE_HEIGHT 8   //128 byte framebuffer
-#define PAGE_HEIGHT 16  //256 byte framebuffer
-//#define PAGE_HEIGHT 32  //512 byte framebuffer
-
-#define LCD_PIXEL_WIDTH 128
-#define LCD_PIXEL_HEIGHT 64
+//#define PAGE_HEIGHT 8   // 128 byte framebuffer
+#define PAGE_HEIGHT 16    // 256 byte framebuffer
+//#define PAGE_HEIGHT 32  // 512 byte framebuffer
 
 #include <U8glib.h>
 
@@ -45,7 +42,7 @@
 //#define ST7920_DELAY_2 DELAY_NS(0)
 //#define ST7920_DELAY_3 DELAY_NS(0)
 
-#if 1// F_CPU >= 20000000
+#if 1// F_CPU >= 20000000 //  PANDAPI
   #define CPU_ST7920_DELAY_1 DELAY_NS(1200)
   #define CPU_ST7920_DELAY_2 DELAY_NS(1200)
   #define CPU_ST7920_DELAY_3 DELAY_NS(1200)
@@ -83,7 +80,7 @@ void ST7920_SWSPI_SND_8BIT(uint8_t val);
 #if DOGM_SPI_DELAY_US > 0
   #define U8G_DELAY() DELAY_US(DOGM_SPI_DELAY_US)
 #else
-  #define U8G_DELAY() u8g_10MicroDelay()
+  #define U8G_DELAY() u8g_10MicroDelay() //  PANDAPI
 #endif
 
 #define ST7920_CS()              { WRITE(ST7920_CS_PIN,1); U8G_DELAY(); }

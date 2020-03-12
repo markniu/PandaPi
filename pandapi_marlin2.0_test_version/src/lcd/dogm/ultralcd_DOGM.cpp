@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -38,7 +38,7 @@
 #include "../../inc/MarlinConfigPre.h"
 
 #if HAS_GRAPHICAL_LCD
-
+ 
 #include "ultralcd_DOGM.h"
 #include "u8g_fontutf8.h"
 
@@ -103,12 +103,13 @@ void MarlinUI::set_font(const MarlinFont font_nr) {
 }
 
 bool MarlinUI::detected() { return true; }
-
+ 
 #if ENABLED(SHOW_BOOTSCREEN)
 
   #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
     // Draws a slice of a particular frame of the custom bootscreen, without the u8g loop
     void MarlinUI::draw_custom_bootscreen(const uint8_t frame/*=0*/) {
+#if 0    
       constexpr u8g_uint_t left = u8g_uint_t((LCD_PIXEL_WIDTH  - (CUSTOM_BOOTSCREEN_BMPWIDTH)) / 2),
                             top = u8g_uint_t((LCD_PIXEL_HEIGHT - (CUSTOM_BOOTSCREEN_BMPHEIGHT)) / 2);
       #if ENABLED(CUSTOM_BOOTSCREEN_INVERTED)
@@ -135,8 +136,66 @@ bool MarlinUI::detected() { return true; }
           if (bottom < LCD_PIXEL_HEIGHT) u8g.drawBox(0, bottom, LCD_PIXEL_WIDTH, LCD_PIXEL_HEIGHT - bottom);
         }
       #endif
-	  
-	//  u8g.drawBitmapP(0, STATUS_HEATERS_Y, 10, STATUS_HEATERS_HEIGHT, status_hotend_a_bmp);
+#else // PANDAPI
+//////////////////////////////////
+ #define CUSTOM_BOOTSCREEN_BMPWIDTH   64
+ #define CUSTOM_BOOTSCREEN_BMPHEIGHT   60
+
+    // Determine text space needed
+    constexpr u8g_uint_t text_width_1 = u8g_uint_t((sizeof(SHORT_BUILD_VERSION) - 1) * (MENU_FONT_WIDTH)),
+                         text_width_2 = u8g_uint_t((sizeof(MARLIN_WEBSITE_URL) - 1) * (MENU_FONT_WIDTH)),
+                         text_max_width = _MAX(text_width_1, text_width_2),
+                         text_total_height = (MENU_FONT_HEIGHT) * 2,
+                         width = LCD_PIXEL_WIDTH, height = LCD_PIXEL_HEIGHT,
+                         rspace = width - (START_BMPWIDTH);
+
+    u8g_int_t offx, offy, txt_base, txt_offx_1, txt_offx_2;
+
+    // Can the text fit to the right of the bitmap?
+    if (text_max_width < rspace) {
+      constexpr int8_t inter = (width - text_max_width - (START_BMPWIDTH)) / 3; // Evenly distribute horizontal space
+      offx = inter;                             // First the boot logo...
+      offy = (height - (START_BMPHEIGHT)) / 2;  // ...V-aligned in the full height
+      txt_offx_1 = txt_offx_2 = inter + (START_BMPWIDTH) + inter; // Text right of the bitmap
+      txt_base = (height + MENU_FONT_ASCENT + text_total_height - (MENU_FONT_HEIGHT)) / 2; // Text vertical center
+    }
+    else {
+      constexpr int8_t inter = (height - text_total_height - (START_BMPHEIGHT)) / 3; // Evenly distribute vertical space
+      offx = rspace / 2;                        // Center the boot logo in the whole space
+      offy = inter;                             // V-align boot logo proportionally
+      txt_offx_1 = (width - text_width_1) / 2;  // Text 1 centered
+      txt_offx_2 = (width - text_width_2) / 2;  // Text 2 centered
+      txt_base = offy + START_BMPHEIGHT + offy + text_total_height - (MENU_FONT_DESCENT);   // Even spacing looks best
+    }
+    NOLESS(offx, 0);
+    NOLESS(offy, 0);
+    bool line2=false;
+    auto _draw_bootscreen_bmp = [&](const uint8_t *bitmap) {
+      //u8g.drawBitmapP(offx, offy, START_BMP_BYTEWIDTH, START_BMPHEIGHT, bitmap);
+     // u8g.drawBitmapP(offx, offy, (START_BMPWIDTH + 7) / 8, START_BMPHEIGHT, bitmap);
+      u8g.drawBitmapP(0, 0, CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH, CUSTOM_BOOTSCREEN_BMPHEIGHT, bitmap);
+      set_font(FONT_MENU);
+        lcd_put_u8str_P(CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH+70, txt_base -2* (MENU_FONT_HEIGHT), PSTR("PandaPi"));
+       lcd_put_u8str_P(CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH+80, txt_base, PSTR("V1.2"));
+    };
+
+    auto draw_bootscreen_bmp = [&](const uint8_t *bitmap) {
+      u8g.firstPage(); do { _draw_bootscreen_bmp(bitmap); } while (u8g.nextPage());
+    };
+
+    #if DISABLED(BOOT_MARLIN_LOGO_ANIMATED)
+      draw_bootscreen_bmp(custom_start_bmp);
+    #else
+      constexpr millis_t d = MARLIN_BOOTSCREEN_FRAME_TIME;
+      LOOP_L_N(f, COUNT(marlin_bootscreen_animation)) {
+        draw_bootscreen_bmp((uint8_t*)pgm_read_ptr(&marlin_bootscreen_animation[f]));
+        if (d) safe_delay(d);
+      }
+    #endif
+
+//////////////////////////
+
+#endif
     }
 
     // Shows the custom bootscreen, with the u8g loop, animations and delays
@@ -153,7 +212,7 @@ bool MarlinUI::detected() { return true; }
           do { draw_custom_bootscreen(f); } while (u8g.nextPage());
           if (d) safe_delay(d);
         }
-
+ 
       #ifndef CUSTOM_BOOTSCREEN_TIMEOUT
         #define CUSTOM_BOOTSCREEN_TIMEOUT 2500
       #endif
@@ -167,12 +226,12 @@ bool MarlinUI::detected() { return true; }
   // Draw the static Marlin bootscreen from a u8g loop
   // or the animated boot screen within its own u8g loop
   void MarlinUI::draw_marlin_bootscreen(const bool line2/*=false*/) {
-       
-    // Determine text space needed 
+
+    // Determine text space needed
     constexpr u8g_uint_t text_width_1 = u8g_uint_t((sizeof(SHORT_BUILD_VERSION) - 1) * (MENU_FONT_WIDTH)),
                          text_width_2 = u8g_uint_t((sizeof(MARLIN_WEBSITE_URL) - 1) * (MENU_FONT_WIDTH)),
                          text_max_width = _MAX(text_width_1, text_width_2),
-                         text_total_height = (MENU_FONT_HEIGHT) * 2, 
+                         text_total_height = (MENU_FONT_HEIGHT) * 2,
                          width = LCD_PIXEL_WIDTH, height = LCD_PIXEL_HEIGHT,
                          rspace = width - (START_BMPWIDTH);
 
@@ -202,7 +261,7 @@ bool MarlinUI::detected() { return true; }
       set_font(FONT_MENU);
       if (!two_part || !line2) lcd_put_u8str_P(txt_offx_1, txt_base - (MENU_FONT_HEIGHT), PSTR(SHORT_BUILD_VERSION));
       if (!two_part || line2) lcd_put_u8str_P(txt_offx_2, txt_base, PSTR(MARLIN_WEBSITE_URL));
-    }; 
+    };
 
     auto draw_bootscreen_bmp = [&](const uint8_t *bitmap) {
       u8g.firstPage(); do { _draw_bootscreen_bmp(bitmap); } while (u8g.nextPage());
@@ -228,67 +287,69 @@ bool MarlinUI::detected() { return true; }
     for (uint8_t q = pages; q--;) {
       draw_marlin_bootscreen(q == 0);
       safe_delay((BOOTSCREEN_TIMEOUT) / pages);
-	  
     }
-  }
-
+  } 
+ 
   void MarlinUI::show_bootscreen() {
     #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
       show_custom_bootscreen();
     #endif
-    show_marlin_bootscreen();
+    show_marlin_bootscreen(); 
   }
-
+ 
 #endif // SHOW_BOOTSCREEN
-
+ 
 #if ENABLED(LIGHTWEIGHT_UI)
   #include "status_screen_lite_ST7920.h"
 #endif
 
 // Initialize or re-initialize the LCD
 void MarlinUI::init_lcd() {
+  #if DISABLED(MKS_LCD12864B)
 
-  #if PIN_EXISTS(LCD_BACKLIGHT)
-    OUT_WRITE(LCD_BACKLIGHT_PIN, (
-      #if ENABLED(DELAYED_BACKLIGHT_INIT)
-        LOW  // Illuminate after reset
-      #else
-        HIGH // Illuminate right away
-      #endif
-    ));
-  #endif
-
-  #if EITHER(MKS_12864OLED, MKS_12864OLED_SSD1306)
-    SET_OUTPUT(LCD_PINS_DC);
-    #ifndef LCD_RESET_PIN
-      #define LCD_RESET_PIN LCD_PINS_RS
+    #if PIN_EXISTS(LCD_BACKLIGHT)
+      OUT_WRITE(LCD_BACKLIGHT_PIN, (
+        #if ENABLED(DELAYED_BACKLIGHT_INIT)
+          LOW  // Illuminate after reset
+        #else
+          HIGH // Illuminate right away
+        #endif
+      ));
     #endif
-  #endif
 
-  #if PIN_EXISTS(LCD_RESET)
-    // Perform a clean hardware reset with needed delays
-    OUT_WRITE(LCD_RESET_PIN, LOW);
-    _delay_ms(5);
-    WRITE(LCD_RESET_PIN, HIGH);
-    _delay_ms(5);
-    u8g.begin();
-  #endif
+    #if EITHER(MKS_12864OLED, MKS_12864OLED_SSD1306)
+      SET_OUTPUT(LCD_PINS_DC);
+      #ifndef LCD_RESET_PIN
+        #define LCD_RESET_PIN LCD_PINS_RS
+      #endif
+    #endif
 
-  #if PIN_EXISTS(LCD_BACKLIGHT) && ENABLED(DELAYED_BACKLIGHT_INIT)
-    WRITE(LCD_BACKLIGHT_PIN, HIGH);
-  #endif
+    #if PIN_EXISTS(LCD_RESET)
+      // Perform a clean hardware reset with needed delays
+      OUT_WRITE(LCD_RESET_PIN, LOW);
+      _delay_ms(5);
+      WRITE(LCD_RESET_PIN, HIGH);
+      _delay_ms(5);
+      u8g.begin();
+    #endif
 
-  #if HAS_LCD_CONTRAST
-    refresh_contrast();
-  #endif
+    #if PIN_EXISTS(LCD_BACKLIGHT) && ENABLED(DELAYED_BACKLIGHT_INIT)
+      WRITE(LCD_BACKLIGHT_PIN, HIGH);
+    #endif
 
-  #if ENABLED(LCD_SCREEN_ROT_90)
-    u8g.setRot90();
-  #elif ENABLED(LCD_SCREEN_ROT_180)
-    u8g.setRot180();
-  #elif ENABLED(LCD_SCREEN_ROT_270)
-    u8g.setRot270();
-  #endif
+    #if HAS_LCD_CONTRAST
+      refresh_contrast();
+    #endif
+
+    #if ENABLED(LCD_SCREEN_ROT_90)
+      u8g.setRot90();
+    #elif ENABLED(LCD_SCREEN_ROT_180)
+      u8g.setRot180();
+    #elif ENABLED(LCD_SCREEN_ROT_270)
+      u8g.setRot270();
+    #endif
+
+  #endif // !MKS_LCD12864B
 
   uxg_SetUtf8Fonts(g_fontinfo, COUNT(g_fontinfo));
 }

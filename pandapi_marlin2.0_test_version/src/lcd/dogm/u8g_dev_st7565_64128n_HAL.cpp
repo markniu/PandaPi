@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -55,7 +55,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if 0//HAS_GRAPHICAL_LCD
+#if 0//HAS_GRAPHICAL_LCD //  PANDAPI
 
 #include <U8glib.h>
 #include "HAL_LCD_com_defines.h"

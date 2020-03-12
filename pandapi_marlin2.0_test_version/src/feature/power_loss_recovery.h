@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -148,22 +148,21 @@ class PrintJobRecovery {
     static void enable(const bool onoff);
     static void changed();
 
-    static void check();
-    static void resume();
-
     static inline bool exists() { return card.jobRecoverFileExists(); }
     static inline void open(const bool read) { card.openJobRecoveryFile(read); }
     static inline void close() { file.close(); }
 
+    static void check();
+    static void resume();
     static void purge();
+
+    static inline void cancel() { purge(); card.autostart_index = 0; }
+
     static void load();
-    static void save(const bool force=
+    static void save(const bool force=false
       #if ENABLED(SAVE_EACH_CMD_MODE)
-        true
-      #else
-        false
+        || true
       #endif
-      , const bool save_queue=true
     );
 
   #if PIN_EXISTS(POWER_LOSS)

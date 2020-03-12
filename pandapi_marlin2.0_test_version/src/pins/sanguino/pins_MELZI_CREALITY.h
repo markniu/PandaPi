@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -35,9 +35,9 @@
 
 #include "pins_MELZI.h"
 
-// For the stock CR-10 use the REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
-//   option for the display in Configuration.h
-
+//
+// For the stock CR-10 enable CR10_STOCKDISPLAY in Configuration.h
+//
 #undef LCD_SDSS
 #undef LED_PIN
 #undef LCD_PINS_RS

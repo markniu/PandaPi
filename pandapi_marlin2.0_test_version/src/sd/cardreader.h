@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,6 +20,7 @@
  *
  */
 #pragma once
+//  PANDAPI
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -42,7 +43,7 @@
 
 
 
-unsigned long	get_file_size(const char *path);
+unsigned long	get_file_size(const char *path);//  PANDAPI
 
 typedef struct {
   bool saving:1,
@@ -60,11 +61,7 @@ typedef struct {
 
 class CardReader {
 public:
-  
-  
-   
-    
-
+  static uint8_t sdprinting_done_state;
   static card_flags_t flag;                         // Flags (above)
   static char filename[FILENAME_LENGTH],            // DOS 8.3 filename of the selected item
               longFilename[LONG_FILENAME_LENGTH];   // Long name of the selected item
@@ -83,7 +80,6 @@ public:
   CardReader();
 
   static SdFile getroot() { return root; }
-  
 
   static void mount();
   static void release();
@@ -100,7 +96,8 @@ public:
   static void checkautostart();
 
   // Basic file ops
-  static void openFile(char * const path, const bool read, const bool subcall=false);
+  static void openFileRead(char * const path, const uint8_t subcall=0);
+  static void openFileWrite(char * const path);
   static void closefile(const bool store_location=false);
   static void removeFile(const char * const name);
 
@@ -122,11 +119,11 @@ public:
 
   // Print job
   static void openAndPrintFile(const char *name);   // (working directory)
-  static void printingHasFinished();
+  static void fileHasFinished();
   static void getAbsFilename(char *dst);
-  static void startFileprint();
   static void printFilename();
-  static void stopSDPrint(
+  static void startFileprint();
+  static void endFilePrint(
     #if SD_RESORT
       const bool re_sort=false
     #endif
@@ -141,7 +138,7 @@ public:
   static inline uint8_t percentDone() { return (isFileOpen() && filesize) ? sdpos / ((filesize + 99) / 100) : 0; }
 
   // Helper for open and remove
-  static const char* diveToFile(SdFile*& curDir, const char * const path, const bool echo=false);
+  static const char* diveToFile(const bool update_cwd, SdFile*& curDir, const char * const path, const bool echo=false);
 
   #if ENABLED(SDCARD_SORT_ALPHA)
     static void presort();
@@ -160,7 +157,7 @@ public:
     static void openJobRecoveryFile(const bool read);
     static void removeJobRecoveryFile();
   #endif
-
+//  PANDAPI
   static inline bool isFileOpen() { return isMounted() && fd_sd_card;/*file.isOpen();*/ }
   static inline uint32_t getIndex() { return sdpos; }
   static inline bool eof() { return sdpos >= filesize; }
@@ -259,7 +256,7 @@ private:
   static SdFile file;
 
   static uint32_t filesize, sdpos;
-  static FILE *fd_sd_card;
+  static FILE *fd_sd_card;//  PANDAPI
 
   //
   // Procedure calls to other files
@@ -290,6 +287,7 @@ private:
   static void selectByIndex(SdFile dir, const uint8_t index);
   static void selectByName(SdFile dir, const char * const match);
   static void printListing(SdFile parent, const char * const prepend=nullptr);
+  //  PANDAPI
   static int  Linux_readDir(dir_t* p,int printout,int index, const char * const mach_name);
 
   #if ENABLED(SDCARD_SORT_ALPHA)

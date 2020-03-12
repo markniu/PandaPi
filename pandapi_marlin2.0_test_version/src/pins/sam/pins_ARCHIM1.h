@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -47,7 +47,7 @@
 // Timers
 //
 #define STEP_TIMER_NUM 3
-//#define HAL_STEP_TIMER_ISR()  void TC3_Handler()
+//#define HAL_STEP_TIMER_ISR()  void TC3_Handler()//  PANDAPI
 
 //
 // Items marked * have been altered from Archim v1.0

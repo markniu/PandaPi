@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,7 +20,7 @@
  *
  */
 #pragma once
-#define __PLAT_PANDAPI__
+#define __PLAT_PANDAPI__ //  PANDAPI
 
 #ifdef __AVR__
   #define HAL_PLATFORM HAL_AVR
@@ -44,11 +44,11 @@
   #define HAL_PLATFORM HAL_LINUX
 #elif defined(__SAMD51__)
   #define HAL_PLATFORM HAL_SAMD51
-#elif defined(__PLAT_PANDAPI__)
+#elif defined(__PLAT_PANDAPI__) //  PANDAPI
   #define HAL_PLATFORM HAL_PANDAPI
   
 #else
-  #error "Unsupported Platform1!"
+  #error "Unsupported Platform!"
 #endif
 
 #define XSTR_(M) #M

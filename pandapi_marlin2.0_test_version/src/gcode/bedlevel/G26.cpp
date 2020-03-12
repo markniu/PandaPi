@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -34,7 +34,7 @@
 #include "../../gcode/gcode.h"
 #include "../../feature/bedlevel/bedlevel.h"
 
-#include "../../Marlin.h"
+#include "../../MarlinCore.h"
 #include "../../module/planner.h"
 #include "../../module/stepper.h"
 #include "../../module/motion.h"
@@ -43,12 +43,15 @@
 #include "../../lcd/ultralcd.h"
 
 #define EXTRUSION_MULTIPLIER 1.0
-#define RETRACTION_MULTIPLIER 1.0
 #define PRIME_LENGTH 10.0
 #define OOZE_AMOUNT 0.3
 
 #define INTERSECTION_CIRCLE_RADIUS 5
 #define CROSSHAIRS_SIZE 3
+
+#ifndef G26_RETRACT_MULTIPLIER
+  #define G26_RETRACT_MULTIPLIER 1.0 // x 1mm
+#endif
 
 #ifndef G26_XY_FEEDRATE
   #define G26_XY_FEEDRATE (PLANNER_XY_FEEDRATE() / 3.0)
@@ -418,15 +421,13 @@ inline bool turn_on_heaters() {
 inline bool prime_nozzle() {
 
   const feedRate_t fr_slow_e = planner.settings.max_feedrate_mm_s[E_AXIS] / 15.0f;
-  #if HAS_LCD_MENU
+  #if HAS_LCD_MENU && DISABLED(TOUCH_BUTTONS) // ui.button_pressed issue with touchscreen
     #if ENABLED(PREVENT_LENGTHY_EXTRUDE)
       float Total_Prime = 0.0;
     #endif
 
     if (g26_prime_flag == -1) {  // The user wants to control how much filament gets purged
-      #if HAS_LCD_MENU
-        ui.capture();
-      #endif
+      ui.capture();
       ui.set_status_P(GET_TEXT(MSG_G26_MANUAL_PRIME), 99);
       ui.chirp();
 
@@ -439,7 +440,10 @@ inline bool prime_nozzle() {
         destination.e += 0.25;
         #if ENABLED(PREVENT_LENGTHY_EXTRUDE)
           Total_Prime += 0.25;
-          if (Total_Prime >= EXTRUDE_MAXLENGTH) return G26_ERR;
+          if (Total_Prime >= EXTRUDE_MAXLENGTH) {
+            ui.release();
+            return G26_ERR;
+          }
         #endif
         prepare_internal_move_to_destination(fr_slow_e);
         destination = current_position;
@@ -508,7 +512,7 @@ void GcodeSuite::G26() {
   if (parser.seenval('T')) tool_change(parser.value_int());
 
   g26_extrusion_multiplier    = EXTRUSION_MULTIPLIER;
-  g26_retraction_multiplier   = RETRACTION_MULTIPLIER;
+  g26_retraction_multiplier   = G26_RETRACT_MULTIPLIER;
   g26_layer_height            = MESH_TEST_LAYER_HEIGHT;
   g26_prime_length            = PRIME_LENGTH;
   g26_bed_temp                = MESH_TEST_BED_TEMP;
@@ -706,7 +710,7 @@ void GcodeSuite::G26() {
     if (location.valid()) {
       const xy_pos_t circle = _GET_MESH_POS(location.pos);
 
-      // If this mesh location is outside the printable_radius, skip it.
+      // If this mesh location is outside the printable radius, skip it.
       if (!position_is_reachable(circle)) continue;
 
       // Determine where to start and end the circle,

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -64,8 +64,8 @@ void GcodeSuite::M420() {
 
   #if ENABLED(MARLIN_DEV_MODE)
     if (parser.intval('S') == 2) {
-      const float x_min = probe_min_x(), x_max = probe_max_x(),
-                  y_min = probe_min_y(), y_max = probe_max_y();
+      const float x_min = probe.min_x(), x_max = probe.max_x(),
+                  y_min = probe.min_y(), y_max = probe.max_y();
       #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
         bilinear_start.set(x_min, y_min);
         bilinear_grid_spacing.set((x_max - x_min) / (GRID_MAX_POINTS_X - 1),
@@ -235,7 +235,7 @@ void GcodeSuite::M420() {
 
   // Error if leveling failed to enable or reenable
   if (to_enable && !planner.leveling_active)
-    SERIAL_ERROR_MSG(MSG_ERR_M420_FAILED);
+    SERIAL_ERROR_MSG(STR_ERR_M420_FAILED);
 
   SERIAL_ECHO_START();
   SERIAL_ECHOPGM("Bed Leveling ");
@@ -247,7 +247,7 @@ void GcodeSuite::M420() {
     if (planner.z_fade_height > 0.0)
       SERIAL_ECHOLN(planner.z_fade_height);
     else
-      SERIAL_ECHOLNPGM(MSG_OFF);
+      SERIAL_ECHOLNPGM(STR_OFF);
   #endif
 
   // Report change in position

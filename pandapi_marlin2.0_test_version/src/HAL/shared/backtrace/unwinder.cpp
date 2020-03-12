@@ -12,7 +12,7 @@
  * File Description: Implementation of the interface into the ARM unwinder.
  **************************************************************************/
 
-#if 0// defined(__arm__) || defined(__thumb__)
+#if 0// defined(__arm__) || defined(__thumb__)//  PANDAPI
 
 #define MODULE_NAME "UNWINDER"
 

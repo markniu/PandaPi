@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -27,14 +27,11 @@
 // Delay that ensures heaters and watchdog are kept alive
 void safe_delay(millis_t ms);
 
-// A delay to provide brittle hosts time to receive bytes
-inline void serial_delay(const millis_t ms) {
-  #if ENABLED(SERIAL_OVERRUN_PROTECTION)
-    safe_delay(ms);
-  #else
-    UNUSED(ms);
-  #endif
-}
+#if ENABLED(SERIAL_OVERRUN_PROTECTION)
+  void serial_delay(const millis_t ms);
+#else
+  inline void serial_delay(const millis_t) {}
+#endif
 
 #if GRID_MAX_POINTS_X && GRID_MAX_POINTS_Y
 
@@ -72,8 +69,9 @@ public:
   ~restorer() { restore(); }
   inline void restore() { ref_ = val_; }
 };
-
+//PANDAPI
 #define REMEMBER(N,X,V...) const restorer<__typeof__(X)> restorer_##N(X, ##V)
+
 #define RESTORE(N) restorer_##N.restore()
 
 // Converts from an uint8_t in the range of 0-255 to an uint8_t

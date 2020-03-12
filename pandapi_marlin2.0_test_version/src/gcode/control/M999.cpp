@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -23,7 +23,7 @@
 #include "../gcode.h"
 
 #include "../../lcd/ultralcd.h" // for lcd_reset_alert_level
-#include "../../Marlin.h"       // for Running
+#include "../../MarlinCore.h"   // for Running
 #include "../queue.h"           // for flush_and_request_resend
 
 /**

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -59,8 +59,6 @@
 
 #include "HAL_LCD_com_defines.h"
 
-#define LCD_PIXEL_WIDTH  128
-#define LCD_PIXEL_HEIGHT  64
 #define PAGE_HEIGHT        8
 
 /* init sequence from https://github.com/adafruit/ST7565-LCD/blob/master/ST7565/ST7565.cpp */
@@ -74,7 +72,7 @@ static const uint8_t u8g_dev_st7920_128x64_HAL_init_seq[] PROGMEM = {
 
   0x038,              // 8 Bit interface (DL=1), basic instruction set (RE=0)
   0x00C,              // display on, cursor & blink off; 0x08: all off
-  0x006,              // Entry mode: Cursor move to right ,DDRAM address counter (AC) plus 1, no shift
+  0x006,              // Entry mode: Cursor move to right, DDRAM address counter (AC) plus 1, no shift
   0x002,              // disable scroll, enable CGRAM adress
   0x001,              // clear RAM, needs 1.6 ms
   U8G_ESC_DLY(100),   // delay 100 ms

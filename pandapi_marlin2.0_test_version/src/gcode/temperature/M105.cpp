@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -29,9 +29,9 @@
 void GcodeSuite::M105() {
 
   const int8_t target_extruder = get_target_extruder_from_command();
-//  if (target_extruder < 0) return;
+  if (target_extruder < 0) return;
 
-  SERIAL_ECHOPGM(MSG_OK);
+  SERIAL_ECHOPGM(STR_OK);
 
   #if HAS_TEMP_SENSOR
 

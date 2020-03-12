@@ -1,7 +1,7 @@
 /**
  * Marlin 3D Printer Firmware
  *
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  * Copyright (c) 2016 Bob Cousins bobcousins42@googlemail.com
  * Copyright (c) 2015-2016 Nico Tonnhofer wurstnase.reprap@gmail.com
  * Copyright (c) 2016 Victor Perez victor_pv@hotmail.com
@@ -25,19 +25,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #include "../../libs/crc16.h"
 
 class PersistentStore {
 public:
-
   static bool access_start();
   static bool access_finish();
   static bool write_data(int &pos, const uint8_t *value, size_t size, uint16_t *crc);
   static bool read_data(int &pos, uint8_t* value, size_t size, uint16_t *crc, const bool writing=true);
   static size_t capacity();
-  static void load_to_cache();
-  static void	write_from_cache();
+  static void load_to_cache(); //  PANDAPI
+  static void	write_from_cache();//  PANDAPI
 
   static inline bool write_data(const int pos, const uint8_t* value, const size_t size=sizeof(uint8_t)) {
     int data_pos = pos;

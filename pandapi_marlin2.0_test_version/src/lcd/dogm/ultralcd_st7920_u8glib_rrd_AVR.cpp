@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 // NOTE - the HAL version of the rrd device uses a generic ST7920 device.  See the
 // file u8g_dev_st7920_128x64_HAL.cpp for the HAL version.
-   
+
 #include "../../inc/MarlinConfigPre.h"
 
 #if !defined(U8G_HAL_LINKS) && ANY(PANDAPI, ARDUINO_ARCH_STM32)
@@ -32,7 +32,7 @@
 #if ENABLED(U8GLIB_ST7920)
 
 #include "ultralcd_st7920_u8glib_rrd_AVR.h"
-  
+
 #ifndef ST7920_DELAY_1
   #define ST7920_DELAY_1 CPU_ST7920_DELAY_1
 #endif
@@ -76,7 +76,7 @@ uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
   uint8_t i, y;
   switch (msg) {
     case U8G_DEV_MSG_INIT: {
-		 wiringPiSetup () ;// luojin
+		 wiringPiSetup () ;// //  PANDAPI
       OUT_WRITE(ST7920_CS_PIN, LOW);
       OUT_WRITE(ST7920_DAT_PIN, LOW);
       OUT_WRITE(ST7920_CLK_PIN, HIGH);
@@ -100,7 +100,7 @@ uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
       }
       ST7920_WRITE_BYTE(0x0C);        // Display on, cursor+blink off
       ST7920_NCS();
-    }  
+    }
     break;
 
     case U8G_DEV_MSG_STOP: break;
@@ -126,7 +126,7 @@ uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
         ST7920_WRITE_BYTES(ptr, (LCD_PIXEL_WIDTH) / 8); // ptr incremented inside of macro!
         y++;
       }
-      ST7920_NCS(); 
+      ST7920_NCS();
     }
     break;
   }
@@ -155,4 +155,4 @@ u8g_dev_t u8g_dev_st7920_128x64_rrd_sw_spi = { u8g_dev_rrd_st7920_128x64_fn, &u8
 #endif
 
 #endif // U8GLIB_ST7920
-#endif // __AVR__ && !U8G_HAL_LINKS
+#endif // !U8G_HAL_LINKS && (__AVR__ || ARDUINO_ARCH_STM32 || ARDUINO_ARCH_ESP32)

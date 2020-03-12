@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -245,14 +245,6 @@ namespace Language_de {
   PROGMEM Language_Str MSG_AUTOTEMP                        = _UxGT("Auto Temperatur");
   PROGMEM Language_Str MSG_LCD_ON                          = _UxGT("an");
   PROGMEM Language_Str MSG_LCD_OFF                         = _UxGT("aus");
-  PROGMEM Language_Str MSG_PID_P                           = _UxGT("PID P");
-  PROGMEM Language_Str MSG_PID_P_E                         = _UxGT("PID P *");
-  PROGMEM Language_Str MSG_PID_I                           = _UxGT("PID I");
-  PROGMEM Language_Str MSG_PID_I_E                         = _UxGT("PID I *");
-  PROGMEM Language_Str MSG_PID_D                           = _UxGT("PID D");
-  PROGMEM Language_Str MSG_PID_D_E                         = _UxGT("PID D *");
-  PROGMEM Language_Str MSG_PID_C                           = _UxGT("PID C");
-  PROGMEM Language_Str MSG_PID_C_E                         = _UxGT("PID C *");
   PROGMEM Language_Str MSG_SELECT                          = _UxGT("Auswählen");
   PROGMEM Language_Str MSG_SELECT_E                        = _UxGT("Auswählen *");
   PROGMEM Language_Str MSG_ACC                             = _UxGT("Beschleunigung");
@@ -298,12 +290,12 @@ namespace Language_de {
   PROGMEM Language_Str MSG_CONTRAST                        = _UxGT("LCD-Kontrast");
   PROGMEM Language_Str MSG_STORE_EEPROM                    = _UxGT("Konfig. speichern");
   PROGMEM Language_Str MSG_LOAD_EEPROM                     = _UxGT("Konfig. laden");
-  PROGMEM Language_Str MSG_RESTORE_FAILSAFE                = _UxGT("Standardwerte laden");
+  PROGMEM Language_Str MSG_RESTORE_DEFAULTS                = _UxGT("Standardwerte laden");
   PROGMEM Language_Str MSG_INIT_EEPROM                     = _UxGT("Werkseinstellungen");
   PROGMEM Language_Str MSG_MEDIA_UPDATE                    = _UxGT("FW Update vom Medium");
   PROGMEM Language_Str MSG_RESET_PRINTER                   = _UxGT("Drucker neustarten");
   PROGMEM Language_Str MSG_REFRESH                         = LCD_STR_REFRESH  _UxGT("Aktualisieren");
-  PROGMEM Language_Str MSG_WATCH                           = _UxGT("Info");
+  PROGMEM Language_Str MSG_INFO_SCREEN                     = _UxGT("Info");
   PROGMEM Language_Str MSG_PREPARE                         = _UxGT("Vorbereitung");
   PROGMEM Language_Str MSG_TUNE                            = _UxGT("Justierung");
   PROGMEM Language_Str MSG_START_PRINT                     = _UxGT("Starte Druck");
@@ -351,7 +343,7 @@ namespace Language_de {
   PROGMEM Language_Str MSG_FILAMENTUNLOAD                  = _UxGT("Filament entladen");
   PROGMEM Language_Str MSG_FILAMENTUNLOAD_E                = _UxGT("Filament entladen *");
   PROGMEM Language_Str MSG_FILAMENTUNLOAD_ALL              = _UxGT("Alles entladen");
-  PROGMEM Language_Str MSG_INIT_MEDIA                      = _UxGT("Medium initial.");  // Manually initialize the SD-card via user interface
+  PROGMEM Language_Str MSG_ATTACH_MEDIA                    = _UxGT("Medium initial.");  // Manually initialize the SD-card via user interface
   PROGMEM Language_Str MSG_CHANGE_MEDIA                    = _UxGT("Medium getauscht"); // SD-card changed by user. For machines with no autocarddetect. Both send "M21"
   PROGMEM Language_Str MSG_RELEASE_MEDIA                   = _UxGT("Medium freigeben"); // if Marlin gets confused - M22
   PROGMEM Language_Str MSG_ZPROBE_OUT                      = _UxGT("Z-Sonde außerhalb");
@@ -456,7 +448,10 @@ namespace Language_de {
   PROGMEM Language_Str MSG_INFO_MAX_TEMP                   = _UxGT("Max Temp");
   PROGMEM Language_Str MSG_INFO_PSU                        = _UxGT("Netzteil");
   PROGMEM Language_Str MSG_DRIVE_STRENGTH                  = _UxGT("Motorleistung");
-  PROGMEM Language_Str MSG_DAC_PERCENT                     = _UxGT("Treiber %");
+  PROGMEM Language_Str MSG_DAC_PERCENT_X                   = _UxGT("X Treiber %");
+  PROGMEM Language_Str MSG_DAC_PERCENT_Y                   = _UxGT("Y Treiber %");
+  PROGMEM Language_Str MSG_DAC_PERCENT_Z                   = _UxGT("Z Treiber %");
+  PROGMEM Language_Str MSG_DAC_PERCENT_E                   = _UxGT("E Treiber %");
   PROGMEM Language_Str MSG_ERROR_TMC                       = _UxGT("TMC Verbindungsfehler");
   PROGMEM Language_Str MSG_DAC_EEPROM_WRITE                = _UxGT("Werte speichern");
   PROGMEM Language_Str MSG_FILAMENT_CHANGE_HEADER          = _UxGT("FILAMENT WECHSEL");

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -25,7 +25,9 @@
  * MKS SBASE pin assignments
  */
 
-#ifndef MCU_LPC1768
+#if defined(MKS_HAS_LPC1769) && !defined(MCU_LPC1769)
+  #error "Oops! Make sure you have the LPC1769 environment selected in your IDE."
+#elif !defined(MKS_HAS_LPC1769) && !defined(MCU_LPC1768)
   #error "Oops! Make sure you have the LPC1768 environment selected in your IDE."
 #endif
 

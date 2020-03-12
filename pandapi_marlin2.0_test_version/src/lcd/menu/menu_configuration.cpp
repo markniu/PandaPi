@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -317,14 +317,11 @@ void menu_configuration() {
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
-    EDIT_ITEM(float52, MSG_ZPROBE_ZOFFSET, &probe_offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif
 
   const bool busy = printer_busy();
   if (!busy) {
-    //
-    // Delta Calibration
-    //
     #if EITHER(DELTA_CALIBRATION_MENU, DELTA_AUTO_CALIBRATION)
       SUBMENU(MSG_DELTA_CALIBRATE, menu_delta_calibrate);
     #endif
@@ -358,7 +355,11 @@ void menu_configuration() {
   //
   #if ENABLED(CASE_LIGHT_MENU)
     #if DISABLED(CASE_LIGHT_NO_BRIGHTNESS)
-      if (PWM_PIN(CASE_LIGHT_PIN))
+      if (true
+        #if DISABLED(CASE_LIGHT_USE_NEOPIXEL)
+          && PWM_PIN(CASE_LIGHT_PIN)
+        #endif
+      )
         SUBMENU(MSG_CASE_LIGHT, menu_case_light);
       else
     #endif
@@ -393,7 +394,7 @@ void menu_configuration() {
   #endif
 
   if (!busy)
-    ACTION_ITEM(MSG_RESTORE_FAILSAFE, []{
+    ACTION_ITEM(MSG_RESTORE_DEFAULTS, []{
       settings.reset();
       #if HAS_BUZZER
         ui.completion_feedback();

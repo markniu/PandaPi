@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -48,7 +48,7 @@ struct filepos_t {
   uint32_t cluster;   // cluster of position
   filepos_t() : position(0), cluster(0) {}
 };
-//extern 	FILE *fd_sdcard;
+
 // use the gnu style oflag in open()
 uint8_t const O_READ = 0x01,                    // open() oflag for reading
               O_RDONLY = O_READ,                // open() oflag - same as O_IN
@@ -308,7 +308,7 @@ class SdBaseFile {
   /**
    * Set the file's current position to zero.
    */
-  void rewind() {  /*fseek(fd_sdcard,0,SEEK_SET);*//*seekSet(0); */}
+  void rewind() {  /*fseek(fd_sdcard,0,SEEK_SET);*//*seekSet(0); */}//  PANDAPI
   bool rename(SdBaseFile* dirFile, const char* newPath);
   bool rmdir();
   bool rmRfStar();

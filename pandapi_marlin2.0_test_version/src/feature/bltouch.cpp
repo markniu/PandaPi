@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -124,7 +124,7 @@ bool BLTouch::deploy_proc() {
       // The deploy might have failed or the probe is actually triggered (nozzle too low?) again
       if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("BLTouch Recovery Failed");
 
-      SERIAL_ERROR_MSG(MSG_STOP_BLTOUCH);  // Tell the user something is wrong, needs action
+      SERIAL_ERROR_MSG(STR_STOP_BLTOUCH);  // Tell the user something is wrong, needs action
       stop();                              // but it's not too bad, no need to kill, allow restart
 
       return true;                         // Tell our caller we goofed in case he cares to know
@@ -169,7 +169,7 @@ bool BLTouch::stow_proc() {
 
       if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("BLTouch Recovery Failed");
 
-      SERIAL_ERROR_MSG(MSG_STOP_BLTOUCH);  // Tell the user something is wrong, needs action
+      SERIAL_ERROR_MSG(STR_STOP_BLTOUCH);  // Tell the user something is wrong, needs action
       stop();                              // but it's not too bad, no need to kill, allow restart
 
       return true;                         // Tell our caller we goofed in case he cares to know

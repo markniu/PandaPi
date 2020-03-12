@@ -11,7 +11,7 @@
  * for exceptions for debugging purposes in 2018 by Eduardo José Tagle.
  */
 
-#if  0//defined(__arm__) || defined(__thumb__)
+#if  0//defined(__arm__) || defined(__thumb__)//  PANDAPI
 
 #include "unwarmbytab.h"
 

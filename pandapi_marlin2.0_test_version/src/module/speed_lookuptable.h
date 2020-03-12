@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,7 +21,7 @@
  */
 #pragma once
 
-#if F_CPU == 16000000
+#if 0//F_CPU == 16000000
 
   const uint16_t speed_lookuptable_fast[256][2] PROGMEM = {
     { 62500, 55556}, { 6944, 3268}, { 3676, 1176}, { 2500, 607}, { 1893, 369}, { 1524, 249}, { 1275, 179}, { 1096, 135},
@@ -93,7 +93,7 @@
     { 992, 4}, { 988, 4}, { 984, 4}, { 980, 4}, { 976, 4}, { 972, 4}, { 968, 3}, { 965, 3}
   };
 
-#else
+#else  //  PANDAPI
 
   const uint16_t speed_lookuptable_fast[256][2] PROGMEM = {
     {62500, 54055}, {8445, 3917}, {4528, 1434}, {3094, 745}, {2349, 456}, {1893, 307}, {1586, 222}, {1364, 167},

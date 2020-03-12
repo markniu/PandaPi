@@ -28,7 +28,7 @@ e-mail   :  support@circuitsathome.com
 #define UHS_PRINTF_HELPER_H
 
 #ifdef LOAD_UHS_PRINTF_HELPER
-//luojin #include <Arduino.h>
+////  PANDAPI #include <Arduino.h>
 #ifdef true
 #undef true
 #endif

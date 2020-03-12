@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -103,65 +103,76 @@
 
 /**
  *                 _____
- *             5V | · · | GND
- *  (LCD_EN) PB7  | · · | PB8  (LCD_RS)
- *  (LCD_D4) PB9  | · · | PA10 (BTN_EN2)
- *          RESET | · · | PA9  (BTN_EN1)
- * (BTN_ENC) PB6  | · · | PB5  (BEEPER)
+ *             5V | 1 2 | GND
+ *  (LCD_EN) PB7  | 3 4 | PB8  (LCD_RS)
+ *  (LCD_D4) PB9  | 5 6   PA10 (BTN_EN2)
+ *          RESET | 7 8 | PA9  (BTN_EN1)
+ * (BTN_ENC) PB6  | 9 10| PB5  (BEEPER)
  *                 -----
  *                 EXP1
  */
+
+#define EXPA1_03_PIN       PB7
+#define EXPA1_04_PIN       PB8
+#define EXPA1_05_PIN       PB9
+#define EXPA1_06_PIN       PA10
+#define EXPA1_07_PIN       -1
+#define EXPA1_08_PIN       PA9
+#define EXPA1_09_PIN       PB6
+#define EXPA1_10_PIN       PB5
+
 #if HAS_SPI_LCD
 
   #if ENABLED(CR10_STOCKDISPLAY)
 
-    #define BEEPER_PIN     PB5
-    #define BTN_ENC        PB6
+    #define BEEPER_PIN     EXPA1_10_PIN
 
-    #define LCD_PINS_RS    PB8
+    #define BTN_EN1        EXPA1_08_PIN
+    #define BTN_EN2        EXPA1_06_PIN
+    #define BTN_ENC        EXPA1_09_PIN
 
-    #define BTN_EN1        PA9
-    #define BTN_EN2        PA10
-
-    #define LCD_PINS_ENABLE PB7
-    #define LCD_PINS_D4    PB9
+    #define LCD_PINS_RS    EXPA1_04_PIN
+    #define LCD_PINS_ENABLE EXPA1_03_PIN
+    #define LCD_PINS_D4    EXPA1_05_PIN
 
   #elif ENABLED(ZONESTAR_LCD)     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-    #define LCD_PINS_RS    PB9
-    #define LCD_PINS_ENABLE PB6
-    #define LCD_PINS_D4    PB8
-    #define LCD_PINS_D5    PA10
-    #define LCD_PINS_D6    PA9
-    #define LCD_PINS_D7    PB5
+    #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_SKR_MINI_E3.h' for details. Comment out this line to continue."
+
+    #define LCD_PINS_RS    EXPA1_05_PIN
+    #define LCD_PINS_ENABLE EXPA1_09_PIN
+    #define LCD_PINS_D4    EXPA1_04_PIN
+    #define LCD_PINS_D5    EXPA1_06_PIN
+    #define LCD_PINS_D6    EXPA1_08_PIN
+    #define LCD_PINS_D7    EXPA1_10_PIN
     #define ADC_KEYPAD_PIN PA1    // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-  #elif ENABLED(MKS_MINI_12864)
+  #elif EITHER(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
 
     /** Creality Ender-2 display pinout
      *                   _____
-     *               5V | · · | GND
-     *      (MOSI) PB7  | · · | PB8  (LCD_RS)
-     *    (LCD_A0) PB9  | · · | PA10 (BTN_EN2)
-     *            RESET | · · | PA9  (BTN_EN1)
-     *   (BTN_ENC) PB6  | · · | PB5  (SCK)
+     *               5V | 1 2 | GND
+     *      (MOSI) PB7  | 3 4 | PB8  (LCD_RS)
+     *    (LCD_A0) PB9  | 5 6   PA10 (BTN_EN2)
+     *            RESET | 7 8 | PA9  (BTN_EN1)
+     *   (BTN_ENC) PB6  | 9 10| PB5  (SCK)
      *                   -----
      *                    EXP1
      */
-    #define BTN_EN1        PA9
-    #define BTN_EN2        PA10
-    #define BTN_ENC        PB6
+    #define BTN_EN1        EXPA1_08_PIN
+    #define BTN_EN2        EXPA1_06_PIN
+    #define BTN_ENC        EXPA1_09_PIN
 
-    #define DOGLCD_CS      PB8
-    #define DOGLCD_A0      PB9
-    #define DOGLCD_SCK     PB5
-    #define DOGLCD_MOSI    PB7
+    #define DOGLCD_CS      EXPA1_04_PIN
+    #define DOGLCD_A0      EXPA1_05_PIN
+    #define DOGLCD_SCK     EXPA1_10_PIN
+    #define DOGLCD_MOSI    EXPA1_03_PIN
     #define FORCE_SOFT_SPI
     #define LCD_BACKLIGHT_PIN -1
 
   #else
 
-    #error "Only CR10_STOCKDISPLAY, ZONESTAR_LCD, and MKS_MINI_12864 are currently supported on the BIGTREE_SKR_MINI_E3."
+    #error "Only ZONESTAR_LCD, MKS_MINI_12864, ENDER2_STOCKDISPLAY, and CR10_STOCKDISPLAY are currently supported on the BIGTREE_SKR_MINI_E3."
 
   #endif
 

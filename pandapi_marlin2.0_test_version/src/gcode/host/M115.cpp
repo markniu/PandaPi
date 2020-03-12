@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -33,13 +33,25 @@
 #endif
 
 /**
- * M115: Capabilities string
+ * M115: Capabilities string and extended capabilities report
+ *       If a capability is not reported, hosts should assume
+ *       the capability is not present.
  */
 void GcodeSuite::M115() {
 
-  SERIAL_ECHOLNPGM(MSG_M115_REPORT);
+  SERIAL_ECHOLNPGM(STR_M115_REPORT);
 
   #if ENABLED(EXTENDED_CAPABILITIES_REPORT)
+
+    // PAREN_COMMENTS
+    #if ENABLED(PAREN_COMMENTS)
+      cap_line(PSTR("PAREN_COMMENTS"), true);
+    #endif
+
+    // QUOTED_STRINGS
+    #if ENABLED(GCODE_QUOTED_STRINGS)
+      cap_line(PSTR("QUOTED_STRINGS"), true);
+    #endif
 
     // SERIAL_XON_XOFF
     cap_line(PSTR("SERIAL_XON_XOFF")
@@ -152,7 +164,7 @@ void GcodeSuite::M115() {
 
     // THERMAL_PROTECTION
     cap_line(PSTR("THERMAL_PROTECTION")
-      #if ENABLED(THERMAL_PROTECTION_HOTENDS) && (ENABLED(THERMAL_PROTECTION_BED) || !HAS_HEATED_BED) && (ENABLED(THERMAL_PROTECTION_CHAMBER) || !HAS_HEATED_CHAMBER)
+      #if (ENABLED(THERMAL_PROTECTION_HOTENDS) || !EXTRUDERS) && (ENABLED(THERMAL_PROTECTION_BED) || !HAS_HEATED_BED) && (ENABLED(THERMAL_PROTECTION_CHAMBER) || !HAS_HEATED_CHAMBER)
         , true
       #endif
     );
@@ -170,7 +182,6 @@ void GcodeSuite::M115() {
         , true
       #endif
     );
-
 
   #endif // EXTENDED_CAPABILITIES_REPORT
 }

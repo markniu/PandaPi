@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -145,21 +145,7 @@
   }
   #undef nop
 
-#elif defined(ESP32)
-
-  FORCE_INLINE static void DELAY_CYCLES(uint32_t x) {
-    unsigned long ccount, stop;
-
-    __asm__ __volatile__ ( "rsr     %0, ccount" : "=a" (ccount) );
-
-    stop = ccount + x; // This can overflow
-
-    while (ccount < stop) { // This doesn't deal with overflows
-      __asm__ __volatile__ ( "rsr     %0, ccount" : "=a" (ccount) );
-    }
-  }
-
-#elif defined(__PLAT_LINUX__)
+#elif defined(__PLAT_LINUX__) || defined(ESP32)
 
   // specified inside platform
 
@@ -170,7 +156,7 @@
 #endif
 
 // Delay in nanoseconds
-#define DELAY_NS(x) DELAY_CYCLES( (x) * (F_CPU*100 / 1000000UL) / 1000UL )
+#define DELAY_NS(x) DELAY_CYCLES( (x) * (F_CPU*100 / 1000000UL) / 1000UL )//  PANDAPI
 
 // Delay in microseconds
-#define DELAY_US(x) DELAY_CYCLES( (x) * (F_CPU*100 / 1000000UL) )
+#define DELAY_US(x) DELAY_CYCLES( (x) * (F_CPU*100 / 1000000UL) )//  PANDAPI
