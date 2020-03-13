@@ -198,7 +198,7 @@ const char str_t_thermal_runaway[] PROGMEM = STR_T_THERMAL_RUNAWAY,
       target = 0; // Always use fan index 0 with SINGLENOZZLE
     #endif
 
-    if (target >= FAN_COUNT) return;
+    if (target >= (FAN_COUNT+2)) return;// PANDAPI
 
     fan_speed[target] = speed;
 	///////////////////////////  PANDAPI
@@ -1057,7 +1057,7 @@ void Temperature::manage_heater() {
   }
   
   /////////check target temperature.
-  static int16_t target_temperature_old[3],target_temperature_bed_old=0,fanSpeeds_old[FAN_COUNT];
+  static int16_t target_temperature_old[3],target_temperature_bed_old=0,fanSpeeds_old[FAN_COUNT+2];
   if(target_temperature_old[0]!=temp_hotend[0].target)
   {
      
@@ -1069,21 +1069,22 @@ void Temperature::manage_heater() {
 	  target_temperature_bed_old=temp_bed.target;
 	  setTargetBed(temp_bed.target);
   }
-  /*
+  
   //setTargetFan
-  if(fanSpeeds_old[0]!=fanSpeeds[0])
+  if(fanSpeeds_old[0]!=fan_speed[0])
   {
-	  fanSpeeds_old[0]=fanSpeeds[0];
-	  setTargetFan(fanSpeeds[0],0);
+	  fanSpeeds_old[0]=fan_speed[0];
+	  set_fan_speed(0,fan_speed[0]);
   }
   // set board Fan
   //if(digitalRead(X_ENABLE_PIN)==0)
   if(fanSpeeds_old[2]!=digitalRead(X_ENABLE_PIN))
   {
+  	//  printf("fan:%d,%d\n",fanSpeeds_old[2],digitalRead(X_ENABLE_PIN));
 	  fanSpeeds_old[2]=digitalRead(X_ENABLE_PIN);
-	  setTargetFan(!fanSpeeds_old[2],2);
+	  set_fan_speed(2,!fanSpeeds_old[2]);
 	  
-  }*/
+  }
 return;
 //////////////////
 
