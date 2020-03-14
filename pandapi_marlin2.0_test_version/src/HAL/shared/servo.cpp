@@ -56,35 +56,52 @@
 #if SHARED_SERVOS
 
 #include "servo.h"
-#include "servo_private.h"
-extern int i2c_fd ;  //  PANDAPI
 
-ServoInfo_t servo_info[MAX_SERVOS];             // static array of servo info structures
+//  PANDAPI
+//#include "servo_private.h"
+
+#include "wiringPi.h"
+#include "wiringPiI2C.h"
+extern int i2c_fd ;  
+
+//ServoInfo_t servo_info[MAX_SERVOS];             // static array of servo info structures
 uint8_t ServoCount = 0;                         // the total number of attached servos
+
+#define MIN_PULSE_WIDTH       544     // the shortest pulse sent to a servo
+#define MAX_PULSE_WIDTH      2400     // the longest pulse sent to a servo
+#define DEFAULT_PULSE_WIDTH  1500     // default pulse width when servo is attached
+#define REFRESH_INTERVAL    20000     // minimum time to refresh servos in microseconds
 
 #define SERVO_MIN(v) (MIN_PULSE_WIDTH - (v) * 4) // minimum value in uS for this servo
 #define SERVO_MAX(v) (MAX_PULSE_WIDTH - (v) * 4) // maximum value in uS for this servo
 
 /************ static functions common to all instances ***********************/
+#if 0
 
 static boolean isTimerActive(timer16_Sequence_t timer) {
+
   // returns true if any servo is active on this timer
   for (uint8_t channel = 0; channel < SERVOS_PER_TIMER; channel++) {
     if (SERVO(timer, channel).Pin.isActive)
       return true;
   }
   return false;
+
+  
 }
+#endif 
 
 /****************** end of static functions ******************************/
 
 Servo::Servo() {
+#if 0
   if (ServoCount < MAX_SERVOS) {
     servoIndex = ServoCount++;                    // assign a servo index to this instance
     servo_info[servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);   // store default values  - 12 Aug 2009
   }
   else
     servoIndex = INVALID_SERVO;  // too many servos
+#endif  
 }
 
 int8_t Servo::attach(const int inPin) {
@@ -92,7 +109,7 @@ int8_t Servo::attach(const int inPin) {
 }
 
 int8_t Servo::attach(const int inPin, const int inMin, const int inMax) {
-
+#if 0
   if (servoIndex >= MAX_SERVOS) return -1;
 
   if (inPin > 0) servo_info[servoIndex].Pin.nbr = inPin;
@@ -106,18 +123,26 @@ int8_t Servo::attach(const int inPin, const int inMin, const int inMax) {
   timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(servoIndex);
   if (!isTimerActive(timer)) initISR(timer);
   servo_info[servoIndex].Pin.isActive = true;  // this must be set after the check for isTimerActive
-
+#endif
   return servoIndex;
 }
 
 void Servo::detach() {
+#if 0	
   servo_info[servoIndex].Pin.isActive = false;
   timer16_Sequence_t timer = SERVO_INDEX_TO_TIMER(servoIndex);
   if (!isTimerActive(timer)) finISR(timer);
+#endif  
+}
+inline long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 void Servo::write(int value) {
 #if PANDAPI	
+	printf("Servo::write\n");
+
 	if (value < MIN_PULSE_WIDTH) { // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
 	  value = map(constrain(value, 0, 180), 0, 180, 544, 2400);
 	//  TIM_SetCompare2(TIM1, value); //
@@ -150,6 +175,7 @@ void Servo::write(int value) {
 }
 
 void Servo::writeMicroseconds(int value) {
+#if 0	
   // calculate and store the values for the given channel
   byte channel = servoIndex;
   if (channel < MAX_SERVOS) {  // ensure channel is valid
@@ -161,18 +187,28 @@ void Servo::writeMicroseconds(int value) {
     servo_info[channel].ticks = value;
     CRITICAL_SECTION_END();
   }
+#endif  
 }
 
 // return the value as degrees
-int Servo::read() { return map(readMicroseconds() + 1, SERVO_MIN(min), SERVO_MAX(max), 0, 180); }
+int Servo::read() {
 
-int Servo::readMicroseconds() {
-  return (servoIndex == INVALID_SERVO) ? 0 : ticksToUs(servo_info[servoIndex].ticks) + (TRIM_DURATION);
+return map(readMicroseconds() + 1, SERVO_MIN(min), SERVO_MAX(max), 0, 180);
 }
 
-bool Servo::attached() { return servo_info[servoIndex].Pin.isActive; }
+int Servo::readMicroseconds() {
+#if 0
+  return (servoIndex == INVALID_SERVO) ? 0 : ticksToUs(servo_info[servoIndex].ticks) + (TRIM_DURATION);
+#endif
+}
 
-void Servo::move(const int value) {
+bool Servo::attached() { 
+#if 0	
+	return servo_info[servoIndex].Pin.isActive;
+#endif
+	}
+
+void Servo::move(const int value) {		
   constexpr uint16_t servo_delay[] = SERVO_DELAY;
   static_assert(COUNT(servo_delay) == NUM_SERVOS, "SERVO_DELAY must be an array NUM_SERVOS long.");
   if (attach(0) >= 0) {

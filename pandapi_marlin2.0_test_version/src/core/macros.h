@@ -33,8 +33,8 @@ extern int OCR1A,DDRE ,PINE,PINE5,SREG,cli,DDRB,DDRH,PINB4,PINB5,PINH6,ADCSRA,AD
 extern int PORTE,PORTD,DDRF,PINF7,PINL1,PINC3,DDRC,PORTJ,DIDR0,OCR0B,PINB,PORTA,PINA,PINA2,PINA6,PORTL,OCIE0B,TIMSK0,OCIE1A,TCNT1,PINL3,PINA4,PORTF,PINF,PINF6,PINF0;
 extern int DDRJ,PINJ1,DDRD,PIND3,PIND,PIND7,PINF2,PINK,PORTK,PINK0,REFS0,ADMUX,ADCSRB,PINH5,PORTH,PINH,DDRA,PINC7,PINJ;
 
-#define min_y(a,b) (((a)<(b))?(a):(b))
-#define max_y(a,b) (((a)>(b))?(a):(b))
+//#define min_y(a,b) (((a)<(b))?(a):(b))
+//#define max_y(a,b) (((a)>(b))?(a):(b))
 
 #define HIGH   1
 #define LOW    0

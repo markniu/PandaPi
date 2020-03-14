@@ -84,6 +84,18 @@
   #define G29_RETURN(b) return;
 #endif
 
+////////PANDAPI
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+// -101~ 100
+int linux_random_101()
+{
+	srand( (unsigned)time( NULL ) );  
+	return rand()%(201)-101;
+
+}
+
 /**
  * G29: Detailed Z probe, probes the bed at 3 or more points.
  *      Will fail if the printer has not been homed with G28.
@@ -711,8 +723,10 @@ G29_TYPE GcodeSuite::G29() {
           #if HAS_DISPLAY
             ui.status_printf_P(0, PSTR(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_MESH), int(pt_index), int(GRID_MAX_POINTS));
           #endif
+		  
 
-          measured_z = faux ? 0.001f * random(-100, 101) : probe.probe_at_point(probePos, raise_after, verbose_level);
+       //PANDAPI   measured_z = faux ? 0.001f * random(-100, 101) : probe.probe_at_point(probePos, raise_after, verbose_level);
+          measured_z = faux ? 0.001f * linux_random_101() : probe.probe_at_point(probePos, raise_after, verbose_level);
 
           if (isnan(measured_z)) {
             set_bed_leveling_enabled(abl_should_enable);

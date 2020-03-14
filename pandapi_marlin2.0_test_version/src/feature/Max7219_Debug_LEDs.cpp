@@ -121,7 +121,7 @@ uint8_t Max7219::led_line[MAX7219_LINES]; // = { 0 };
 #define CLR_7219(X,Y) do{ led_line[LED_IND(X,Y)] &= ~_BV(LED_BIT(X,Y)); }while(0)
 #define BIT_7219(X,Y) TEST(led_line[LED_IND(X,Y)], LED_BIT(X,Y))
 
-#ifdef CPU_32_BIT
+#ifdef CPU_32_BIT || PANDAPI
   #define SIG_DELAY() DELAY_US(1)   // Approximate a 1µs delay on 32-bit ARM
   #undef CRITICAL_SECTION_START
   #undef CRITICAL_SECTION_END
