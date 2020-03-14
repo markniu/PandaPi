@@ -2715,7 +2715,7 @@ int Temperature::read_with_check()
 	};
 	parse_string(cmd_buf,"T1:","",out,&k);	
 	f= atof(out);
-	if(fabs(temp_hotend[0].celsius-f)<20)
+	if(fabs(temp_hotend[1].celsius-f)<20)
 		temp_hotend[1].celsius=f;
 	else 
 	{
