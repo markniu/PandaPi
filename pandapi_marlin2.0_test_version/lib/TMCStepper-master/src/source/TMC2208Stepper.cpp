@@ -4,7 +4,6 @@
 #include "wiringPi.h"
 #include <stdio.h>
 #include "driver_api.h"
-#include <unistd.h>
 
 // Protected
 // addr needed for TMC2209
@@ -129,7 +128,6 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	datagram[len] = calcCRC(datagram, len);
    
     printf("TMC2208:");
-	usleep(100);
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != nullptr) {
 				for(uint8_t i=0; i<=len; i++){
@@ -145,8 +143,6 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 				bytesWritten += serial_write(*HWSerial, datagram[i]);
 			    printf("0x%02x",datagram[i]);
 		}
-		usleep(100);	
-		serial_write(*HWSerial, '\n');
 		printf("\n");
 	}
 	delay(replyDelay);

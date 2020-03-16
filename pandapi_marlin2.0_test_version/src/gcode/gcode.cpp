@@ -219,6 +219,7 @@ void GcodeSuite::dwell(millis_t time) {
 #if ENABLED(M100_FREE_MEMORY_WATCHER)
   extern void M100_dump_routine(PGM_P const title, const char * const start, const char * const end);
 #endif
+char status_printer=0;//0: idle; 1:homeing ; //  PANDAPI
 
 /**
  * Process the parsed command and dispatch it to its handler
@@ -277,15 +278,21 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 27: G27(); break;                                    // G27: Nozzle Park
       #endif
 
-      case 28: G28(false); break;                                 // G28: Home all axes, one at a time
+      case 28:
+	  	status_printer=1;
+		G28(false); // G28: Home all axes, one at a time
+		status_printer=0;
+		break;                                
 
       #if HAS_LEVELING
         case 29:                                                  // G29: Bed leveling calibration
-          #if ENABLED(G29_RETRY_AND_RECOVER)
+		  status_printer=1;
+		  #if ENABLED(G29_RETRY_AND_RECOVER)
             G29_with_retry();
           #else
             G29();
           #endif
+		  status_printer=0;
           break;
       #endif // HAS_LEVELING
 

@@ -197,6 +197,11 @@ int CardReader::countItems(SdFile dir) {
 //
 void CardReader::selectByIndex(SdFile dir, const uint8_t index) {
   dir_t p;
+  ////PANDAPI
+  printf("selectByIndex==\n");
+  Linux_readDir(&p,0,index,NULL);
+  return;
+
   for (uint8_t cnt = 0; dir.readDir(&p, longFilename) > 0;) {
     if (is_dir_or_gcode(p)) {
       if (cnt == index) {

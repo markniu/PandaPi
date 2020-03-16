@@ -210,14 +210,12 @@
  *  Z   Home to the Z endstop
  *
  */
- 
-char status_printer=0;//0: idle; 1:homeing ; //  PANDAPI
 void GcodeSuite::G28(const bool always_home_all) {
   if (DEBUGGING(LEVELING)) {
     DEBUG_ECHOLNPGM(">>> G28");
     log_machine_info();
   }
- status_printer=1;//  PANDAPI
+
 
   #if ENABLED(DUAL_X_CARRIAGE)
     bool IDEX_saved_duplication_state = extruder_duplication_enabled;
@@ -553,5 +551,5 @@ void GcodeSuite::G28(const bool always_home_all) {
       L64xxManager.set_param((L64XX_axis_t)cv, L6470_ABS_POS, stepper.position(L64XX_axis_xref[cv]));
     }
   #endif
-  status_printer=0;//  PANDAPI
+
 }
