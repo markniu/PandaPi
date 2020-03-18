@@ -114,7 +114,7 @@ void u8g_Delay(uint16_t val) {
 }
 void u8g_MicroDelay(void)
 {
-	delayMicroseconds(2);
+	delayMicroseconds(1);
    // usleep(1);
   // delay (1);
    
@@ -123,7 +123,7 @@ void u8g_10MicroDelay(void)
 {
   //  delay (10);
 //	usleep(10);
-  delayMicroseconds(20);
+  delayMicroseconds(10);
 }
 #endif
 

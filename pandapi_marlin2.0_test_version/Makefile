@@ -44,4 +44,4 @@ $(TARGET): $(OBJ)
 
 clean:
 	#find . -type f | xargs touch
-	rm -f pi_marlin $(_OBJ)  
+	rm -f pi_marlin $(OBJ)  
