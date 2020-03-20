@@ -539,7 +539,12 @@ void CardReader::endFilePrint(
     did_pause_print = 0;
   #endif
   flag.sdprinting = flag.abort_sd_printing = false;
-  if (isFileOpen()) file.close();
+  ////PANDAPI
+  if (isFileOpen()) 
+  {
+	//file.close();
+	fclose(fd_sd_card);fd_sd_card=NULL;
+  }
   #if SD_RESORT
     if (re_sort) presort();
   #endif
@@ -1207,7 +1212,13 @@ uint16_t CardReader::get_num_Files() {
 //
 void CardReader::fileHasFinished() {
   planner.synchronize();
-  file.close();
+ // file.close();
+////PANDAPI
+  if (isFileOpen()) 
+  {
+	//file.close();
+	fclose(fd_sd_card);fd_sd_card=NULL;
+  }
   if (file_subcall_ctr > 0) { // Resume calling file after closing procedure
     file_subcall_ctr--;
     openFileRead(proc_filenames[file_subcall_ctr], 2); // 2 = Returning from sub-procedure

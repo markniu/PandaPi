@@ -1566,7 +1566,7 @@ void Planner::quick_stop() {
   #endif
 
   // Make sure to drop any attempt of queuing moves for at least 1 second
-  cleaning_buffer_counter = 1000;
+  cleaning_buffer_counter = 0;//1000;//PANDAPI
 
   // Reenable Stepper ISR
   if (was_enabled) stepper.wake_up();

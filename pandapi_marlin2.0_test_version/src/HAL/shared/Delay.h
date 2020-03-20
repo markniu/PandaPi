@@ -156,7 +156,7 @@
 #endif
 
 // Delay in nanoseconds
-#define DELAY_NS(x) DELAY_CYCLES( (x) * (F_CPU*1000 / 1000000UL) / 1000UL )//  PANDAPI
+#define DELAY_NS(x) DELAY_CYCLES( (x) * (F_CPU*10000 / 1000000UL) / 1000UL )//  PANDAPI
 
 // Delay in microseconds
-#define DELAY_US(x) DELAY_CYCLES( (x) * (F_CPU*1000 / 1000000UL) )//  PANDAPI
+#define DELAY_US(x) DELAY_CYCLES( (x) * (F_CPU*10000 / 1000000UL) )//  PANDAPI

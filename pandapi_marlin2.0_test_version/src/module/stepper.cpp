@@ -1332,7 +1332,7 @@ void HAL_STEP_TIMER_ISR() {
 #ifdef CPU_32_BIT
   #define STEP_MULTIPLY(A,B) MultiU32X24toH32(A, B)
 #else
-  #define STEP_MULTIPLY(A,B)  (A * B >> 16)//MultiU24X32toH16(A, B)//  PANDAPI
+  #define STEP_MULTIPLY(A,B) MultiU24X32toH16(A, B)
 #endif
 
 void Stepper::isr() {
@@ -1613,9 +1613,9 @@ void Stepper::pulse_phase_isr() {
     #endif
 
     // TODO: need to deal with MINIMUM_STEPPER_PULSE over i2s
-    #if ISR_MULTI_STEPS// PANDAPI
-    //  START_HIGH_PULSE();
-     // AWAIT_HIGH_PULSE();
+    #if ISR_MULTI_STEPS
+      START_HIGH_PULSE();
+      AWAIT_HIGH_PULSE();
     #endif
 
     // Pulse stop
@@ -2053,7 +2053,7 @@ uint32_t Stepper::block_phase_isr() {
 
       // Enforce a minimum duration for STEP pulse ON
       #if ISR_PULSE_CONTROL
-    //PANDAPI    START_HIGH_PULSE();
+        START_HIGH_PULSE();
       #endif
 
       LA_steps < 0 ? ++LA_steps : --LA_steps;
