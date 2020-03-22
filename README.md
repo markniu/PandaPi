@@ -48,6 +48,8 @@
 * [How-to-plugin-OctoPrint-Enclosure](https://github.com/markniu/PandaPi/wiki/How-to-plugin-OctoPrint-Enclosure(DTH11-temperature-humidity-sensor))
 * [How-to-use-PID-auto-tune](https://github.com/markniu/PandaPi/wiki/How-to-use-PID-auto-tune)
 * [How-to-wiring-filament-runout-sensor](https://github.com/markniu/PandaPi/wiki/How-to-wiring-filament-runout-sensor)
+* [How-to-wire-Proximity-sensor](https://github.com/markniu/PandaPi/wiki/How-to-wire-Proximity-sensor)
+* [Pins-Map](https://github.com/markniu/PandaPi/wiki/Pins-Map)
 
 
 * ##  FAQ：
