@@ -2,7 +2,7 @@
 ## Run Marlin & Octoprint on Raspberry Pi directly. Improve print speed and smoothness
    If you want to run PandaPi on RPi, you need one following extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 
-![](https://raw.githubusercontent.com/markniu/doc_test/master/imges/44915.jpg)
+<img width="650"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/44915.jpg"/>
 
 1. ###  better prints at faster speeds
      If you want to do more higher speed or print some short line or corner the higher process speed is very important,otherwise there will be some slight on the surface. so 32 bit MCU is better,but if you want add more function like web camera,HDMI LCD... little space,for friendly easy to use this PandaPi runs on the powerful Raspberry Pi is the best. 
