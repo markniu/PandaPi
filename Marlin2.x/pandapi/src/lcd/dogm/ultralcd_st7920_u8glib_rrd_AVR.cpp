@@ -71,7 +71,7 @@ void ST7920_SWSPI_SND_8BIT(uint8_t val) {
   ST7920_SND_BIT; // 7
   ST7920_SND_BIT; // 8
 }
-
+   
 uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
   uint8_t i, y;
   switch (msg) {
@@ -144,7 +144,7 @@ u8g_pb_t  u8g_dev_st7920_128x64_rrd_pb = { { PAGE_HEIGHT, LCD_PIXEL_HEIGHT, 0, 0
 u8g_dev_t u8g_dev_st7920_128x64_rrd_sw_spi = { u8g_dev_rrd_st7920_128x64_fn, &u8g_dev_st7920_128x64_rrd_pb, &u8g_com_null_fn };
 
 #pragma GCC reset_options
-
+ 
 #if ENABLED(LIGHTWEIGHT_UI)
   #include "../../HAL/shared/HAL_ST7920.h"
   void ST7920_cs()                          { ST7920_CS(); }
