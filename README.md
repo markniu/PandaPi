@@ -8,9 +8,9 @@
 3. ### No arduino, no platformIO.
     online compile.
     
-If you want to run PandaPi on RPi, you need one following extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
+<img width="650"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/44915.jpg"/> 
 
-<img width="650"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/44915.jpg"/>    
+If you want to run PandaPi on RPi, you need one PandaPi extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 
 * ## Block diagram
 <img width="450"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/dlg.png"/>
@@ -70,7 +70,7 @@ If you want to run PandaPi on RPi, you need one following extra board that can b
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
 ## [Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/) $38
-
+thanks for your support! and have fun with 3D printer world!
 
 
 
