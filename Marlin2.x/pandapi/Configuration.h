@@ -74,6 +74,7 @@
 #define STRING_CONFIG_H_AUTHOR "(mark, PandaPi marlin  config)" // Who made the changes.
 //#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 #define PANDAPI  1    // PandaPi shield for raspberry Pi printer
+#define CPU_32_BIT
 
 /**
  * *** VENDORS PLEASE READ ***
