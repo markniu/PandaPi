@@ -1330,6 +1330,7 @@ void HAL_STEP_TIMER_ISR() {
 }
 
 #ifdef CPU_32_BIT
+  #include "math_32bit.h"
   #define STEP_MULTIPLY(A,B) MultiU32X24toH32(A, B)
 #else
   #define STEP_MULTIPLY(A,B) MultiU24X32toH16(A, B)
