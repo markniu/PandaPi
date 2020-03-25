@@ -69,7 +69,7 @@ If you want to run PandaPi on RPi, you need one PandaPi extra board that can be 
 
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
-## [Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/) $38
+## [Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/) $39
 thanks for your support! and have fun with 3D printer world!
 
 
