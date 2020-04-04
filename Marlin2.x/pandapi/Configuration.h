@@ -75,7 +75,7 @@
 //#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 #define PANDAPI  1    // PandaPi shield for raspberry Pi printer
 #define CPU_32_BIT
-
+#define MOTOR_SPEED_CALIBRATE  
 /**
  * *** VENDORS PLEASE READ ***
  *
@@ -773,9 +773,9 @@
  *   M204 R    Retract Acceleration
  *   M204 T    Travel Acceleration
  */
-#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E acceleration for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  3000    // E acceleration for retracts
-#define DEFAULT_TRAVEL_ACCELERATION   3000    // X, Y, Z acceleration for travel (non printing) moves
+#define DEFAULT_ACCELERATION          2000    // X, Y, Z and E acceleration for printing moves
+#define DEFAULT_RETRACT_ACCELERATION  2000    // E acceleration for retracts
+#define DEFAULT_TRAVEL_ACCELERATION   2000    // X, Y, Z acceleration for travel (non printing) moves
 
 /**
  * Default Jerk limits (mm/s)

@@ -1059,11 +1059,11 @@ void setup() {
   //  PANDAPI
   int pi_n=read_version();//GetIniKeyInt("VER","PI","/home/pi/Config_panda.ini");
   if(pi_n==-4)//pi4b
-  	step_motor_init(stepper.isr,4*8); //mark
+  	step_motor_init(stepper.isr,42); //mark
   else if(pi_n==3)//pi3+
   	step_motor_init(stepper.isr,12); //mark
   else //if(pi_n==-3)//pi3b
-  	step_motor_init(stepper.isr,8); //mark
+  	step_motor_init(stepper.isr,12); //mark
   printf("pi_num===%d\n",pi_n);
    SERIAL_ECHOPGM("Pi version:");
    SERIAL_ECHO(pi_n);

@@ -1,3 +1,4 @@
+
 /**
  * Marlin 3D Printer Firmware
  * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
@@ -46,6 +47,13 @@
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #include "../feature/pause.h"
 #endif
+
+//PANDAPI
+#include <fcntl.h>
+#include <stdio.h>
+char root_path[64];//  "/media/usb/"
+extern char parse_string(char *src,char *start,char *end,char *out,int *e_pos);
+
 
 // public:
 
@@ -479,6 +487,44 @@ void CardReader::printFilename() {
   SERIAL_EOL();
 }
 
+
+
+//  PANDAPI
+int read_u_path()
+{
+	 
+	system("df | grep \"/dev/sd\" > /home/pi/U_path");
+	delay(500);
+	FILE * fp; 
+	if((fp=fopen("/home/pi/U_path","r"))!=NULL)  //  PANDAPI
+	{
+ 
+	    char buf[500];
+		int k=0;
+	    memset(buf, 0, sizeof(buf));
+		unsigned int n = fread(buf,sizeof(char),sizeof(buf),fp);
+		
+		fclose(fp);
+		printf("eeee:%s :\n", buf );
+		
+		if(strlen(buf)>20)
+		{
+			//printf("%s\n", buf+strlen(buf)-15);
+			parse_string(buf+strlen(buf)-20,"% ","\n",root_path,&k);
+			root_path[strlen(root_path)+1]=0;
+			root_path[strlen(root_path)]='/';
+		    printf("root_path:%s\n", root_path);
+		}
+		else
+			sprintf(root_path,"/media/usb");
+	}
+	else
+		sprintf(root_path,"/media/usb");
+}
+
+
+
+
 void CardReader::mount() {
   flag.mounted = false;
   /*//  PANDAPI
@@ -495,6 +541,8 @@ void CardReader::mount() {
     SERIAL_ERROR_MSG(STR_SD_OPENROOT_FAIL);
   else {
 */
+  read_u_path();
+
   {
     flag.mounted = true;
     SERIAL_ECHO_MSG(STR_SD_CARD_OK);
