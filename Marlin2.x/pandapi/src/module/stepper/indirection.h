@@ -49,7 +49,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 //  PANDAPI
 #define delay_step() \
 {\
-	int jj=130;	/* A4988: 130(1us) ;TMC2208: 0(200ns) ;*/ \
+	int jj=200;	/* A4988: 130(1us) ;TMC2208: 0(200ns) ;*/ \
 	while(jj--);\
 }
 // X Stepper

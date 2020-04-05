@@ -492,8 +492,8 @@
   
   // //  PANDAPI
   #define DEFAULT_Kp 25
-  #define DEFAULT_Ki 2.4//1.08
-  #define DEFAULT_Kd 66.9
+  #define DEFAULT_Ki 2.0//1.08
+  #define DEFAULT_Kd 440
 
   // MakerGear
   //#define DEFAULT_Kp 7.0
