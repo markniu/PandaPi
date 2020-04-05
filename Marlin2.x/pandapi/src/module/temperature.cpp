@@ -1085,7 +1085,8 @@ void Temperature::manage_heater() {
 	  set_fan_speed(2,!fanSpeeds_old[2]);
 	  
   }
-return;
+
+//return;
 //////////////////
 
   #if EARLY_WATCHDOG
@@ -1100,10 +1101,9 @@ return;
   #if ENABLED(EMERGENCY_PARSER)
     if (emergency_parser.killed_by_M112) kill(M112_KILL_STR, nullptr, true);
   #endif
-
-  if (!raw_temps_ready) return;
-
-  updateTemperaturesFromRawValues(); // also resets the watchdog
+// PANDAPI
+  //if (!raw_temps_ready) return;
+  //updateTemperaturesFromRawValues(); // also resets the watchdog
 
   #if ENABLED(HEATER_0_USES_MAX6675)
     if (temp_hotend[0].celsius > _MIN(HEATER_0_MAXTEMP, HEATER_0_MAX6675_TMAX - 1.0)) max_temp_error(H_E0);
