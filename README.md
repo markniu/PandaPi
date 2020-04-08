@@ -1,4 +1,4 @@
-## More than just a 64-bit 3D printer controller.
+## 64-bit 3D printer controller.
  Run Marlin & Octoprint on Raspberry Pi directly.
    
 1. ###  better prints at faster speeds
