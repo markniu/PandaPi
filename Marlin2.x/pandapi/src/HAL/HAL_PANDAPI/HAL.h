@@ -38,7 +38,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 */
-#define pgm_read_ptr(b) *b
+#define pgm_read_ptr(b) (*(b))
 
 #ifndef pgm_read_ptr
   // Compatibility for avr-libc 1.8.0-4.1 included with Ubuntu for

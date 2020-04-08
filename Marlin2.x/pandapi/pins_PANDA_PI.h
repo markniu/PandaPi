@@ -116,8 +116,10 @@
 
 
 #define HEATER_0_PIN     255
+#define HEATER_1_PIN     255
 #define HEATER_BED_PIN   255
 #define TEMP_0_PIN       255
+#define TEMP_1_PIN       255
 #define TEMP_BED_PIN     255
 #define TEMP_BOARD_PIN   255
 
