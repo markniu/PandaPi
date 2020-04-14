@@ -64,10 +64,8 @@ If you want to run PandaPi on RPi, you need one PandaPi extra board that can be 
 
 3. how do this assure the real time control?
 
-   about the real-time, I did a [test](https://hackaday.io/project/166466-3dprinter-firmware-run-on-raspberrypi/log/167122-upgrade-to-real-time-linux) .
-   
-    here is another test. the output signal of the one raspberryPI's GPIO,and displayed by the oscilloscope.
-<img   src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/60632064_o.jpg"/>
+   about the real-time, here is the result that is almost perfect for real time control drivers. the output signal of the one raspberryPI's GPIO,and displayed by the oscilloscope.
+<img  width="550"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/60632064_o.jpg"/>
 
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
