@@ -56,7 +56,7 @@ If you want to run PandaPi on RPi, you need one PandaPi extra board that can be 
 
     Klipper: uses a RPi to parse G-code,map out curves,set accelerations,and then send the motor command to the MCU via uart.
 
-     the obvious difference is that PandaPi control the motor directly.the gpio on the RPi speed being able to signal at 10+ Mhz as compared to 8/32bit MCU limit of about 10Khz/200khz for steps.that is one of my main reason to explore this project. although the <100Khz speed is enough for our FDM printer recently.
+     the obvious difference is that PandaPi control the motor directly.the gpio on the RPi speed being able to signal at 10+ Mhz as compared to 8/32bit MCU limit of about 10Khz/200khz for steps.that is one of my reason to explore this project. although the <100Khz speed is enough for our FDM printer recently but not the future.
 
 2. Why is there a mcu?
 
