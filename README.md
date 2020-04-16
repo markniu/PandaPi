@@ -12,14 +12,13 @@
 
 If you want to run PandaPi on RPi, you need one PandaPi extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 
-* ## HDMI LCD，camera,...
+* HDMI LCD，camera,...
 <img  width="550"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/620.jpg"/>
-
-* ## Block diagram
-<img width="450"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/dlg.png"/>
 
 * ##   [Hardware resources](https://github.com/markniu/PandaPi/wiki/Hardware-resources) 
 
+* ## Block diagram
+<img width="450" src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/dlg2.png"/>
 
 * ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
 **Quick start guide**：
@@ -72,7 +71,7 @@ If you want to run PandaPi on RPi, you need one PandaPi extra board that can be 
 
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
-## [Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/) $39
+## [Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/)  
 thanks for your support! and have fun with 3D printer world!
 
 
