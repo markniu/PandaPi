@@ -12,6 +12,10 @@
 
 If you want to run PandaPi on RPi, you need one PandaPi extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 
+HDMI LCD，camera,...
+
+<img  width="550"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/620.jpg"/>
+
 * ## Block diagram
 <img width="450"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/dlg.png"/>
 
