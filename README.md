@@ -16,6 +16,25 @@ If you want to run PandaPi on RPi, you need one PandaPi extra board that can be 
 <img  width="550"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/620.jpg"/>
 
 * ##   [Hardware resources](https://github.com/markniu/PandaPi/wiki/Hardware-resources) 
+RaspberryPi | Pi 4B/3B/3B+  | .
+--- | --- | --- 
+Extruders | 	2 | 	 
+Controlled Fans | 	3	 |  FAN0:hotend cooler,it will be opened if the temperature is higher than 60°C.FAN1:model cooler, controlled by the gcode file or gcode command, M106: Set Fan Speed "M106 S255", M107: Fan Off.FAN2:board cooler,If the driver is working, it will be opened.
+Heaters   | 	3	 |  
+Endstops   | 	3	 | 
+Temp sens   | 	3	 |  100K NTC (thermal resistance)	
+SWD   | 	1	 | STlinkV2
+Serial port chip   | 	CH340G	 | 
+stepper driver   |  6*(TMC2209/TMC2208/A4988)	 | Modular, replaceable,uart for TMC2209 sensorless endstop
+Input   | 	9~28V 20A max	 | power both the board and the Raspberry Pi
+heater Output   | 	15Amax	 | 
+MCU   | 	stm32	 |  
+LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
+on board FAN   | 	silent 24V self auto controlled	 | 
+Spacer screw   | 	Nylon spacer screw	 | 
+filament detect pin    | 	  reuse the SWD pin   | 	
+Bed leveling    | 	  BLtouch  | 	support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
+Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 * ## Block diagram
 <img width="450" src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/dlg2.png"/>
