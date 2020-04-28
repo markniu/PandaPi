@@ -90,7 +90,7 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
-## [Where to buy](https://www.tindie.com/products/niujl123/upgrade-your-3d-printer-to-64-bit/)  
+## [Where to buy](https://www.pandapi3d.com/)  
 thanks for your support! and have fun with 3D printer world!
 
 
