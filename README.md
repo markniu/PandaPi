@@ -16,6 +16,13 @@ If you want to run PandaPi on RPi, you need one PandaPi extra board that can be 
 <img  width="550"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/620.jpg"/>
 
 * ##   [Hardware resources](https://github.com/markniu/PandaPi/wiki/Hardware-resources) 
+
+* Support mixed use of 5V-24V fans
+* optocoupler for bed proximity sensor
+* Low temperature mosfet at high current heating.
+* autorecovery fuses and isolation components for over-current and reverse polarity protection for board,drivers,raspberry pi.
+* no wiring for TMC driver sensorless homing and uart mode.
+
 RaspberryPi | Pi 4B/3B/3B+  | .
 --- | --- | --- 
 Extruders | 	2 | 	 
@@ -30,10 +37,10 @@ Input   | 	9~28V 20A max	 | power both the board and the Raspberry Pi
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
 LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
-FAN   | 	<font color=#FF00000> Support mixed use of 5V-24V fans</font>| 
+FAN   |  [Support mixed use of 5V-24V fans](https://github.com/markniu/PandaPi/wiki/Hardware-resources)   | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
-Bed leveling    | 	  BLtouch  | <font color=#9acd32>	support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.</font>
+Bed leveling    | 	  BLtouch  | 	[support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler]((https://github.com/markniu/PandaPi/wiki/Hardware-resources) ).
 Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 * ## Block diagram
