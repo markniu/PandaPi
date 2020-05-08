@@ -1,5 +1,5 @@
-## 64-bit 3D printer controller.
- Run Marlin & Octoprint on Raspberry Pi directly.
+## 64-bit 3D printer controller.                                             
+ Run Marlin & Octoprint on Raspberry Pi directly.             ([Where to buy](https://www.pandapi3d.com/))
    
 1. ###  better prints at faster speeds
      If you want to do more higher speed or print some short line or corner the higher process speed is very important,otherwise there will be some slight on the surface. so 32 bit MCU is better,but if you want add more function like web camera,HDMI LCD... little space,for friendly easy to use this PandaPi runs on the powerful Raspberry Pi is the best. 
