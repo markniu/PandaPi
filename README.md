@@ -30,7 +30,7 @@ Input   | 	9~28V 20A max	 | power both the board and the Raspberry Pi
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
 LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
-on board FAN   | 	silent 24V self auto controlled	 | 
+FAN   | 	Support mixed use of 5V-24V fans| 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
 Bed leveling    | 	  BLtouch  | 	support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
