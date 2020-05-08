@@ -41,10 +41,10 @@ Input   | 	9~28V 20A max	 | power both the board and the Raspberry Pi
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
 LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
-FAN   |  [Support mixed use of 3V-24V fans](https://github.com/markniu/PandaPi/wiki/Hardware-resources)   | 
+FAN   |   Support mixed use of 3V-24V fans   | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
-Bed leveling    | 	  BLtouch  | 	[support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler]((https://github.com/markniu/PandaPi/wiki/Hardware-resources) ).
+Bed leveling    | 	  BLtouch  | 	 support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
 Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 * ## Block diagram
