@@ -72,7 +72,8 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 * [How-to-install-desktop(HDMI_LCD)](https://github.com/markniu/PandaPi/wiki/How-to-install-desktop(HDMI_LCD))
 
-* [How-to-run-TMC2209-&-Sensorless-homing](https://github.com/markniu/PandaPi/wiki/How-to-run-TMC2209-&-Sensorless-homing(V2.0))
+* [How-to-run-TMC2209-with-UART mode](https://github.com/markniu/PandaPi/wiki/How-to-run-TMC2209-with-UART-mode-(V2.0))
+
 * [How-to-plugin-OctoPrint-Enclosure](https://github.com/markniu/PandaPi/wiki/How-to-plugin-OctoPrint-Enclosure(DTH11-temperature-humidity-sensor))
 * [How-to-use-PID-auto-tune](https://github.com/markniu/PandaPi/wiki/How-to-use-PID-auto-tune)
 * [How-to-wiring-filament-runout-sensor](https://github.com/markniu/PandaPi/wiki/How-to-wiring-filament-runout-sensor)
