@@ -124,6 +124,9 @@
 #define TEMP_BOARD_PIN   255
 
 #define FAN_PIN         255
+#define FAN1_PIN         255
+#define FAN2_PIN         255
+#define FAN3_PIN         255
 
 
 //////////////////////////

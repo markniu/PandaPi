@@ -1082,7 +1082,7 @@ void Temperature::manage_heater() {
   {
   	//  printf("fan:%d,%d\n",fanSpeeds_old[2],digitalRead(X_ENABLE_PIN));
 	  fanSpeeds_old[2]=digitalRead(X_ENABLE_PIN);
-	  set_fan_speed(2,!fanSpeeds_old[2]);
+	  set_fan_speed(2,(!fanSpeeds_old[2])*255);
 	  
   }
 
