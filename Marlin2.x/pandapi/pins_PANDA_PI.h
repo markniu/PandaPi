@@ -78,7 +78,7 @@
  //  #define Y2_HARDWARE_SERIAL customizedSerial1
   #define Z_HARDWARE_SERIAL  customizedSerial1
   // #define Z2_HARDWARE_SERIAL customizedSerial1
- // #define E0_HARDWARE_SERIAL customizedSerial1
+  #define E0_HARDWARE_SERIAL customizedSerial1
   //#define E1_HARDWARE_SERIAL customizedSerial1
   //#define E2_HARDWARE_SERIAL customizedSerial1
   //#define E3_HARDWARE_SERIAL customizedSerial1
