@@ -1064,12 +1064,13 @@ void Temperature::manage_heater() {
 	  target_temperature_old[0]=degTargetHotend(0);
 	  setTargetHotend(temp_hotend[0].target,0);
   }
+#if HAS_HEATED_BED  
   if(target_temperature_bed_old!=temp_bed.target)
   {
 	  target_temperature_bed_old=temp_bed.target;
 	  setTargetBed(temp_bed.target);
   }
-  
+#endif  
   //setTargetFan
   if(fanSpeeds_old[0]!=fan_speed[0])
   {
@@ -2704,6 +2705,7 @@ int Temperature::read_with_check()
 		printf("\n f0=%f\n",fabs(temp_hotend[0].celsius-f));
 		ret=1;
 	}
+#if HAS_HEATED_BED 
 	parse_string(cmd_buf,"B:","",out,&k);	
 	f= atof(out);
 	if(fabs(temp_bed.celsius-f)<20)
@@ -2713,6 +2715,7 @@ int Temperature::read_with_check()
 		printf("\n f1=%f\n",fabs(temp_bed.celsius-f));
 		ret=1;
 	};
+#endif	
 	parse_string(cmd_buf,"T1:","",out,&k);	
 	f= atof(out);
 	if(fabs(temp_hotend[1].celsius-f)<20)
@@ -2789,11 +2792,12 @@ void Temperature::tick() {
 	  parse_string(cmd_buf,"T:","B",out,&k);  
 	  float f= atof(out); 
 	  temp_hotend[0].celsius=f;    
+#if HAS_HEATED_BED 
 
 	  parse_string(cmd_buf,"B:","",out,&k);   
 	  f= atof(out);
 	  temp_bed.celsius=f;
-
+#endif
 	  parse_string(cmd_buf,"T1:","",out,&k);  
 	  f= atof(out);
 	  temp_hotend[1].celsius=f;
