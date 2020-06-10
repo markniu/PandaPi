@@ -778,7 +778,7 @@ G29_TYPE GcodeSuite::G29() {
 
         // Retain the last probe position
         probePos = points[i];
-        measured_z = faux ? 0.001 * random(-100, 101) : probe.probe_at_point(probePos, raise_after, verbose_level);
+        measured_z = faux ? 0.001 * linux_random(-100, 101) : probe.probe_at_point(probePos, raise_after, verbose_level);
         if (isnan(measured_z)) {
           set_bed_leveling_enabled(abl_should_enable);
           break;

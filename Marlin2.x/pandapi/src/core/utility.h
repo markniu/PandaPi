@@ -23,6 +23,8 @@
 
 #include "../inc/MarlinConfigPre.h"
 #include "../core/types.h"
+int linux_random(int x,int y);
+char * dtostrf(double number, signed char width, unsigned char prec, char *s);
 
 // Delay that ensures heaters and watchdog are kept alive
 void safe_delay(millis_t ms);

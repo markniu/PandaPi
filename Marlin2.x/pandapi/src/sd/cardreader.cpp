@@ -504,9 +504,7 @@ int read_u_path()
 	    memset(buf, 0, sizeof(buf));
 		unsigned int n = fread(buf,sizeof(char),sizeof(buf),fp);
 		
-		fclose(fp);
-		printf("eeee:%s :\n", buf );
-		
+		fclose(fp);		
 		if(strlen(buf)>20)
 		{
 			//printf("%s\n", buf+strlen(buf)-15);
@@ -746,20 +744,26 @@ void CardReader::removeFile(const char * const name) {
   if (!isMounted()) return;
 
   //endFilePrint();
+ // PANDAPI
+ // SdFile *curDir;
+ // const char * const fname = diveToFile(false, curDir, name);
+//  if (!fname) return;
+  
+  char pa_data[128];
+  sprintf(pa_data,"%s/%s",root_path,name);
+  printf(pa_data);printf(" file delete\n");
 
-  SdFile *curDir;
-  const char * const fname = diveToFile(false, curDir, name);
-  if (!fname) return;
-
-  if (file.remove(curDir, fname)) {
-    SERIAL_ECHOLNPAIR("File deleted:", fname);
+ // if (file.remove(curDir, fname)) 
+ if( remove(pa_data) == 0 )
+  {
+    SERIAL_ECHOLNPAIR("File deleted:", pa_data);
     sdpos = 0;
     #if ENABLED(SDCARD_SORT_ALPHA)
       presort();
     #endif
   }
   else
-    SERIAL_ECHOLNPAIR("Deletion failed, File: ", fname, ".");
+    SERIAL_ECHOLNPAIR("Deletion failed,  : ", pa_data, ".");
 }
 
 void CardReader::report_status() {
@@ -1304,18 +1308,60 @@ void CardReader::fileHasFinished() {
 #if ENABLED(POWER_LOSS_RECOVERY)
 
   bool CardReader::jobRecoverFileExists() {
-    const bool exists = recovery.file.open(&root, recovery.filename, O_READ);
-    if (exists) recovery.file.close();
+    //const bool exists = recovery.file.open(&root, recovery.filename, O_READ);
+    //if (exists) recovery.file.close();
+    //  PANDAPI
+    bool exists = 0;
+	char pa_data[128];
+	sprintf(pa_data,"%s/%s",root_path,recovery.filename);
+	if (access(pa_data, F_OK) == 0)
+	{
+		printf("%s exists.\n",pa_data);
+		exists=1;
+	}
+	else
+	{
+		printf("%s not exists.\n",pa_data);
+		exists=0;
+	}
+	
     return exists;
   }
 
   void CardReader::openJobRecoveryFile(const bool read) {
-    if (!isMounted()) return;
+   /* if (!isMounted()) return;
     if (recovery.file.isOpen()) return;
     if (!recovery.file.open(&root, recovery.filename, read ? O_READ : O_CREAT | O_WRITE | O_TRUNC | O_SYNC))
       SERIAL_ECHOLNPAIR(STR_SD_OPEN_FILE_FAIL, recovery.filename, ".");
     else if (!read)
       echo_write_to_file(recovery.filename);
+      */
+   //  PANDAPI   
+   if (recovery.fp) 
+   {
+      //return;
+	  fclose(recovery.fp);
+	 
+   }
+   
+   char pa_data[128];
+   sprintf(pa_data,"%s/%s",root_path,recovery.filename);
+   printf(pa_data);printf(" opening...read:%d\n",read);
+   if (!read)
+   {
+	 echo_write_to_file(recovery.filename);   
+	 recovery.fp = fopen(pa_data, "wb");
+   }
+   else
+   	recovery.fp = fopen(pa_data, "rb");
+   
+   if (!recovery.fp)
+   {	   
+       printf("open failed:%s\n",pa_data);
+	   SERIAL_ECHOLNPAIR(STR_SD_OPEN_FILE_FAIL, recovery.filename, ".");
+   }
+    	
+
   }
 
   // Removing the job recovery file currently requires closing

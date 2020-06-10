@@ -106,8 +106,8 @@ inline bool food_on_line() {
 // Add a new food blob
 void food_reset() {
   do {
-    sdat.foodx = random(0, GAME_W);
-    sdat.foody = random(0, GAME_H);
+    sdat.foodx = linux_random(0, GAME_W);
+    sdat.foody = linux_random(0, GAME_H);
   } while (food_on_line());
 }
 

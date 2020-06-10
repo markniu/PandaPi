@@ -203,7 +203,7 @@ mesh_index_pair find_closest_circle_to_print(const xy_pos_t &pos) {
         f += (g26_pos - m).magnitude() / 15.0f;
 
         // Add the specified amount of Random Noise to our search
-        if (random_deviation > 1.0) f += random(0.0, random_deviation);
+        if (random_deviation > 1.0) f += linux_random(0.0, random_deviation);
 
         if (f < closest) {
           closest = f;          // Found a closer un-printed location
@@ -607,7 +607,7 @@ void GcodeSuite::G26() {
   }
 
   if (parser.seen('U')) {
-    randomSeed(millis());
+    // pandapi randomSeed(millis());
     // This setting will persist for the next G26
     random_deviation = parser.has_value() ? parser.value_float() : 50.0;
   }

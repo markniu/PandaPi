@@ -73,7 +73,7 @@ void GcodeSuite::M420() {
       #endif
       for (uint8_t x = 0; x < GRID_MAX_POINTS_X; x++)
         for (uint8_t y = 0; y < GRID_MAX_POINTS_Y; y++) {
-          Z_VALUES(x, y) = 0.001 * random(-200, 200);
+          Z_VALUES(x, y) = 0.001 * linux_random(-200, 200);
           #if ENABLED(EXTENSIBLE_UI)
             ExtUI::onMeshUpdate(x, y, Z_VALUES(x, y));
           #endif

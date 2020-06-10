@@ -65,6 +65,7 @@ void GcodeSuite::M24() {
     card.startFileprint();            // SD card will now be read for commands
     startOrResumeJob();               // Start (or resume) the print job timer
     #if ENABLED(POWER_LOSS_RECOVERY)
+	  recovery.cancel();
       recovery.prepare();
     #endif
   }

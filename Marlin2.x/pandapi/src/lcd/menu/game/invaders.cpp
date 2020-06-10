@@ -195,7 +195,7 @@ inline void reset_invaders() {
 
 
 inline void spawn_ufo() {
-  idat.ufov = random(0, 2) ? 1 : -1;
+  idat.ufov = linux_random(0, 2) ? 1 : -1;
   idat.ufox = idat.ufov > 0 ? -(UFO_W) : LCD_PIXEL_WIDTH - 1;
 }
 
@@ -270,7 +270,7 @@ void InvadersGame::game_screen() {
         idat.pos.x += idat.dir; // Invaders take one step left/right
 
         // Randomly shoot if invaders are listed
-        if (idat.count && !random(0, 20)) {
+        if (idat.count && !linux_random(0, 20)) {
 
           // Find a free bullet
           laser_t *b = nullptr;
@@ -278,10 +278,10 @@ void InvadersGame::game_screen() {
           if (b) {
             // Pick a random shooter and update the bullet
             //SERIAL_ECHOLNPGM("free bullet found");
-            const uint8_t inv = idat.shooters[random(0, idat.count + 1)], col = inv & 0x0F, row = inv >> 4, type = inv_type[row];
+            const uint8_t inv = idat.shooters[linux_random(0, idat.count + 1)], col = inv & 0x0F, row = inv >> 4, type = inv_type[row];
             b->x = INV_X_CTR(col, type);
             b->y = INV_Y_BOT(row);
-            b->v = 2 + random(0, 2);
+            b->v = 2 + linux_random(0, 2);
           }
         }
       }
@@ -335,7 +335,7 @@ void InvadersGame::game_screen() {
       }
 
       // Randomly spawn a UFO
-      if (!idat.ufov && !random(0,500)) spawn_ufo();
+      if (!idat.ufov && !linux_random(0,500)) spawn_ufo();
 
       // Did the laser hit a ufo?
       if (idat.laser.v && idat.ufov && idat.laser.y < UFO_H + 2 && WITHIN(idat.laser.x, idat.ufox, idat.ufox + UFO_W - 1)) {

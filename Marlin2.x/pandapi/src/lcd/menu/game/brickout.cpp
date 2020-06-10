@@ -96,8 +96,8 @@ void BrickoutGame::game_screen() {
           // If bricks are gone, go to reset state
           if (!--bdat.brick_count) game_state = 2;
           // Bounce the ball cleverly
-          if ((bdat.ballv < 0) == (bdat.hit_dir < 0)) { bdat.ballv = -bdat.ballv; bdat.ballh += fixed_t(random(-16, 16)); _BUZZ(5, 880); }
-                                       else { bdat.ballh = -bdat.ballh; bdat.ballv += fixed_t(random(-16, 16)); _BUZZ(5, 640); }
+          if ((bdat.ballv < 0) == (bdat.hit_dir < 0)) { bdat.ballv = -bdat.ballv; bdat.ballh += fixed_t(linux_random(-16, 16)); _BUZZ(5, 880); }
+                                       else { bdat.ballh = -bdat.ballh; bdat.ballv += fixed_t(linux_random(-16, 16)); _BUZZ(5, 640); }
         }
       }
       // Is the ball moving down and in paddle range?
@@ -116,12 +116,12 @@ void BrickoutGame::game_screen() {
             if ((bdat.ballh > 0) == is_left_edge) bdat.ballh = -bdat.ballh;
           }
           else if (diff <= 3) {
-            bdat.ballh += fixed_t(random(-64, 0));
+            bdat.ballh += fixed_t(linux_random(-64, 0));
             NOLESS(bdat.ballh, BTOF(-2));
             NOMORE(bdat.ballh, BTOF(2));
           }
           else if (diff >= PADDLE_W-1 - 3) {
-            bdat.ballh += fixed_t(random( 0, 64));
+            bdat.ballh += fixed_t(linux_random( 0, 64));
             NOLESS(bdat.ballh, BTOF(-2));
             NOMORE(bdat.ballh, BTOF(2));
           }

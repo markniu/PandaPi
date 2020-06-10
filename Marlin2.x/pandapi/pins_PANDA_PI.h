@@ -66,6 +66,11 @@
 #define E2_STEP_PIN        31
 #define E2_DIR_PIN         21
 #define E2_ENABLE_PIN      0
+/*
+#define Z2_STEP_PIN        31
+#define Z2_DIR_PIN         21
+#define Z2_ENABLE_PIN      0
+*/
 
 /**
  * Default pins for TMC software SPI

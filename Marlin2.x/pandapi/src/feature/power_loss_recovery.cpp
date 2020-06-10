@@ -33,10 +33,12 @@
 
 bool PrintJobRecovery::enabled; // Initialized by settings.load()
 
-SdFile PrintJobRecovery::file;
+//SdFile PrintJobRecovery::file;
 job_recovery_info_t PrintJobRecovery::info;
 const char PrintJobRecovery::filename[5] = "/PLR";
 uint8_t PrintJobRecovery::queue_index_r;
+
+
 uint32_t PrintJobRecovery::cmd_sdpos, // = 0
          PrintJobRecovery::sdpos[BUFSIZE];
 
@@ -56,7 +58,7 @@ uint32_t PrintJobRecovery::cmd_sdpos, // = 0
 
 #define DEBUG_OUT ENABLED(DEBUG_POWER_LOSS_RECOVERY)
 #include "../core/debug_out.h"
-
+ 
 PrintJobRecovery recovery;
 
 #ifndef POWER_LOSS_PURGE_LEN
@@ -106,6 +108,7 @@ void PrintJobRecovery::check() {
       load();
       if (!valid()) return purge();
       queue.inject_P(PSTR("M1000 S"));
+	  printf("\ngoto Recovery UI\n");
     }
   }
 }
@@ -124,8 +127,9 @@ void PrintJobRecovery::purge() {
 void PrintJobRecovery::load() {
   if (exists()) {
     open(true);
-    (void)file.read(&info, sizeof(info));
-    close();
+    //(void)file.read(&info, sizeof(info));
+	unsigned int n = fread(&info,sizeof(char),sizeof(info),recovery.fp);
+    fclose(recovery.fp);
   }
   debug(PSTR("Load"));
 }
@@ -274,12 +278,15 @@ void PrintJobRecovery::save(const bool force/*=false*/) {
 void PrintJobRecovery::write() {
 
   debug(PSTR("Write"));
-
+  printf("write power loss infor fp:%d \n",recovery.fp);
   open(false);
-  file.seekSet(0);
-  const int16_t ret = file.write(&info, sizeof(info));
+ // file.seekSet(0);
+ // const int16_t ret = file.write(&info, sizeof(info));
+  int ret=fwrite(&info,sizeof(info),1,recovery.fp);
   if (ret == -1) DEBUG_ECHOLNPGM("Power-loss file write failed.");
-  if (!file.close()) DEBUG_ECHOLNPGM("Power-loss file close failed.");
+  fclose(recovery.fp);
+  //if (!file.close()) DEBUG_ECHOLNPGM("Power-loss file close failed.");
+//   printf("write power loss infor==11 \n",info);
 }
 
 /**
@@ -482,10 +489,34 @@ void PrintJobRecovery::resume() {
 }
 
 #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
+#define DEBUG_PRINT_P(P)		serialprintPGM(P)
+#define DEBUG_ECHO_START		SERIAL_ECHO_START
+#define DEBUG_ERROR_START		SERIAL_ERROR_START
+#define DEBUG_CHAR				SERIAL_CHAR
+#define DEBUG_ECHO				SERIAL_ECHO
+#define DEBUG_ECHO_F			SERIAL_ECHO_F
+#define DEBUG_ECHOLN			SERIAL_ECHOLN
+#define DEBUG_ECHOPGM			SERIAL_ECHOPGM
+#define DEBUG_ECHOLNPGM 		SERIAL_ECHOLNPGM
+#define DEBUG_ECHOPAIR			SERIAL_ECHOPAIR
+#define DEBUG_ECHOPAIR_P		SERIAL_ECHOPAIR_P
+#define DEBUG_ECHOPAIR_F		SERIAL_ECHOPAIR_F
+#define DEBUG_ECHOPAIR_F_P		SERIAL_ECHOPAIR_F_P
+#define DEBUG_ECHOLNPAIR		SERIAL_ECHOLNPAIR
+#define DEBUG_ECHOLNPAIR_P		SERIAL_ECHOLNPAIR_P
+#define DEBUG_ECHOLNPAIR_F		SERIAL_ECHOLNPAIR_F
+#define DEBUG_ECHOLNPAIR_F_P	SERIAL_ECHOLNPAIR_F_P
+#define DEBUG_ECHO_MSG			SERIAL_ECHO_MSG
+#define DEBUG_ERROR_MSG 		SERIAL_ERROR_MSG
+#define DEBUG_EOL				SERIAL_EOL
+#define DEBUG_POS				SERIAL_POS
+#define DEBUG_XYZ				SERIAL_XYZ
 
+  
   void PrintJobRecovery::debug(PGM_P const prefix) {
-    DEBUG_PRINT_P(prefix);
+    DEBUG_PRINT_P(prefix); 
     DEBUG_ECHOLNPAIR(" Job Recovery Info...\nvalid_head:", int(info.valid_head), " valid_foot:", int(info.valid_foot));
+	printf("Recovery z:%.1f\n",info.current_position[2]);
     if (info.valid_head) {
       if (info.valid_head == info.valid_foot) {
         DEBUG_ECHOPGM("current_position: ");

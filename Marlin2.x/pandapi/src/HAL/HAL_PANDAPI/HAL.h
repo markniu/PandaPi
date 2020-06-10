@@ -55,8 +55,8 @@
 #define analogInputToDigitalPin(IO) IO
 
 #ifndef CRITICAL_SECTION_START
-  #define CRITICAL_SECTION_START  unsigned char _sreg = SREG; //cli()
-  #define CRITICAL_SECTION_END    SREG = _sreg
+  #define CRITICAL_SECTION_START NOOP//pandapi unsigned char _sreg = SREG; //cli()
+  #define CRITICAL_SECTION_END   NOOP//pandapi SREG = _sreg
 #endif
 #define ISRS_ENABLED() //TEST(SREG, SREG_I)
 #define ENABLE_ISRS()   //sei()
