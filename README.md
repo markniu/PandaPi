@@ -6,7 +6,7 @@
 2. ### Octoprint + marlin.
     the marlin code is very stable and are familiar with us, if we have a good idea or control algorithm, we can change it easily.   
 3. ### No arduino, no platformIO.
-    online compile.
+    configure your printer with browser
     
 ### Hardware    
 1. ####  Support mixed use of 3V-24V fans
