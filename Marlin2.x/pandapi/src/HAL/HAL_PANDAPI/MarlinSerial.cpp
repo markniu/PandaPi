@@ -287,7 +287,8 @@
   template<typename Cfg>
   void MarlinSerial<Cfg>::begin(const long baud) {
 	  
-	  Serial_PC(baud,BAUDRATE_TNT,&store_rxd_char);
+	  Serial_PC(baud,Cfg::PORT,&store_rxd_char);
+
 
   }
 
@@ -383,7 +384,7 @@
 
   template<typename Cfg>
   void MarlinSerial<Cfg>::write(const uint8_t c) {
-   Serial_send_char(c);
+   Serial_send_char(Cfg::PORT,c);
   }
 
   template<typename Cfg>
@@ -604,14 +605,14 @@
   #ifdef SERIAL_PORT_2
 
     // Hookup ISR handlers
-    ISR(SERIAL_REGNAME(USART,SERIAL_PORT_2,_RX_vect)) {
+ /*   ISR(SERIAL_REGNAME(USART,SERIAL_PORT_2,_RX_vect)) {
       MarlinSerial<MarlinSerialCfg<SERIAL_PORT_2>>::store_rxd_char();
     }
 
     ISR(SERIAL_REGNAME(USART,SERIAL_PORT_2,_UDRE_vect)) {
       MarlinSerial<MarlinSerialCfg<SERIAL_PORT_2>>::_tx_udr_empty_irq();
     }
-
+*/
     // Preinstantiate
     template class MarlinSerial<MarlinSerialCfg<SERIAL_PORT_2>>;
 

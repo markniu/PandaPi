@@ -114,7 +114,7 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-//#define SERIAL_PORT_2 -1
+#define SERIAL_PORT_2 1  //for octopi serial /dev/tnt
 
 /**
  * This setting determines the communication speed of the printer.
@@ -123,11 +123,11 @@
  * you commonly experience drop-outs during host printing.
  * You may try up to 1000000 to speed up SD file transfer.
  *
- * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
+ * :[2400, 9600, 19200, 38400, 57600, 115200,  500000, 1000000]
  */
  
-#define BAUDRATE 115200//250000
-#define BAUDRATE_TNT  BAUDRATE//500000  // for octoprint serial//  PANDAPI
+#define BAUDRATE 115200 
+#define BAUDRATE_TNT   500000  // for octoprint serial//  PANDAPI
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH

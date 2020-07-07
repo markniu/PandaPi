@@ -117,7 +117,7 @@ template<class SERIAL_TYPE>
 uint8_t TMC2208Stepper::serial_write(SERIAL_TYPE &serPtr, const uint8_t data) {
 
 //	return serPtr.write(data);
-    Serial_send_char(data);
+    Serial_send_char(0,data);
     return 1;
 }
 

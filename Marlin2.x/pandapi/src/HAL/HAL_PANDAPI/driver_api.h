@@ -77,8 +77,8 @@ void step_motor_init(void(*step_isr)(void),int n);
 ///unsigned long millis(void);
 ///void millis_count_init(void);
 void motor_next_isr(u16 time_n);
-char Serial_send(const char* buf_data);
-char Serial_send_char(  char  buf_data);
+char Serial_send(char uart_index, const char* buf_data);
+char Serial_send_char( char uart_index, char  buf_data);
 
 void FLUSH_serial0(void);
 void stm32_wdg_init(unsigned int time_out_ms);
