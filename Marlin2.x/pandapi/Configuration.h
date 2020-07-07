@@ -127,7 +127,7 @@
  */
  
 #define BAUDRATE 115200 
-#define BAUDRATE_TNT   500000  // for octoprint serial//  PANDAPI
+#define BAUDRATE_TNT   115200  // for octoprint serial [ 57600, 115200,  500000, 1000000]
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
