@@ -655,7 +655,10 @@ class Temperature {
 	  //////////////////  PANDAPI
 	  char tmp_data[32],cmd_buf[64];
 	  int cn=0;
-	  sprintf(tmp_data,"t%d;",celsius);
+	  if(ee==0)
+	  	sprintf(tmp_data,"t%d;",celsius);
+	  else
+	  	sprintf(tmp_data,"T%d;",celsius);
 	  printf(tmp_data);printf("\n");
 	  for(int i=0;i<strlen(tmp_data);i++)
 	  	wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);

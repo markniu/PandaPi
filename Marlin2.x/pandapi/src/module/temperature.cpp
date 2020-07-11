@@ -1064,6 +1064,13 @@ void Temperature::manage_heater() {
 	  target_temperature_old[0]=degTargetHotend(0);
 	  setTargetHotend(temp_hotend[0].target,0);
   }
+#if HOTENDS == 2  
+  if(target_temperature_old[1]!=temp_hotend[1].target)
+  {
+	  target_temperature_old[1]=degTargetHotend(1);
+	  setTargetHotend(temp_hotend[1].target,1);
+  }
+#endif  
 #if HAS_HEATED_BED  
   if(target_temperature_bed_old!=temp_bed.target)
   {
