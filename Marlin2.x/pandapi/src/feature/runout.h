@@ -107,13 +107,13 @@ class TFilamentMonitor : public FilamentMonitorBase {
         #endif
       )) {
         #ifdef FILAMENT_RUNOUT_DISTANCE_MM
-          cli(); // Prevent RunoutResponseDelayed::block_completed from accumulating here
+        //  cli(); // Prevent RunoutResponseDelayed::block_completed from accumulating here
         #endif
         response.run();
         sensor.run();
         const bool ran_out = response.has_run_out();
         #ifdef FILAMENT_RUNOUT_DISTANCE_MM
-          sei();
+        //  sei();
         #endif
         if (ran_out) {
           filament_ran_out = true;
