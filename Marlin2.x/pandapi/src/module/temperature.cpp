@@ -2676,10 +2676,12 @@ int parse_checksum(char* command)
 	return 0;
 }
 
+
 int Temperature::read_with_check()
 {
 	char cn=0,cmd_buf[128], out[128];
 	int k=0,ret=0;
+	float temp_data[3];
 	memset(cmd_buf,0,sizeof(cmd_buf));
 	memset(out,0,sizeof(out));
 
@@ -2700,36 +2702,42 @@ int Temperature::read_with_check()
 		break;
 		}
 	}
-	//sprintf(cmd_buf,"h1T:28.3B:20.3T1:29.3 *14");
+	//sprintf(cmd_buf,"h1T:28.3B:20.3T1:29.3 *14"); 
 	if(parse_checksum(cmd_buf))
 		return 1;
+	/////////////
 	parse_string(cmd_buf,"T:","B",out,&k);	
 	float f= atof(out);
-	if(fabs(temp_hotend[0].celsius-f)<20)
-		temp_hotend[0].celsius=f;
+	temp_data[1]=f;
+	parse_string(cmd_buf,"B:","",out,&k);	
+	f= atof(out);
+	temp_data[0]=f;
+	parse_string(cmd_buf,"T1:","",out,&k);	
+	f= atof(out);
+	temp_data[2]=f;
+	////////////////////
+	
+	if(fabs(temp_hotend[0].celsius-temp_data[HOTEND_0_CODE])<20)
+		temp_hotend[0].celsius=temp_data[HOTEND_0_CODE];
 	else
 	{
-		printf("\n f0=%f\n",fabs(temp_hotend[0].celsius-f));
+		printf("\n f0=%f\n",fabs(temp_hotend[0].celsius-temp_data[HOTEND_0_CODE]));
 		ret=1;
 	}
 #if HAS_HEATED_BED 
-	parse_string(cmd_buf,"B:","",out,&k);	
-	f= atof(out);
-	if(fabs(temp_bed.celsius-f)<20)
-		temp_bed.celsius=f;
+	if(fabs(temp_bed.celsius-temp_data[HOTBED_CODE])<20)
+		temp_bed.celsius=temp_data[HOTBED_CODE];
 	else
 	{
-		printf("\n f1=%f\n",fabs(temp_bed.celsius-f));
+		printf("\n f1=%f\n",fabs(temp_bed.celsius-temp_data[HOTBED_CODE]));
 		ret=1;
 	};
 #endif	
-	parse_string(cmd_buf,"T1:","",out,&k);	
-	f= atof(out);
-	if(fabs(temp_hotend[1].celsius-f)<20)
-		temp_hotend[1].celsius=f;
+	if(fabs(temp_hotend[1].celsius-temp_data[HOTEND_1_CODE])<20)
+		temp_hotend[1].celsius=temp_data[HOTEND_1_CODE];
 	else 
 	{
-		printf("\n f2=%f\n",fabs(temp_hotend[1].celsius-f));
+		printf("\n f2=%f\n",fabs(temp_hotend[1].celsius-temp_data[HOTEND_1_CODE]));
 		ret=1;
 	}
 
@@ -2823,8 +2831,8 @@ void Temperature::tick() {
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)			
 		  if((temp_hotend[0].celsius>130||temp_hotend[1].celsius>130)&&(IS_SD_PRINTING() || print_job_timer.isRunning()))
 		  {
-			   runout_pin[0]=((k>>1)&0x01);
-			   runout_pin[1]=(k&0x01);
+			   runout_pin[0]=((k>>1)&0x01);// C(DEBUG_SCL PA14)
+			   runout_pin[1]=(k&0x01);// D(DEBUG_SDA PA13 )
 			  printf("runout_pin[0,1]:%d,%d\n", runout_pin[0], runout_pin[1]);
 		  }
 #endif

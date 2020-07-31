@@ -328,7 +328,8 @@ typedef struct { int16_t raw_min, raw_max, mintemp, maxtemp; } temp_range_t;
 class Temperature {
 
   public:
-
+	  
+	  
     #if HOTENDS
       #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
         #define HOTEND_TEMPS (HOTENDS + 1)
@@ -640,6 +641,7 @@ class Temperature {
     #if HOTENDS
 
       static void setTargetHotend(const int16_t celsius, const uint8_t E_NAME) {
+       
         const uint8_t ee = HOTEND_INDEX;
         #ifdef MILLISECONDS_PREHEAT_TIME
           if (celsius == 0)
@@ -654,11 +656,12 @@ class Temperature {
         start_watching_hotend(ee);
 	  //////////////////  PANDAPI
 	  char tmp_data[32],cmd_buf[64];
+	  char heat_string[3][2]={"b","t","T"}; //  PANDAPI
 	  int cn=0;
 	  if(ee==0)
-	  	sprintf(tmp_data,"t%d;",celsius);
+	  	sprintf(tmp_data,"%s%d;",heat_string[HOTEND_0_CODE],celsius);
 	  else
-	  	sprintf(tmp_data,"T%d;",celsius);
+	  	sprintf(tmp_data,"%s%d;",heat_string[HOTEND_1_CODE],celsius);
 	  printf(tmp_data);printf("\n");
 	  for(int i=0;i<strlen(tmp_data);i++)
 	  	wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
@@ -728,8 +731,9 @@ class Temperature {
         start_watching_bed();
 		 //////////////////  PANDAPI
 		 char tmp_data[32],cmd_buf[64];
+		 char heat_string[3][2]={"b","t","T"}; //  PANDAPI
 		 int cn=0;
-		 sprintf(tmp_data,"b%d;",celsius);
+		 sprintf(tmp_data,"%s%d;",heat_string[HOTBED_CODE],celsius);
 		 printf(tmp_data);printf("\n");
 		 for(int i=0;i<strlen(tmp_data);i++)
 		   wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);

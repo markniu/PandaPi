@@ -120,6 +120,11 @@
 #endif
 
 
+
+#define HOTBED_CODE       0 
+#define HOTEND_0_CODE     1
+#define HOTEND_1_CODE     2
+
 #define HEATER_0_PIN     255
 #define HEATER_1_PIN     255
 #define HEATER_BED_PIN   255
@@ -128,10 +133,15 @@
 #define TEMP_BED_PIN     255
 #define TEMP_BOARD_PIN   255
 
+
+
 #define FAN_PIN         255
 #define FAN1_PIN         255
 #define FAN2_PIN         255
 #define FAN3_PIN         255
+
+
+
 
 
 //////////////////////////

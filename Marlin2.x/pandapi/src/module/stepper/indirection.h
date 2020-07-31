@@ -253,7 +253,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E2_STEP_INIT() SET_OUTPUT(E2_STEP_PIN)
 #ifndef E2_STEP_WRITE
-  #define E2_STEP_WRITE(STATE) WRITE(E2_STEP_PIN,STATE)
+  #define E2_STEP_WRITE(STATE) {WRITE(E2_STEP_PIN,STATE);delay_step();}//  PANDAPI
 #endif
 #define E2_STEP_READ() bool(READ(E2_STEP_PIN))
 
