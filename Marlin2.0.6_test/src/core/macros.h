@@ -160,6 +160,12 @@ typedef unsigned char byte;
 #ifndef printf_P
 #define printf_P(...) printf(__VA_ARGS__)
 #endif
+////////////PANDAPI
+#define snprintf_P  snprintf  
+#define vsprintf_P  vsprintf 
+#define vsnprintf_P  vsnprintf 
+#define fprintf_P   fprintf 
+///////////
 #ifndef snprintf_P
 #define snprintf_P(s, n, ...) ((s), (n), __VA_ARGS__)
 #endif
