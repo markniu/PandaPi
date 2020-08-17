@@ -33,19 +33,20 @@ static PGMSTR(echomagic, "echo:");
 #if HAS_MULTI_SERIAL
   int8_t serial_port_index = 0;
 #endif
-
+ 
 void serialprintPGM(PGM_P str) {
 #if PANDAPI
-return;
+
+//return;
  // Serial_send(0,str);
   int i;
   for(i=0;i<strlen(str);i++)
-  	SERIAL_CHAR(str[i]);
+  	 SERIAL_CHAR(str[i]);
 #else
   while (const char c = pgm_read_byte(str++)) SERIAL_CHAR(c);
 
  #endif 
-}
+} 
 void serial_echo_start()  { serialprintPGM(echomagic); }
 void serial_error_start() { serialprintPGM(errormagic); }
 

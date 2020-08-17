@@ -125,7 +125,22 @@
  */
  
 #define BAUDRATE 115200 
+//  PANDAPI
 #define BAUDRATE_TNT   115200  // for octoprint serial//  PANDAPI [ 57600, 115200,  500000, 1000000]
+
+//  PANDAPI
+#define DGUS_LCD_UI_PANDAPI
+#if DISABLED(DGUS_LCD_UI_PANDAPI)
+	#define ULTRA_LCD 
+	#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+#endif
+
+// @section extruder
+
+// This defines the number of extruders
+// :[0, 1, 2, 3, 4, 5, 6, 7, 8]
+#define EXTRUDERS 2
+
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -142,11 +157,6 @@
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
 //#define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 
-// @section extruder
-
-// This defines the number of extruders
-// :[0, 1, 2, 3, 4, 5, 6, 7, 8]
-#define EXTRUDERS 1
 
 // Generally expected filament diameter (1.75, 2.85, 3.0, ...). Used for Volumetric, Filament Width Sensor, etc.
 #define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
@@ -421,8 +431,12 @@
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
  */
 #define TEMP_SENSOR_0 13
-#if EXTRUDERS > 1 //  PANDAPI
-#define TEMP_SENSOR_1 13
+#if ENABLED(SINGLENOZZLE)//  PANDAPI
+	#define TEMP_SENSOR_1 0
+#else
+	#if EXTRUDERS > 1 //  PANDAPI
+		#define TEMP_SENSOR_1 13
+	#endif
 #endif
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_3 0
@@ -1868,11 +1882,6 @@
 //
 // Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.
 //
-//#define DGUS_LCD_UI_PANDAPI
-#if DISABLED(DGUS_LCD_UI_PANDAPI)
-	#define ULTRA_LCD //  PANDAPI
-	#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
-#endif
 //=============================================================================
 //======================== LCD / Controller Selection =========================
 //=====================   (I2C and Shift-Register LCDs)   =====================

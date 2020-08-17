@@ -324,10 +324,18 @@ inline bool serial_data_available() {
 inline int read_serial(const uint8_t index) {
   switch (index) {
 #if !HAS_DGUS_LCD  	
-    case 0: return MYSERIAL0.read();
+    case 0:
+		if(MYSERIAL0.available())//PANDAPI
+			return MYSERIAL0.read();
+		else
+			return -1;
 #endif	
 #if HAS_MULTI_SERIAL
-      case 1: return MYSERIAL1.read();
+      case 1: 
+	  	if(MYSERIAL1.available())//PANDAPI
+			return MYSERIAL1.read();
+		else
+			return -1;
  #endif
     default: return -1;
   }
@@ -454,9 +462,9 @@ void GCodeQueue::get_serial_commands() {
   /**
    * Loop while serial characters are incoming and the queue is not full
    */
+    
   while (length < BUFSIZE && serial_data_available()) {
     LOOP_L_N(i, NUM_SERIAL) {
-
       const int c = read_serial(i);
       if (c < 0) continue;
 

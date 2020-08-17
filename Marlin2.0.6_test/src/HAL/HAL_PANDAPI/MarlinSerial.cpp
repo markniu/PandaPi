@@ -295,13 +295,16 @@
   // Public Methods
   template<typename Cfg>
   void MarlinSerial<Cfg>::begin(const long baud) {
+    /////////////PANDAPI
+    if(port_fd)
+		return;
      if(Cfg::PORT==0)
 	  	port_fd=serialOpen("/dev/ttyAMA0",baud);
 	 else if(Cfg::PORT==1)
 	  	port_fd=serialOpen("/dev/tnt1",baud);	
 	 // Serial_PC(baud,Cfg::PORT,&store_rxd_char);
-
-
+	printf("port:%d,port_fd:%d\n",Cfg::PORT,port_fd);
+   ///////////
   }
  
   template<typename Cfg>
@@ -318,10 +321,11 @@
   template<typename Cfg>
   int MarlinSerial<Cfg>::read() {
     unsigned char rc[32];
+	
   //  if(Cfg::PORT==0)
     {
 		rc[0]=serialGetchar(port_fd);
-		// printf("0Y%x ",rc[0]);
+		//  printf("%c ",rc[0]);
 		return rc[0];
     }
     const ring_buffer_pos_t h = atomic_read_rx_head();
@@ -408,6 +412,8 @@
 //  printf("port:%d,c:0x%x ",Cfg::PORT,c);
  //  if(Cfg::PORT==0)
 	 serialPutchar(port_fd,c);
+// printf("port:%d,port_fd:%d\n",Cfg::PORT,port_fd);
+
  //  else
   // 	Serial_send_char(Cfg::PORT,c);
   }

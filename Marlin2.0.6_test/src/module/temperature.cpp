@@ -1044,6 +1044,13 @@ void Temperature::manage_heater() {
 	  target_temperature_old[0]=degTargetHotend(0);
 	  setTargetHotend(temp_hotend[0].target,0);
   }
+#if HOTENDS == 2  
+  if(target_temperature_old[1]!=temp_hotend[1].target)
+  {
+	  target_temperature_old[1]=degTargetHotend(1);
+	  setTargetHotend(temp_hotend[1].target,1);
+  }
+#endif  
 #if HAS_HEATED_BED  
   if(target_temperature_bed_old!=temp_bed.target)
   {
@@ -1078,9 +1085,9 @@ void Temperature::manage_heater() {
   if (TERN0(EMERGENCY_PARSER, emergency_parser.killed_by_M112))
     kill(M112_KILL_STR, nullptr, true);
 
-  if (!raw_temps_ready) return;
-
-  updateTemperaturesFromRawValues(); // also resets the watchdog
+// PANDAPI
+  //if (!raw_temps_ready) return;
+  //updateTemperaturesFromRawValues(); // also resets the watchdog
 
   #if DISABLED(IGNORE_THERMOCOUPLE_ERRORS)
     #if ENABLED(HEATER_0_USES_MAX6675)
@@ -2544,8 +2551,10 @@ int parse_checksum(char* command)
 
 int Temperature::read_with_check()
 {
+
 	char cn=0,cmd_buf[128], out[128];
 	int k=0,ret=0;
+	float temp_data[3];
 	memset(cmd_buf,0,sizeof(cmd_buf));
 	memset(out,0,sizeof(out));
 
@@ -2566,36 +2575,42 @@ int Temperature::read_with_check()
 		break;
 		}
 	}
-	//sprintf(cmd_buf,"h1T:28.3B:20.3T1:29.3 *14");
+	//sprintf(cmd_buf,"h1T:28.3B:20.3T1:29.3 *14"); 
 	if(parse_checksum(cmd_buf))
 		return 1;
+	/////////////
 	parse_string(cmd_buf,"T:","B",out,&k);	
 	float f= atof(out);
-	if(fabs(temp_hotend[0].celsius-f)<20)
-		temp_hotend[0].celsius=f;
+	temp_data[1]=f;
+	parse_string(cmd_buf,"B:","",out,&k);	
+	f= atof(out);
+	temp_data[0]=f;
+	parse_string(cmd_buf,"T1:","",out,&k);	
+	f= atof(out);
+	temp_data[2]=f;
+	////////////////////
+	
+	if(fabs(temp_hotend[0].celsius-temp_data[HOTEND_0_CODE])<20)
+		temp_hotend[0].celsius=temp_data[HOTEND_0_CODE];
 	else
 	{
-		printf("\n f0=%f\n",fabs(temp_hotend[0].celsius-f));
+		printf("\n f0=%f\n",fabs(temp_hotend[0].celsius-temp_data[HOTEND_0_CODE]));
 		ret=1;
 	}
 #if HAS_HEATED_BED 
-	parse_string(cmd_buf,"B:","",out,&k);	
-	f= atof(out);
-	if(fabs(temp_bed.celsius-f)<20)
-		temp_bed.celsius=f;
+	if(fabs(temp_bed.celsius-temp_data[HOTBED_CODE])<20)
+		temp_bed.celsius=temp_data[HOTBED_CODE];
 	else
 	{
-		printf("\n f1=%f\n",fabs(temp_bed.celsius-f));
+		printf("\n f1=%f\n",fabs(temp_bed.celsius-temp_data[HOTBED_CODE]));
 		ret=1;
 	};
 #endif	
-	parse_string(cmd_buf,"T1:","",out,&k);	
-	f= atof(out);
-	if(fabs(temp_hotend[1].celsius-f)<20)
-		temp_hotend[1].celsius=f;
+	if(fabs(temp_hotend[1].celsius-temp_data[HOTEND_1_CODE])<20)
+		temp_hotend[1].celsius=temp_data[HOTEND_1_CODE];
 	else 
 	{
-		printf("\n f2=%f\n",fabs(temp_hotend[1].celsius-f));
+		printf("\n f2=%f\n",fabs(temp_hotend[1].celsius-temp_data[HOTEND_1_CODE]));
 		ret=1;
 	}
 
@@ -2627,6 +2642,7 @@ void Temperature::tick() {
   /////////////////   
   char cn=0,cmd_buf[128], out[128];
   int k=0;
+  float temp_data[3];
   memset(cmd_buf,0,sizeof(cmd_buf));
   memset(out,0,sizeof(out));
 
@@ -2662,18 +2678,30 @@ void Temperature::tick() {
 	  printf("%s  +   \n",cmd_buf);
 		if(parse_checksum(cmd_buf))
 			return ;
-	  parse_string(cmd_buf,"T:","B",out,&k);  
-	  float f= atof(out); 
-	  temp_hotend[0].celsius=f;    
-#if HAS_HEATED_BED 
+		/////////////
+		parse_string(cmd_buf,"T:","B",out,&k);	
+		float f= atof(out);
+		temp_data[1]=f;
+		parse_string(cmd_buf,"B:","",out,&k);	
+		f= atof(out);
+		temp_data[0]=f;
+		parse_string(cmd_buf,"T1:","",out,&k);	
+		f= atof(out);
+		temp_data[2]=f;
+		////////////////////
 
-	  parse_string(cmd_buf,"B:","",out,&k);   
-	  f= atof(out);
-	  temp_bed.celsius=f;
+		
+	 // parse_string(cmd_buf,"T:","B",out,&k);  
+	//  float f= atof(out); 
+	  temp_hotend[0].celsius=temp_data[HOTEND_0_CODE];   
+#if HAS_HEATED_BED 
+	//  parse_string(cmd_buf,"B:","",out,&k);   
+	 // f= atof(out);
+	  temp_bed.celsius=temp_data[HOTBED_CODE];
 #endif
-	  parse_string(cmd_buf,"T1:","",out,&k);  
-	  f= atof(out);
-	  temp_hotend[1].celsius=f;
+	//  parse_string(cmd_buf,"T1:","",out,&k);  
+	//  f= atof(out);
+	  temp_hotend[1].celsius=temp_data[HOTEND_1_CODE];
 
 
 	  parse_string(cmd_buf,"h","T",out,&k);   

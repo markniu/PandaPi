@@ -56,7 +56,7 @@ extern uint8_t marlin_debug_flags;
     #define SERIAL_OUT(WHAT, V...) (void)CAT(MYSERIAL,SERIAL_CATCHALL).WHAT(V)
   #else
     #define SERIAL_OUT(WHAT, V...) do{ \
-     /* if (!serial_port_index || serial_port_index == SERIAL_BOTH) (void)MYSERIAL0.WHAT(V); */\
+      if (!serial_port_index || serial_port_index == SERIAL_BOTH) (void)MYSERIAL0.WHAT(V); \
       if ( serial_port_index) (void)MYSERIAL1.WHAT(V); \
     }while(0)
   #endif
@@ -65,7 +65,7 @@ extern uint8_t marlin_debug_flags;
 #else
   #define _PORT_REDIRECT(n,p)   NOOP
   #define _PORT_RESTORE(n)      NOOP
-  #define SERIAL_OUT(WHAT, V...) NOOP//(void)MYSERIAL0.WHAT(V)
+  #define SERIAL_OUT(WHAT, V...)  (void)MYSERIAL0.WHAT(V)
   #define SERIAL_ASSERT(P)      NOOP
 #endif
 

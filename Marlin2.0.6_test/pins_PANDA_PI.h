@@ -119,6 +119,11 @@
   #define MOSFET_D_PIN     -1
 #endif
 
+// heat connector index
+#define HOTBED_CODE       0  
+#define HOTEND_0_CODE     1  
+#define HOTEND_1_CODE     2  
+
 
 #define HEATER_0_PIN     255
 #define HEATER_1_PIN     255
