@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -16,14 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #ifdef __AVR__
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if ENABLED(FAST_PWM_FAN) || SPINDLE_LASER_PWM
+#if NEEDS_HARDWARE_PWM // Specific meta-flag for features that mandate PWM
 
 #include "HAL.h"
 
@@ -167,7 +167,7 @@ void set_pwm_frequency(const pin_t pin, int f_desired) {
     uint16_t prescaler[] = { 0, 1, 8, /*TIMER2 ONLY*/32, 64, /*TIMER2 ONLY*/128, 256, 1024 };
 
     // loop over prescaler values
-    for (uint8_t i = 1; i < 8; i++) {
+    LOOP_S_L_N(i, 1, 8) {
       uint16_t res_temp_fast = 255, res_temp_phase_correct = 255;
       if (timer.n == 2) {
         // No resolution calculation for TIMER2 unless enabled USE_OCR2A_AS_TOP
@@ -274,9 +274,9 @@ void set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t v_size/*=255
     else
       top = *timer.ICRn; // top = ICRn
 
-    _SET_OCRnQ(timer.OCRnQ, timer.q, v * float(top / v_size)); // Scale 8/16-bit v to top value
+    _SET_OCRnQ(timer.OCRnQ, timer.q, v * float(top) / float(v_size)); // Scale 8/16-bit v to top value
   }
 }
 
-#endif // FAST_PWM_FAN || SPINDLE_LASER_PWM
+#endif // NEEDS_HARDWARE_PWM
 #endif // __AVR__

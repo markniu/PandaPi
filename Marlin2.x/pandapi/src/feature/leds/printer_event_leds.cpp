@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -39,10 +39,6 @@ PrinterEventLEDs printerEventLEDs;
 #if HAS_TEMP_HOTEND || HAS_HEATED_BED
 
   uint8_t PrinterEventLEDs::old_intensity = 0;
-  inline long map(long x, long in_min, long in_max, long out_min, long out_max)
-  {
-	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  }
 
   inline uint8_t pel_intensity(const float &start, const float &current, const float &target) {
     return (uint8_t)map(constrain(current, start, target), start, target, 0.f, 255.f);
@@ -51,10 +47,10 @@ PrinterEventLEDs printerEventLEDs;
   inline void pel_set_rgb(const uint8_t r, const uint8_t g, const uint8_t b) {
     leds.set_color(
       MakeLEDColor(r, g, b, 0, neo.brightness())
-        #if ENABLED(NEOPIXEL_IS_SEQUENTIAL)
-          , true
-        #endif
-      );
+      #if ENABLED(NEOPIXEL_IS_SEQUENTIAL)
+        , true
+      #endif
+    );
   }
 
 #endif

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -52,7 +52,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #if defined(ARDUINO) && !defined(ARDUINO_ARCH_STM32) && !defined(ARDUINO_ARCH_SAM)
 
 #include "../../inc/MarlinConfigPre.h"
@@ -88,7 +88,7 @@ void u8g_spiSend_sw_AVR_mode_0(uint8_t val) {
   volatile uint8_t *outData = u8g_outData,
                    *outClock = u8g_outClock;
   U8G_ATOMIC_START();
-  for (uint8_t i = 0; i < 8; i++) {
+  LOOP_L_N(i, 8) {
     if (val & 0x80)
       *outData |= bitData;
     else
@@ -108,7 +108,7 @@ void u8g_spiSend_sw_AVR_mode_3(uint8_t val) {
   volatile uint8_t *outData = u8g_outData,
                    *outClock = u8g_outClock;
   U8G_ATOMIC_START();
-  for (uint8_t i = 0; i < 8; i++) {
+  LOOP_L_N(i, 8) {
     *outClock &= bitNotClock;
     if (val & 0x80)
       *outData |= bitData;
@@ -126,7 +126,7 @@ void u8g_spiSend_sw_AVR_mode_3(uint8_t val) {
 #else
   #define SPISEND_SW_AVR u8g_spiSend_sw_AVR_mode_0
 #endif
- 
+
 uint8_t u8g_com_HAL_AVR_sw_sp_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr) {
   switch (msg) {
     case U8G_COM_MSG_INIT:

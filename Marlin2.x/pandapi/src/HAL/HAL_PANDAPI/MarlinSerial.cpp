@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -42,6 +42,12 @@
 
   #include "MarlinSerial.h"
   #include "../../MarlinCore.h"
+  #include "wiringSerial.h"
+
+  #if ENABLED(DIRECT_STEPPING)
+    #include "../../feature/direct_stepping.h"
+  #endif
+
 
   template<typename Cfg> typename MarlinSerial<Cfg>::ring_buffer_r MarlinSerial<Cfg>::rx_buffer = { 0, 0, { 0 } };
   template<typename Cfg> typename MarlinSerial<Cfg>::ring_buffer_t MarlinSerial<Cfg>::tx_buffer = { 0 };
@@ -55,15 +61,14 @@
   // A SW memory barrier, to ensure GCC does not overoptimize loops
   #define sw_barrier() asm volatile("": : :"memory");
 
-  #include "../../feature/emergency_parser.h"
+  #include "../../feature/e_parser.h"
 
   // "Atomically" read the RX head index value without disabling interrupts:
   // This MUST be called with RX interrupts enabled, and CAN'T be called
   // from the RX ISR itself!
   template<typename Cfg>
   FORCE_INLINE typename MarlinSerial<Cfg>::ring_buffer_pos_t MarlinSerial<Cfg>::atomic_read_rx_head() {
-#if 1
-	if (Cfg::RX_SIZE > 256) {
+    if (Cfg::RX_SIZE > 256) {
       // Keep reading until 2 consecutive reads return the same value,
       // meaning there was no update in-between caused by an interrupt.
       // This works because serial RX interrupts happen at a slower rate
@@ -82,14 +87,14 @@
       // With an 8bit index, reads are always atomic. No need for special handling
       return rx_buffer.head;
     }
-#endif
-	
   }
 
   template<typename Cfg>
   volatile bool MarlinSerial<Cfg>::rx_tail_value_not_stable = false;
   template<typename Cfg>
   volatile uint16_t MarlinSerial<Cfg>::rx_tail_value_backup = 0;
+  template<typename Cfg>
+  volatile int MarlinSerial<Cfg>::port_fd = 0;
 
   // Set RX tail index, taking into account the RX ISR could interrupt
   //  the write to this variable in the middle - So a backup strategy
@@ -134,6 +139,19 @@
 
     static EmergencyParser::State emergency_state; // = EP_RESET
 
+    // This must read the R_UCSRA register before reading the received byte to detect error causes
+    if (Cfg::DROPPED_RX  && !++rx_dropped_bytes) --rx_dropped_bytes;
+    if (Cfg::RX_OVERRUNS && !++rx_buffer_overruns) --rx_buffer_overruns;
+    if (Cfg::RX_FRAMING_ERRORS && !++rx_framing_errors) --rx_framing_errors;
+
+    // Read the character from the USART
+    // uint8_t c = R_UDR;
+    char c;
+
+    #if ENABLED(DIRECT_STEPPING)
+      if (page_manager.maybe_store_rxd_char(c)) return;
+    #endif
+
     // Get the tail - Nothing can alter its value while this ISR is executing, but there's
     // a chance that this ISR interrupted the main process while it was updating the index.
     // The backup mechanism ensures the correct value is always returned.
@@ -145,14 +163,6 @@
     // Get the next element
     ring_buffer_pos_t i = (ring_buffer_pos_t)(h + 1) & (ring_buffer_pos_t)(Cfg::RX_SIZE - 1);
 
-    // This must read the R_UCSRA register before reading the received byte to detect error causes
-    if (Cfg::DROPPED_RX   && !++rx_dropped_bytes) --rx_dropped_bytes;
-    if (Cfg::RX_OVERRUNS  && !++rx_buffer_overruns) --rx_buffer_overruns;
-    if (Cfg::RX_FRAMING_ERRORS   && !++rx_framing_errors) --rx_framing_errors;
-
-    // Read the character from the USART
-   // uint8_t c = R_UDR;
-    char c;
     if (Cfg::EMERGENCYPARSER) emergency_parser.update(emergency_state, c);
 
     // If the character is to be stored at the index just before the tail
@@ -242,8 +252,7 @@
         /*  while (!B_UDRE)
 		   {
 
-            if (B_RXC)
-			 {
+            if (B_RXC) {
               // A char arrived while waiting for the TX buffer to be empty - Receive and process it!
 
               i = (ring_buffer_pos_t)(h + 1) & (ring_buffer_pos_t)(Cfg::RX_SIZE - 1);
@@ -286,12 +295,18 @@
   // Public Methods
   template<typename Cfg>
   void MarlinSerial<Cfg>::begin(const long baud) {
-	  
-	  Serial_PC(baud,Cfg::PORT,&store_rxd_char);
-
-
+    /////////////PANDAPI
+    if(port_fd)
+		return;
+     if(Cfg::PORT==0)
+	  	port_fd=serialOpen("/dev/ttyAMA0",baud);
+	 else if(Cfg::PORT==1)
+	  	port_fd=serialOpen("/dev/tnt1",baud);	
+	 // Serial_PC(baud,Cfg::PORT,&store_rxd_char);
+	printf("port:%d,port_fd:%d\n",Cfg::PORT,port_fd);
+   ///////////
   }
-
+ 
   template<typename Cfg>
   void MarlinSerial<Cfg>::end() {
 
@@ -305,11 +320,18 @@
 
   template<typename Cfg>
   int MarlinSerial<Cfg>::read() {
+    unsigned char rc[32];
+	
+  //  if(Cfg::PORT==0)
+    {
+		rc[0]=serialGetchar(port_fd);
+		//  printf("%c ",rc[0]);
+		return rc[0];
+    }
     const ring_buffer_pos_t h = atomic_read_rx_head();
 
     // Read the tail. Main thread owns it, so it is safe to directly read it
     ring_buffer_pos_t t = rx_buffer.tail;
-	 
 
     // If nothing to read, return now
     if (h == t) return -1;
@@ -317,7 +339,7 @@
     // Get the next char
     const int v = rx_buffer.buffer[t];
     t = (ring_buffer_pos_t)(t + 1) & (Cfg::RX_SIZE - 1);
-	 printf("%c",v);
+	 printf("0Y%x ",v);
 
     // Advance tail - Making sure the RX ISR will always get an stable value, even
     // if it interrupts the writing of the value of that variable in the middle.
@@ -328,7 +350,7 @@
       if ((xon_xoff_state & XON_XOFF_CHAR_MASK) == XOFF_CHAR) {
         // Get count of bytes in the RX buffer
         const ring_buffer_pos_t rx_count = (ring_buffer_pos_t)(h - t) & (ring_buffer_pos_t)(Cfg::RX_SIZE - 1);
-        if (rx_count < (Cfg::RX_SIZE) / 10) {
+        if (rx_count < (Cfg::RX_SIZE) / 128) {
           if (Cfg::TX_SIZE > 0) {
             // Signal we want an XON character to be sent.
             xon_xoff_state = XON_CHAR;
@@ -350,7 +372,10 @@
 
   template<typename Cfg>
   typename MarlinSerial<Cfg>::ring_buffer_pos_t MarlinSerial<Cfg>::available() {
-    const ring_buffer_pos_t h = atomic_read_rx_head(), t = rx_buffer.tail;
+    ring_buffer_pos_t n=serialDataAvail(port_fd);
+   // printf("serialDataAvail==%d ",n);
+	return n;
+	const ring_buffer_pos_t h = atomic_read_rx_head(), t = rx_buffer.tail;
     return (ring_buffer_pos_t)(Cfg::RX_SIZE + h - t) & (Cfg::RX_SIZE - 1);
   }
 
@@ -384,9 +409,24 @@
 
   template<typename Cfg>
   void MarlinSerial<Cfg>::write(const uint8_t c) {
-   Serial_send_char(Cfg::PORT,c);
-  }
+//  printf("port:%d,c:0x%x ",Cfg::PORT,c);
+ //  if(Cfg::PORT==0)
+	 serialPutchar(port_fd,c);
+// printf("port:%d,port_fd:%d\n",Cfg::PORT,port_fd);
 
+ //  else
+  // 	Serial_send_char(Cfg::PORT,c);
+  }
+#if HAS_DGUS_LCD  
+  template<typename Cfg>
+  int MarlinSerial<Cfg>:: get_tx_buffer_free() {
+	  const int t = tx_buffer.tail,  // next byte to send.
+							  h = tx_buffer.head;  // next pos for queue.
+	  int ret = t - h - 1;
+	  if (ret < 0) ret += Cfg::TX_SIZE + 1;
+	  return ret;
+	}
+#endif
   template<typename Cfg>
   void MarlinSerial<Cfg>::flushTX() {
 /*
@@ -566,7 +606,7 @@
 
     // Round correctly so that print(1.999, 2) prints as "2.00"
     double rounding = 0.5;
-    for (uint8_t i = 0; i < digits; ++i) rounding *= 0.1;
+    LOOP_L_N(i, digits) rounding *= 0.1;
     number += rounding;
 
     // Extract the integer part of the number and print it
@@ -638,6 +678,36 @@
 
   // Instantiate
   MarlinSerial<MarlinInternalSerialCfg<INTERNAL_SERIAL_PORT>> internalSerial;
+
+#endif
+
+#ifdef DGUS_SERIAL_PORT
+
+ // template<typename Cfg>
+  /*int MarlinSerial<Cfg>::  get_tx_buffer_free() {
+    const int t = tx_buffer.tail,  // next byte to send.
+                            h = tx_buffer.head;  // next pos for queue.
+    int ret = t - h - 1;
+    if (ret < 0) ret += Cfg::TX_SIZE + 1;
+    return ret;
+  }*/
+
+//void MarlinSerial<Cfg>::begin(const long baud)
+
+/* PANDA
+  ISR(SERIAL_REGNAME(USART,DGUS_SERIAL_PORT,_RX_vect)) {
+    MarlinSerial<MarlinInternalSerialCfg<DGUS_SERIAL_PORT>>::store_rxd_char();
+  }
+
+  ISR(SERIAL_REGNAME(USART,DGUS_SERIAL_PORT,_UDRE_vect)) {
+    MarlinSerial<MarlinInternalSerialCfg<DGUS_SERIAL_PORT>>::_tx_udr_empty_irq();
+  }
+
+  // Preinstantiate
+  template class MarlinSerial<MarlinInternalSerialCfg<DGUS_SERIAL_PORT>>;
+
+  // Instantiate
+  MarlinSerial<MarlinInternalSerialCfg<DGUS_SERIAL_PORT>> internalDgusSerial;*/
 
 #endif
 

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -79,15 +79,12 @@ uint8_t ServoCount = 0;                         // the total number of attached 
 #if 0
 
 static boolean isTimerActive(timer16_Sequence_t timer) {
-
   // returns true if any servo is active on this timer
-  for (uint8_t channel = 0; channel < SERVOS_PER_TIMER; channel++) {
+  LOOP_L_N(channel, SERVOS_PER_TIMER) {
     if (SERVO(timer, channel).Pin.isActive)
       return true;
   }
   return false;
-
-  
 }
 #endif 
 
@@ -208,15 +205,13 @@ bool Servo::attached() {
 #endif
 	}
 
-void Servo::move(const int value) {		
+void Servo::move(const int value) {
   constexpr uint16_t servo_delay[] = SERVO_DELAY;
   static_assert(COUNT(servo_delay) == NUM_SERVOS, "SERVO_DELAY must be an array NUM_SERVOS long.");
   if (attach(0) >= 0) {
     write(value);
     safe_delay(servo_delay[servoIndex]);
-    #if ENABLED(DEACTIVATE_SERVOS_AFTER_MOVE)
-      detach();
-    #endif
+    TERN_(DEACTIVATE_SERVOS_AFTER_MOVE, detach());
   }
 }
 

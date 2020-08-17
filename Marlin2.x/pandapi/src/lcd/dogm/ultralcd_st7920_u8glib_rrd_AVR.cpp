@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -34,18 +34,29 @@
 #include "ultralcd_st7920_u8glib_rrd_AVR.h"
 
 #ifndef ST7920_DELAY_1
-  #define ST7920_DELAY_1 CPU_ST7920_DELAY_1
+  #ifdef BOARD_ST7920_DELAY_1
+    #define ST7920_DELAY_1 BOARD_ST7920_DELAY_1
+  #else
+    #define ST7920_DELAY_1 CPU_ST7920_DELAY_1
+  #endif
 #endif
 #ifndef ST7920_DELAY_2
-  #define ST7920_DELAY_2 CPU_ST7920_DELAY_2
+  #ifdef BOARD_ST7920_DELAY_2
+    #define ST7920_DELAY_2 BOARD_ST7920_DELAY_2
+  #else
+    #define ST7920_DELAY_2 CPU_ST7920_DELAY_2
+  #endif
 #endif
 #ifndef ST7920_DELAY_3
-  #define ST7920_DELAY_3 CPU_ST7920_DELAY_3
+  #ifdef BOARD_ST7920_DELAY_3
+    #define ST7920_DELAY_3 BOARD_ST7920_DELAY_3
+  #else
+    #define ST7920_DELAY_3 CPU_ST7920_DELAY_3
+  #endif
 #endif
 
 // Optimize this code with -O3
 #pragma GCC optimize (3)
-
 
 #ifdef ARDUINO_ARCH_STM32F1
   #define ST7920_DAT(V) !!((V) & 0x80)
@@ -71,7 +82,7 @@ void ST7920_SWSPI_SND_8BIT(uint8_t val) {
   ST7920_SND_BIT; // 7
   ST7920_SND_BIT; // 8
 }
-   
+
 uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
   uint8_t i, y;
   switch (msg) {
@@ -144,7 +155,7 @@ u8g_pb_t  u8g_dev_st7920_128x64_rrd_pb = { { PAGE_HEIGHT, LCD_PIXEL_HEIGHT, 0, 0
 u8g_dev_t u8g_dev_st7920_128x64_rrd_sw_spi = { u8g_dev_rrd_st7920_128x64_fn, &u8g_dev_st7920_128x64_rrd_pb, &u8g_com_null_fn };
 
 #pragma GCC reset_options
- 
+
 #if ENABLED(LIGHTWEIGHT_UI)
   #include "../../HAL/shared/HAL_ST7920.h"
   void ST7920_cs()                          { ST7920_CS(); }

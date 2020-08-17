@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -34,7 +34,7 @@
 #undef UNUSED         // Redefined by stm32f4xx_hal_def.h
 
 ////  PANDAPI #include <Arduino.h>  // NOTE: If included earlier then this line is a NOOP
-
+#include <string.h>
 #undef DISABLED
 #define DISABLED(V...) DO(DIS,&&,V)
 

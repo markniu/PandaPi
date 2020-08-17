@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -278,9 +278,9 @@
 #endif
 
 #define _E6_CS
+#define _E6_MS1
 #define _E6_MS2
 #define _E6_MS3
-#define _E6_MS4
 
 #if E_NEEDED(6)
   #if PIN_EXISTS(E6_CS) && AXIS_HAS_SPI(E6)
@@ -302,9 +302,9 @@
 #endif
 
 #define _E7_CS
+#define _E7_MS1
+#define _E7_MS2
 #define _E7_MS3
-#define _E7_MS4
-#define _E7_MS5
 
 #if E_NEEDED(7)
   #if PIN_EXISTS(E7_CS) && AXIS_HAS_SPI(E7)
@@ -389,6 +389,31 @@
 // Heaters, Fans, Temp Sensors
 //
 
+#ifndef E0_AUTO_FAN_PIN
+  #define E0_AUTO_FAN_PIN -1
+#endif
+#ifndef E1_AUTO_FAN_PIN
+  #define E1_AUTO_FAN_PIN -1
+#endif
+#ifndef E2_AUTO_FAN_PIN
+  #define E2_AUTO_FAN_PIN -1
+#endif
+#ifndef E3_AUTO_FAN_PIN
+  #define E3_AUTO_FAN_PIN -1
+#endif
+#ifndef E4_AUTO_FAN_PIN
+  #define E4_AUTO_FAN_PIN -1
+#endif
+#ifndef E5_AUTO_FAN_PIN
+  #define E5_AUTO_FAN_PIN -1
+#endif
+#ifndef E6_AUTO_FAN_PIN
+  #define E6_AUTO_FAN_PIN -1
+#endif
+#ifndef E7_AUTO_FAN_PIN
+  #define E7_AUTO_FAN_PIN -1
+#endif
+
 #define _H0_PINS
 #define _H1_PINS
 #define _H2_PINS
@@ -398,10 +423,10 @@
 #define _H6_PINS
 #define _H7_PINS
 
-#if HOTENDS
+#if HAS_HOTEND
   #undef _H0_PINS
   #define _H0_PINS HEATER_0_PIN, E0_AUTO_FAN_PIN, analogInputToDigitalPin(TEMP_0_PIN),
-  #if HOTENDS > 1
+  #if HAS_MULTI_HOTEND
     #undef _H1_PINS
     #define _H1_PINS HEATER_1_PIN, E1_AUTO_FAN_PIN, analogInputToDigitalPin(TEMP_1_PIN),
     #if HOTENDS > 2
@@ -428,14 +453,8 @@
         #endif // HOTENDS > 4
       #endif // HOTENDS > 3
     #endif // HOTENDS > 2
-  #endif // HOTENDS > 1
+  #endif // HAS_MULTI_HOTEND
 #endif // HOTENDS
-
-#define _BED_PINS
-#if PIN_EXISTS(HEATER_BED) && PIN_EXISTS(TEMP_BED)
-  #undef _BED_PINS
-  #define _BED_PINS HEATER_BED_PIN, analogInputToDigitalPin(TEMP_BED_PIN),
-#endif
 
 //
 // Dual X, Dual Y, Multi-Z
@@ -639,6 +658,23 @@
   #define _FANC CONTROLLER_FAN_PIN,
 #else
   #define _FANC
+#endif
+
+#if PIN_EXISTS(HEATER_BED) && PIN_EXISTS(TEMP_BED)
+  #define _BED_PINS HEATER_BED_PIN, analogInputToDigitalPin(TEMP_BED_PIN),
+#else
+  #define _BED_PINS
+#endif
+
+#if PIN_EXISTS(TEMP_CHAMBER)
+  #define __CHAMBER_PINS CHAMBER_AUTO_FAN_PIN, analogInputToDigitalPin(TEMP_CHAMBER_PIN),
+#else
+  #define __CHAMBER_PINS
+#endif
+#if PIN_EXISTS(HEATER_CHAMBER)
+  #define _CHAMBER_PINS __CHAMBER_PINS HEATER_CHAMBER_PIN,
+#else
+  #define _CHAMBER_PINS
 #endif
 
 #ifndef HAL_SENSITIVE_PINS

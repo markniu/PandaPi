@@ -1,4 +1,3 @@
-
 /**
  * Marlin 3D Printer Firmware
  * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
@@ -17,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -30,18 +29,23 @@
 
 #include "../MarlinCore.h"
 #include "../lcd/ultralcd.h"
+ 
+#if ENABLED(DWIN_CREALITY_LCD)
+  #include "../lcd/dwin/dwin.h"
+#endif
+
 #include "../module/planner.h"        // for synchronize
 #include "../module/printcounter.h"
-#include "../core/language.h"
 #include "../gcode/queue.h"
 #include "../module/configuration_store.h"
+#include "../module/stepper/indirection.h"
 
 #if ENABLED(EMERGENCY_PARSER)
-  #include "../feature/emergency_parser.h"
+  #include "../feature/e_parser.h"
 #endif
 
 #if ENABLED(POWER_LOSS_RECOVERY)
-  #include "../feature/power_loss_recovery.h"
+  #include "../feature/powerloss.h"
 #endif
 
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
@@ -62,7 +66,7 @@ uint8_t CardReader::sdprinting_done_state;
 char CardReader::filename[FILENAME_LENGTH], CardReader::longFilename[LONG_FILENAME_LENGTH];
 int8_t CardReader::autostart_index;
 
-#if ENABLED(BINARY_FILE_TRANSFER) && NUM_SERIAL > 1
+#if BOTH(HAS_MULTI_SERIAL, BINARY_FILE_TRANSFER)
   int8_t CardReader::transfer_port_index;
 #endif
 
@@ -153,7 +157,7 @@ CardReader::CardReader() {
 //
 char *createFilename(char * const buffer, const dir_t &p) {
   char *pos = buffer;
-  for (uint8_t i = 0; i < 11; i++) {
+  LOOP_L_N(i, 11) {
     if (p.name[i] == ' ') continue;
     if (i == 8) *pos++ = '.';
     *pos++ = p.name[i];
@@ -166,12 +170,13 @@ char *createFilename(char * const buffer, const dir_t &p) {
 // Return 'true' if the item is a folder or G-code file
 //
 bool CardReader::is_dir_or_gcode(const dir_t &p) {
-  uint8_t pn0 = p.name[0];
+  //uint8_t pn0 = p.name[0];
 
-  if ( pn0 == DIR_NAME_FREE || pn0 == DIR_NAME_DELETED  // Clear or Deleted entry
-    || pn0 == '.' || longFilename[0] == '.'             // Hidden file
-    || !DIR_IS_FILE_OR_SUBDIR(&p)                       // Not a File or Directory
-    || (p.attributes & DIR_ATT_HIDDEN)                  // Hidden by attribute
+  if ( (p.attributes & DIR_ATT_HIDDEN)                  // Hidden by attribute
+    // When readDir() > 0 these must be false:
+    //|| pn0 == DIR_NAME_FREE || pn0 == DIR_NAME_DELETED  // Clear or Deleted entry
+    //|| pn0 == '.' || longFilename[0] == '.'             // Hidden file
+    //|| !DIR_IS_FILE_OR_SUBDIR(&p)                       // Not a File or Directory
   ) return false;
 
   flag.filenameIsDir = DIR_IS_SUBDIR(&p);               // We know it's a File or Folder
@@ -184,16 +189,15 @@ bool CardReader::is_dir_or_gcode(const dir_t &p) {
 
 ////  PANDAPI
 // Get the number of (compliant) items in the folder
-//(dir_t* p,int printout,int index char* mach_name,)
+//
 int CardReader::countItems(SdFile dir) {
   dir_t p;
-  return Linux_readDir(&p,0,-1,NULL);
+  return Linux_readDir(&p,0,-1,NULL);////  PANDAPI
   int c = 0;
-  printf("countItems==\n");
   while (dir.readDir(&p, longFilename) > 0)
     c += is_dir_or_gcode(p);
 
-  #if ENABLED(SDCARD_SORT_ALPHA) && SDSORT_USES_RAM && SDSORT_CACHE_NAMES
+  #if ALL(SDCARD_SORT_ALPHA, SDSORT_USES_RAM, SDSORT_CACHE_NAMES)
     nrFiles = c;
   #endif
 
@@ -226,10 +230,7 @@ void CardReader::selectByIndex(SdFile dir, const uint8_t index) {
 //
 void CardReader::selectByName(SdFile dir, const char * const match) {
   dir_t p;
-  printf("selectByName==\n");
-  Linux_readDir(&p,0,-1,match);
-  return;
-  for (uint8_t cnt = 0; Linux_readDir(&p,0,-1,match) > 0; cnt++) {
+  for (uint8_t cnt = 0; dir.readDir(&p, longFilename) > 0; cnt++) {
     if (is_dir_or_gcode(p)) {
       createFilename(filename, p);
       if (strcasecmp(match, filename) == 0) return;
@@ -540,22 +541,68 @@ void CardReader::mount() {
   else {
 */
   read_u_path();
-
   {
     flag.mounted = true;
     SERIAL_ECHO_MSG(STR_SD_CARD_OK);
-    #if ENABLED(EEPROM_SETTINGS) && NONE(FLASH_EEPROM_EMULATION, SPI_EEPROM, I2C_EEPROM)
-      settings.first_load();
-    #endif
   }
   cdroot();
 
   ui.refresh();
 }
 
+/**
+ * Handle SD card events
+ */
+#if MB(FYSETC_CHEETAH, FYSETC_AIO_II)
+  #include "../module/stepper.h"
+#endif
+
+void CardReader::manage_media() {
+  static uint8_t prev_stat = 2;       // First call, no prior state
+  uint8_t stat = uint8_t(IS_SD_INSERTED());
+  if (stat == prev_stat) return;
+
+  flag.workDirIsRoot = true;          // Return to root on mount/release
+
+  if (ui.detected()) {
+
+    uint8_t old_stat = prev_stat;
+    prev_stat = stat;                 // Change now to prevent re-entry
+
+    if (stat) {                       // Media Inserted
+      safe_delay(500);                // Some boards need a delay to get settled
+      mount();                        // Try to mount the media
+      #if MB(FYSETC_CHEETAH, FYSETC_CHEETAH_V12, FYSETC_AIO_II)
+        reset_stepper_drivers();      // Workaround for Cheetah bug
+      #endif
+      if (!isMounted()) stat = 0;     // Not mounted?
+    }
+    else {
+      #if PIN_EXISTS(SD_DETECT)
+        release();                    // Card is released
+      #endif
+    }
+
+    ui.media_changed(old_stat, stat); // Update the UI
+
+    if (stat) {
+      TERN_(SDCARD_EEPROM_EMULATION, settings.first_load());
+      if (old_stat == 2)              // First mount?
+        TERN(POWER_LOSS_RECOVERY,
+          recovery.check(),           // Check for PLR file. (If not there it will beginautostart)
+          beginautostart()            // Look for auto0.g on the next loop
+        );
+    }
+  }
+}
+
 void CardReader::release() {
   endFilePrint();
   flag.mounted = false;
+  flag.workDirIsRoot = true;
+  #if ALL(SDCARD_SORT_ALPHA, SDSORT_USES_RAM, SDSORT_CACHE_NAMES)
+    nrFiles = 0;
+  #endif
 }
 
 void CardReader::openAndPrintFile(const char *name) {
@@ -570,20 +617,13 @@ void CardReader::openAndPrintFile(const char *name) {
 void CardReader::startFileprint() {
   if (isMounted()) {
     flag.sdprinting = true;
-    #if SD_RESORT
-      flush_presort();
-    #endif
+    TERN_(SD_RESORT, flush_presort());
   }
 }
 
-void CardReader::endFilePrint(
-  #if SD_RESORT
-    const bool re_sort/*=false*/
-  #endif
-) {
-  #if ENABLED(ADVANCED_PAUSE_FEATURE)
-    did_pause_print = 0;
-  #endif
+void CardReader::endFilePrint(TERN_(SD_RESORT, const bool re_sort/*=false*/)) {
+  TERN_(ADVANCED_PAUSE_FEATURE, did_pause_print = 0);
+  TERN_(DWIN_CREALITY_LCD, HMI_flag.print_finish = flag.sdprinting);
   flag.sdprinting = flag.abort_sd_printing = false;
   ////PANDAPI
   if (isFileOpen()) 
@@ -591,14 +631,12 @@ void CardReader::endFilePrint(
 	//file.close();
 	fclose(fd_sd_card);fd_sd_card=NULL;
   }
-  #if SD_RESORT
-    if (re_sort) presort();
-  #endif
+  TERN_(SD_RESORT, if (re_sort) presort());
 }
 
 void CardReader::openLogFile(char * const path) {
-  flag.logging = true;
-  openFileWrite(path);
+  flag.logging = DISABLED(SDCARD_READONLY);
+  TERN(SDCARD_READONLY,,openFileWrite(path));
 }
 
 //
@@ -614,7 +652,7 @@ void CardReader::getAbsFilename(char *dst) {
     if (cnt < MAXPATHNAMELENGTH) { *dst = '/'; dst++; cnt++; }
   };
 
-  for (uint8_t i = 0; i < workDirDepth; i++)                // Loop down to current work dir
+  LOOP_L_N(i, workDirDepth)                // Loop down to current work dir
     appendAtom(workDirParents[i]);
 
   if (cnt < MAXPATHNAMELENGTH - (FILENAME_LENGTH) - 1) {    // Leave room for filename and nul
@@ -630,10 +668,12 @@ void openFailed(const char * const fname) {
 
 void announceOpen(const uint8_t doing, const char * const path) {
   if (doing) {
+    PORT_REDIRECT(SERIAL_BOTH);
     SERIAL_ECHO_START();
     SERIAL_ECHOPGM("Now ");
     serialprintPGM(doing == 1 ? PSTR("doing") : PSTR("fresh"));
     SERIAL_ECHOLNPAIR(" file: ", path);
+    PORT_RESTORE();
   }
 }
 
@@ -662,8 +702,8 @@ void CardReader::openFileRead(char * const path, const uint8_t subcall_type/*=0*
 
       // Too deep? The firmware has to bail.
       if (file_subcall_ctr > SD_PROCEDURE_DEPTH - 1) {
-        SERIAL_ERROR_MSG("trying to call sub-gcode files with too many levels. MAX level is:" STRINGIFY(SD_PROCEDURE_DEPTH));
-        kill();
+        SERIAL_ERROR_MSG("Exceeded max SUBROUTINE depth:" STRINGIFY(SD_PROCEDURE_DEPTH));
+        kill(GET_TEXT(MSG_KILL_SUBCALL_OVERFLOW));
         return;
       }
 
@@ -695,8 +735,11 @@ void CardReader::openFileRead(char * const path, const uint8_t subcall_type/*=0*
 	  SERIAL_ECHOLNPGM(pa_data);
       filesize = get_file_size(pa_data);//file.fileSize();
     sdpos = 0;
+
+    PORT_REDIRECT(SERIAL_BOTH);
     SERIAL_ECHOLNPAIR(STR_SD_FILE_OPENED, fname, STR_SD_SIZE, filesize);
     SERIAL_ECHOLNPGM(STR_SD_FILE_SELECTED);
+    PORT_RESTORE();
 
     selectFileByName(fname);
     ui.set_status(longFilename[0] ? longFilename : fname);
@@ -724,17 +767,19 @@ void CardReader::openFileWrite(char * const path) {
   const char * const fname = diveToFile(false, curDir, path);
   if (!fname) return;
 
-  if (file.open(curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
-    flag.saving = true;
-    selectFileByName(fname);
-    #if ENABLED(EMERGENCY_PARSER)
-      emergency_parser.disable();
-    #endif
-    echo_write_to_file(fname);
-    ui.set_status(fname);
-  }
-  else
+  #if ENABLED(SDCARD_READONLY)
     openFailed(fname);
+  #else
+    if (file.open(curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
+      flag.saving = true;
+      selectFileByName(fname);
+      TERN_(EMERGENCY_PARSER, emergency_parser.disable());
+      echo_write_to_file(fname);
+      ui.set_status(fname);
+    }
+    else
+      openFailed(fname);
+  #endif
 }
 
 //
@@ -807,15 +852,10 @@ void CardReader::checkautostart() {
   if (autostart_index < 0 || flag.sdprinting) return;
 
   if (!isMounted()) mount();
-  #if ENABLED(EEPROM_SETTINGS) && NONE(FLASH_EEPROM_EMULATION, SPI_EEPROM, I2C_EEPROM)
-    else settings.first_load();
-  #endif
+  TERN_(SDCARD_EEPROM_EMULATION, else settings.first_load());
 
-  if (isMounted()
-    #if ENABLED(POWER_LOSS_RECOVERY)
-      && !recovery.valid() // Don't run auto#.g when a resume file exists
-    #endif
-  ) {
+  // Don't run auto#.g when a PLR file exists
+  if (isMounted() && TERN1(POWER_LOSS_RECOVERY, !recovery.valid())) {
     char autoname[8];
     sprintf_P(autoname, PSTR("auto%c.g"), autostart_index + '0');
     dir_t p;
@@ -848,9 +888,7 @@ void CardReader::closefile(const bool store_location) {
   file.close();
   flag.saving = flag.logging = false;
   sdpos = 0;
-  #if ENABLED(EMERGENCY_PARSER)
-    emergency_parser.enable();
-  #endif
+  TERN_(EMERGENCY_PARSER, emergency_parser.enable());
 
   if (store_location) {
     //future: store printer state, filename and position for continuing a stopped print
@@ -923,8 +961,10 @@ const char* CardReader::diveToFile(const bool update_cwd, SdFile*& curDir, const
 
   startDir = curDir;
   while (item_name_adr) {
-    // Find next sub
+    // Find next subdirectory delimiter
     char * const name_end = "";// //  PANDAPI  strchr(item_name_adr, '/');
+
+    // Last atom in the path? Item found.
     if (name_end <= item_name_adr) break;
 
     // Set subDirName
@@ -971,9 +1011,7 @@ void CardReader::cd(const char * relpath) {
     flag.workDirIsRoot = false;
     if (workDirDepth < MAX_DIR_DEPTH)
       workDirParents[workDirDepth++] = workDir;
-    #if ENABLED(SDCARD_SORT_ALPHA)
-      presort();
-    #endif
+    TERN_(SDCARD_SORT_ALPHA, presort());
   }
   else {
     SERIAL_ECHO_START();
@@ -984,9 +1022,7 @@ void CardReader::cd(const char * relpath) {
 int8_t CardReader::cdup() {
   if (workDirDepth > 0) {                                               // At least 1 dir has been saved
     workDir = --workDirDepth ? workDirParents[workDirDepth - 1] : root; // Use parent, or root if none
-    #if ENABLED(SDCARD_SORT_ALPHA)
-      presort();
-    #endif
+    TERN_(SDCARD_SORT_ALPHA, presort());
   }
   if (!workDirDepth) flag.workDirIsRoot = true;
   return workDirDepth;
@@ -995,9 +1031,7 @@ int8_t CardReader::cdup() {
 void CardReader::cdroot() {
   workDir = root;
   flag.workDirIsRoot = true;
-  #if ENABLED(SDCARD_SORT_ALPHA)
-    presort();
-  #endif
+  TERN_(SDCARD_SORT_ALPHA, presort());
 }
 
 #if ENABLED(SDCARD_SORT_ALPHA)
@@ -1006,12 +1040,8 @@ void CardReader::cdroot() {
    * Get the name of a file in the working directory by sort-index
    */
   void CardReader::getfilename_sorted(const uint16_t nr) {
-    selectFileByIndex(
-      #if ENABLED(SDSORT_GCODE)
-        sort_alpha &&
-      #endif
-      (nr < sort_count) ? sort_order[nr] : nr
-    );
+    selectFileByIndex(TERN1(SDSORT_GCODE, sort_alpha) && (nr < sort_count)
+      ? sort_order[nr] : nr);
   }
 
   #if ENABLED(SDSORT_USES_RAM)
@@ -1057,9 +1087,7 @@ void CardReader::cdroot() {
     flush_presort();
 
     // Sorting may be turned off
-    #if ENABLED(SDSORT_GCODE)
-      if (!sort_alpha) return;
-    #endif
+    if (TERN0(SDSORT_GCODE, !sort_alpha)) return;
 
     // If there are files, sort up to the limit
     uint16_t fileCnt = countFilesInWorkDir();
@@ -1070,9 +1098,7 @@ void CardReader::cdroot() {
       NOMORE(fileCnt, uint16_t(SDSORT_LIMIT));
 
       // Sort order is always needed. May be static or dynamic.
-      #if ENABLED(SDSORT_DYNAMIC_RAM)
-        sort_order = new uint8_t[fileCnt];
-      #endif
+      TERN_(SDSORT_DYNAMIC_RAM, sort_order = new uint8_t[fileCnt]);
 
       // Use RAM to store the entire directory during pre-sort.
       // SDSORT_LIMIT should be set to prevent over-allocation.
@@ -1110,11 +1136,7 @@ void CardReader::cdroot() {
 
         // Init sort order.
         for (uint16_t i = 0; i < fileCnt; i++) {
-          sort_order[i] = (
-            #if ENABLED(SDCARD_RATHERRECENTFIRST)
-              fileCnt - 1 -
-            #endif
-          i);
+          sort_order[i] = i;
           // If using RAM then read all filenames now.
           #if ENABLED(SDSORT_USES_RAM)
             selectFileByIndex(i);
@@ -1126,7 +1148,7 @@ void CardReader::cdroot() {
             #if HAS_FOLDER_SORTING
               const uint16_t bit = i & 0x07, ind = i >> 3;
               if (bit == 0) isDir[ind] = 0x00;
-              if (flag.filenameIsDir) isDir[ind] |= _BV(bit);
+              if (flag.filenameIsDir) SBI(isDir[ind], bit);
             #endif
           #endif
         }
@@ -1138,9 +1160,7 @@ void CardReader::cdroot() {
           #if DISABLED(SDSORT_USES_RAM)
             selectFileByIndex(o1);              // Pre-fetch the first entry and save it
             strcpy(name1, longest_filename());  // so the loop only needs one fetch
-            #if HAS_FOLDER_SORTING
-              bool dir1 = flag.filenameIsDir;
-            #endif
+            TERN_(HAS_FOLDER_SORTING, bool dir1 = flag.filenameIsDir);
           #endif
 
           for (uint16_t j = 0; j < i; ++j) {
@@ -1156,7 +1176,7 @@ void CardReader::cdroot() {
             #if HAS_FOLDER_SORTING
               #if ENABLED(SDSORT_USES_RAM)
                 // Folder sorting needs an index and bit to test for folder-ness.
-                #define _SORT_CMP_DIR(fs) IS_DIR(o1) == IS_DIR(o2) ? _SORT_CMP_NODIR() : IS_DIR(fs > 0 ? o1 : o2)
+                #define _SORT_CMP_DIR(fs) (IS_DIR(o1) == IS_DIR(o2) ? _SORT_CMP_NODIR() : IS_DIR(fs > 0 ? o1 : o2))
               #else
                 #define _SORT_CMP_DIR(fs) ((dir1 == flag.filenameIsDir) ? _SORT_CMP_NODIR() : (fs > 0 ? dir1 : !dir1))
               #endif
@@ -1192,9 +1212,7 @@ void CardReader::cdroot() {
               // The next o1 is the current o2. No new fetch needed.
               o1 = o2;
               #if DISABLED(SDSORT_USES_RAM)
-                #if HAS_FOLDER_SORTING
-                  dir1 = dir2;
-                #endif
+                TERN_(HAS_FOLDER_SORTING, dir1 = dir2);
                 strcpy(name1, name2);
               #endif
             }
@@ -1205,9 +1223,7 @@ void CardReader::cdroot() {
         #if ENABLED(SDSORT_USES_RAM) && DISABLED(SDSORT_CACHE_NAMES)
           #if ENABLED(SDSORT_DYNAMIC_RAM)
             for (uint16_t i = 0; i < fileCnt; ++i) free(sortnames[i]);
-            #if HAS_FOLDER_SORTING
-              free(isDir);
-            #endif
+            TERN_(HAS_FOLDER_SORTING, free(isDir));
           #endif
         #endif
       }
@@ -1235,7 +1251,7 @@ void CardReader::cdroot() {
       #if ENABLED(SDSORT_DYNAMIC_RAM)
         delete sort_order;
         #if ENABLED(SDSORT_CACHE_NAMES)
-          for (uint8_t i = 0; i < sort_count; ++i) {
+          LOOP_L_N(i, sort_count) {
             free(sortshort[i]); // strdup
             free(sortnames[i]); // strdup
           }
@@ -1250,13 +1266,14 @@ void CardReader::cdroot() {
 #endif // SDCARD_SORT_ALPHA
 
 uint16_t CardReader::get_num_Files() {
-  return
-    #if ENABLED(SDCARD_SORT_ALPHA) && SDSORT_USES_RAM && SDSORT_CACHE_NAMES
+  if (!isMounted()) return 0;
+  return (
+    #if ALL(SDCARD_SORT_ALPHA, SDSORT_USES_RAM, SDSORT_CACHE_NAMES)
       nrFiles // no need to access the SD card for filenames
     #else
       countFilesInWorkDir()
     #endif
-  ;
+  );
 }
 
 //
@@ -1278,12 +1295,9 @@ void CardReader::fileHasFinished() {
     startFileprint();
   }
   else {
-    endFilePrint();
+    endFilePrint(TERN_(SD_RESORT, true));
 
-    #if ENABLED(SDCARD_SORT_ALPHA)
-      presort();
-    #endif
-
+    marlin_state = MF_SD_COMPLETE;
     sdprinting_done_state = 1;
   }
 }
@@ -1291,7 +1305,7 @@ void CardReader::fileHasFinished() {
 #if ENABLED(AUTO_REPORT_SD_STATUS)
   uint8_t CardReader::auto_report_sd_interval = 0;
   millis_t CardReader::next_sd_report_ms;
-  #if NUM_SERIAL > 1
+  #if HAS_MULTI_SERIAL
     int8_t CardReader::auto_report_port;
   #endif
 

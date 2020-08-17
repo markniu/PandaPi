@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -40,7 +40,7 @@
   #include "TMC26X.h"
 #endif
 
-#if HAS_TRINAMIC
+#if HAS_TRINAMIC_CONFIG
   #include "trinamic.h"
 #endif
 
@@ -190,18 +190,18 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #ifndef Z4_ENABLE_INIT
     #define Z4_ENABLE_INIT() SET_OUTPUT(Z4_ENABLE_PIN)
     #define Z4_ENABLE_WRITE(STATE) WRITE(Z4_ENABLE_PIN,STATE)
-    #define Z4_ENABLE_READ() READ(Z4_ENABLE_PIN)
+    #define Z4_ENABLE_READ() bool(READ(Z4_ENABLE_PIN))
   #endif
   #ifndef Z4_DIR_INIT
     #define Z4_DIR_INIT() SET_OUTPUT(Z4_DIR_PIN)
     #define Z4_DIR_WRITE(STATE) WRITE(Z4_DIR_PIN,STATE)
-    #define Z4_DIR_READ() READ(Z4_DIR_PIN)
+    #define Z4_DIR_READ() bool(READ(Z4_DIR_PIN))
   #endif
-  #define Z4_STEP_INIT SET_OUTPUT(Z4_STEP_PIN)
+  #define Z4_STEP_INIT() SET_OUTPUT(Z4_STEP_PIN)
   #ifndef Z4_STEP_WRITE
     #define Z4_STEP_WRITE(STATE) WRITE(Z4_STEP_PIN,STATE)
   #endif
-  #define Z4_STEP_READ READ(Z4_STEP_PIN)
+  #define Z4_STEP_READ() bool(READ(Z4_STEP_PIN))
 #else
   #define Z4_DIR_WRITE(STATE) NOOP
 #endif
@@ -870,14 +870,14 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 
 #ifndef ENABLE_AXIS_E0
-  #if E_STEPPERS > 0 && HAS_E0_ENABLE
+  #if E_STEPPERS && HAS_E0_ENABLE
     #define  ENABLE_AXIS_E0() ENABLE_STEPPER_E0()
   #else
     #define  ENABLE_AXIS_E0() NOOP
   #endif
 #endif
 #ifndef DISABLE_AXIS_E0
-  #if E_STEPPERS > 0 && HAS_E0_ENABLE
+  #if E_STEPPERS && HAS_E0_ENABLE
     #define DISABLE_AXIS_E0() DISABLE_STEPPER_E0()
   #else
     #define DISABLE_AXIS_E0() NOOP

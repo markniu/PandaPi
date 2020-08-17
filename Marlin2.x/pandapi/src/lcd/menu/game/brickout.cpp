@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -96,8 +96,8 @@ void BrickoutGame::game_screen() {
           // If bricks are gone, go to reset state
           if (!--bdat.brick_count) game_state = 2;
           // Bounce the ball cleverly
-          if ((bdat.ballv < 0) == (bdat.hit_dir < 0)) { bdat.ballv = -bdat.ballv; bdat.ballh += fixed_t(linux_random(-16, 16)); _BUZZ(5, 880); }
-                                       else { bdat.ballh = -bdat.ballh; bdat.ballv += fixed_t(linux_random(-16, 16)); _BUZZ(5, 640); }
+          if ((bdat.ballv < 0) == (bdat.hit_dir < 0)) { bdat.ballv = -bdat.ballv; bdat.ballh += fixed_t(random(-16, 16)); _BUZZ(5, 880); }
+                                       else { bdat.ballh = -bdat.ballh; bdat.ballv += fixed_t(random(-16, 16)); _BUZZ(5, 640); }
         }
       }
       // Is the ball moving down and in paddle range?
@@ -116,12 +116,12 @@ void BrickoutGame::game_screen() {
             if ((bdat.ballh > 0) == is_left_edge) bdat.ballh = -bdat.ballh;
           }
           else if (diff <= 3) {
-            bdat.ballh += fixed_t(linux_random(-64, 0));
+            bdat.ballh += fixed_t(random(-64, 0));
             NOLESS(bdat.ballh, BTOF(-2));
             NOMORE(bdat.ballh, BTOF(2));
           }
           else if (diff >= PADDLE_W-1 - 3) {
-            bdat.ballh += fixed_t(linux_random( 0, 64));
+            bdat.ballh += fixed_t(random( 0, 64));
             NOLESS(bdat.ballh, BTOF(-2));
             NOMORE(bdat.ballh, BTOF(2));
           }
@@ -140,13 +140,13 @@ void BrickoutGame::game_screen() {
 
   // Draw bricks
   if (PAGE_CONTAINS(BRICK_TOP, BRICK_BOT)) {
-    for (uint8_t y = 0; y < BRICK_ROWS; ++y) {
+    LOOP_L_N(y, BRICK_ROWS) {
       const uint8_t yy = y * BRICK_H + BRICK_TOP;
       if (PAGE_CONTAINS(yy, yy + BRICK_H - 1)) {
-        for (uint8_t x = 0; x < BRICK_COLS; ++x) {
+        LOOP_L_N(x, BRICK_COLS) {
           if (TEST(bdat.bricks[y], x)) {
             const uint8_t xx = x * BRICK_W;
-            for (uint8_t v = 0; v < BRICK_H - 1; ++v)
+            LOOP_L_N(v, BRICK_H - 1)
               if (PAGE_CONTAINS(yy + v, yy + v))
                 u8g.drawHLine(xx, yy + v, BRICK_W - 1);
           }

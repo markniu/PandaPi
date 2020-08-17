@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -26,7 +26,10 @@
 
 #define NUMBER_PINS_TOTAL NUM_DIGITAL_PINS
 
+#define AVR_ATmega2560_FAMILY_PLUS_70 MB(BQ_ZUM_MEGA_3D, MIGHTYBOARD_REVE, MINIRAMBO, SCOOVO_X9H)
+
 #if AVR_AT90USB1286_FAMILY
+
   // Working with Teensyduino extension so need to re-define some things
   #include "pinsDebug_Teensyduino.h"
   // Can't use the "digitalPinToPort" function from the Teensyduino type IDEs
@@ -35,7 +38,9 @@
   #define digitalPinToBitMask_DEBUG(p) digitalPinToBitMask(p)
   #define digitalPinToPort_DEBUG(p) digitalPinToPort_Teensy(p)
   #define GET_PINMODE(pin) (*portModeRegister(pin) & digitalPinToBitMask_DEBUG(pin))
+
 #elif AVR_ATmega2560_FAMILY_PLUS_70   // So we can access/display all the pins on boards using more than 70
+
   #include "pinsDebug_plus_70.h"
   #define digitalPinToTimer_DEBUG(p) digitalPinToTimer_plus_70(p)
   #define digitalPinToBitMask_DEBUG(p) digitalPinToBitMask_plus_70(p)
@@ -43,11 +48,13 @@
   bool GET_PINMODE(int8_t pin) {return *portModeRegister(digitalPinToPort_DEBUG(pin)) & digitalPinToBitMask_DEBUG(pin); }
 
 #else
+
   #define digitalPinToTimer_DEBUG(p) digitalPinToTimer(p)
   #define digitalPinToBitMask_DEBUG(p) digitalPinToBitMask(p)
   #define digitalPinToPort_DEBUG(p) digitalPinToPort(p)
   bool GET_PINMODE(int8_t pin) {return *portModeRegister(digitalPinToPort_DEBUG(pin)) & digitalPinToBitMask_DEBUG(pin); }
   #define GET_ARRAY_PIN(p) pgm_read_byte(&pin_array[p].pin)
+
 #endif
 
 #define VALID_PIN(pin) (pin >= 0 && pin < NUM_DIGITAL_PINS ? 1 : 0)
@@ -63,12 +70,12 @@
 
 void PRINT_ARRAY_NAME(uint8_t x) {
   char *name_mem_pointer = (char*)pgm_read_ptr(&pin_array[x].name);
-  for (uint8_t y = 0; y < MAX_NAME_LENGTH; y++) {
+  LOOP_L_N(y, MAX_NAME_LENGTH) {
     char temp_char = pgm_read_byte(name_mem_pointer + y);
     if (temp_char != 0)
       SERIAL_CHAR(temp_char);
     else {
-      for (uint8_t i = 0; i < MAX_NAME_LENGTH - y; i++) SERIAL_CHAR(' ');
+      LOOP_L_N(i, MAX_NAME_LENGTH - y) SERIAL_CHAR(' ');
       break;
     }
   }
@@ -224,11 +231,10 @@ static void err_is_interrupt()   { SERIAL_ECHOPGM("   compare interrupt enabled"
 static void err_prob_interrupt() { SERIAL_ECHOPGM("   overflow interrupt enabled"); }
 static void print_is_also_tied() { SERIAL_ECHOPGM(" is also tied to this pin"); SERIAL_ECHO_SP(14); }
 
-void com_print(uint8_t N, uint8_t Z) {
+inline void com_print(const uint8_t N, const uint8_t Z) {
   const uint8_t *TCCRA = (uint8_t*)TCCR_A(N);
   SERIAL_ECHOPGM("    COM");
-  SERIAL_CHAR('0' + N);
-  SERIAL_CHAR('A' + Z);
+  SERIAL_CHAR('0' + N, Z);
   SERIAL_ECHOPAIR(": ", int((*TCCRA >> (6 - Z * 2)) & 0x03));
 }
 
@@ -240,8 +246,7 @@ void timer_prefix(uint8_t T, char L, uint8_t N) {  // T - timer    L - pwm  N - 
   if (N == 4) WGM |= ((*TCCRB & _BV(WGM_3)) >> 1);
 
   SERIAL_ECHOPGM("    TIMER");
-  SERIAL_CHAR(T + '0');
-  SERIAL_CHAR(L);
+  SERIAL_CHAR(T + '0', L);
   SERIAL_ECHO_SP(3);
 
   if (N == 3) {

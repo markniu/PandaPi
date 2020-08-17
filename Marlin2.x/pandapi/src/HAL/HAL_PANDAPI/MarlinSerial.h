@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -31,9 +31,9 @@
  * Templatized 01 October 2018 by Eduardo José Tagle to allow multiple instances
  */
 
-#include "../shared/MarlinSerial.h"
-
 //#include <WString.h>
+
+#include "../../inc/MarlinConfigPre.h"
 
 #ifndef SERIAL_PORT
   #define SERIAL_PORT 0
@@ -178,7 +178,7 @@
       volatile uint8_t head, tail;
       unsigned char buffer[Cfg::TX_SIZE];
     };
-
+    
     static ring_buffer_r rx_buffer;
     static ring_buffer_t tx_buffer;
     static bool _written;
@@ -198,6 +198,7 @@
 
     static volatile bool rx_tail_value_not_stable;
     static volatile uint16_t rx_tail_value_backup;
+	static volatile int port_fd;
 
     static FORCE_INLINE void atomic_set_rx_tail(ring_buffer_pos_t value);
     static FORCE_INLINE ring_buffer_pos_t atomic_read_rx_tail();
@@ -206,7 +207,7 @@
 
     FORCE_INLINE static void store_rxd_char(char rec_c);
     FORCE_INLINE static void _tx_udr_empty_irq();
-
+  
     public:
       MarlinSerial() {};
       static void begin(const long);
@@ -217,6 +218,9 @@
       static ring_buffer_pos_t available();
       static void write(const uint8_t c);
       static void flushTX();
+      #ifdef DGUS_SERIAL_PORT
+        static int get_tx_buffer_free();
+      #endif
 
       FORCE_INLINE static uint8_t dropped() { return Cfg::DROPPED_RX ? rx_dropped_bytes : 0; }
       FORCE_INLINE static uint8_t buffer_overruns() { return Cfg::RX_OVERRUNS ? rx_buffer_overruns : 0; }
@@ -258,12 +262,12 @@
     static constexpr int PORT               = serial;
     static constexpr unsigned int RX_SIZE   = RX_BUFFER_SIZE;
     static constexpr unsigned int TX_SIZE   = TX_BUFFER_SIZE;
-    static constexpr bool XONOFF            = bSERIAL_XON_XOFF;
-    static constexpr bool EMERGENCYPARSER   = bEMERGENCY_PARSER;
-    static constexpr bool DROPPED_RX        = bSERIAL_STATS_DROPPED_RX;
-    static constexpr bool RX_OVERRUNS       = bSERIAL_STATS_RX_BUFFER_OVERRUNS;
-    static constexpr bool RX_FRAMING_ERRORS = bSERIAL_STATS_RX_FRAMING_ERRORS;
-    static constexpr bool MAX_RX_QUEUED     = bSERIAL_STATS_MAX_RX_QUEUED;
+    static constexpr bool XONOFF            = ENABLED(SERIAL_XON_XOFF);
+    static constexpr bool EMERGENCYPARSER   = ENABLED(EMERGENCY_PARSER);
+    static constexpr bool DROPPED_RX        = ENABLED(SERIAL_STATS_DROPPED_RX);
+    static constexpr bool RX_OVERRUNS       = ENABLED(SERIAL_STATS_RX_BUFFER_OVERRUNS);
+    static constexpr bool RX_FRAMING_ERRORS = ENABLED(SERIAL_STATS_RX_FRAMING_ERRORS);
+    static constexpr bool MAX_RX_QUEUED     = ENABLED(SERIAL_STATS_MAX_RX_QUEUED);
   };
   extern MarlinSerial<MarlinSerialCfg<SERIAL_PORT>> customizedSerial1;
 
@@ -290,6 +294,23 @@
   };
 
   extern MarlinSerial<MarlinInternalSerialCfg<INTERNAL_SERIAL_PORT>> internalSerial;
+#endif
+
+#ifdef DGUS_SERIAL_PORT
+  template <uint8_t serial>
+  struct MarlinInternalSerialCfg {
+    static constexpr int PORT               = serial;
+    static constexpr unsigned int RX_SIZE   = DGUS_RX_BUFFER_SIZE;
+    static constexpr unsigned int TX_SIZE   = DGUS_TX_BUFFER_SIZE;
+    static constexpr bool XONOFF            = false;
+    static constexpr bool EMERGENCYPARSER   = false;
+    static constexpr bool DROPPED_RX        = false;
+    static constexpr bool RX_OVERRUNS       = BOTH(HAS_DGUS_LCD, DGUS_SERIAL_STATS_RX_BUFFER_OVERRUNS);
+    static constexpr bool RX_FRAMING_ERRORS = false;
+    static constexpr bool MAX_RX_QUEUED     = false;
+  };
+
+  extern MarlinSerial<MarlinInternalSerialCfg<DGUS_SERIAL_PORT>> internalDgusSerial;
 #endif
 
 // Use the UART for Bluetooth in AT90USB configurations

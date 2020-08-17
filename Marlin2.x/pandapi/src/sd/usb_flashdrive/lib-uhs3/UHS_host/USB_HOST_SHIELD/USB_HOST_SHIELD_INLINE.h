@@ -13,13 +13,13 @@ Contact information
 -------------------
 
 Circuits At Home, LTD
-Web      :  http://www.circuitsathome.com
+Web      :  https://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
  */
 
 #if defined(USB_HOST_SHIELD_H) && !defined(USB_HOST_SHIELD_LOADED)
 #define USB_HOST_SHIELD_LOADED
-////  PANDAPI #include <Arduino.h>
+#include <Arduino.h>
 
 #ifndef digitalPinToInterrupt
 #error digitalPinToInterrupt not defined, complain to your board maintainer.

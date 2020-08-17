@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  * Copyright (c) 2016 Bob Cousins bobcousins42@googlemail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -30,7 +30,7 @@
   #define HardwareSerial_h // Hack to prevent HardwareSerial.h header inclusion
   #include "MarlinSerial.h"
 #endif
-/*
+/*  //PANDAPI
 #include <stdint.h>
 #include <util/delay.h>
 #include <avr/eeprom.h>
@@ -47,12 +47,18 @@
   #define pgm_read_ptr_near(address_short) (void*)__LPM_word((uint16_t)(address_short))
   #define pgm_read_ptr(address_short) pgm_read_ptr_near(address_short)
 #endif
+// Interrupts
+
 
 // ------------------------
 // Defines
 // ------------------------
 
-#define analogInputToDigitalPin(IO) IO
+// AVR PROGMEM extension for sprintf_P
+#define S_FMT "%S"
+
+// AVR PROGMEM extension for string define
+#define PGMSTR(NAM,STR) const char NAM[] PROGMEM = STR
 
 #ifndef CRITICAL_SECTION_START
   #define CRITICAL_SECTION_START NOOP//pandapi unsigned char _sreg = SREG; //cli()
@@ -61,9 +67,6 @@
 #define ISRS_ENABLED() //TEST(SREG, SREG_I)
 #define ENABLE_ISRS()   //sei()
 #define DISABLE_ISRS()   //cli()
-
-// On AVR this is in math.h?
-//#define square(x) ((x)*(x))
 
 // ------------------------
 // Types
@@ -93,22 +96,36 @@ typedef int8_t pin_t;
   #define NUM_SERIAL 1
 #else
   #if !WITHIN(SERIAL_PORT, -1, 3)
-    #error "SERIAL_PORT must be from -1 to 3"
+    #error "SERIAL_PORT must be from -1 to 3. Please update your configuration."
   #endif
 
   #define MYSERIAL0 customizedSerial1
 
   #ifdef SERIAL_PORT_2
     #if !WITHIN(SERIAL_PORT_2, -1, 3)
-      #error "SERIAL_PORT_2 must be from -1 to 3"
+      #error "SERIAL_PORT_2 must be from -1 to 3. Please update your configuration."
     #elif SERIAL_PORT_2 == SERIAL_PORT
-      #error "SERIAL_PORT_2 must be different than SERIAL_PORT"
+      #error "SERIAL_PORT_2 must be different than SERIAL_PORT. Please update your configuration."
     #endif
-    #define NUM_SERIAL 2
     #define MYSERIAL1 customizedSerial2
+    #define NUM_SERIAL 2
   #else
     #define NUM_SERIAL 1
   #endif
+#endif
+
+#ifdef DGUS_SERIAL_PORT
+/*  #if !WITHIN(DGUS_SERIAL_PORT, -1, 3)
+    #error "DGUS_SERIAL_PORT must be from -1 to 3. Please update your configuration."
+  #elif DGUS_SERIAL_PORT == SERIAL_PORT
+    #error "DGUS_SERIAL_PORT must be different than SERIAL_PORT. Please update your configuration."
+  #elif defined(SERIAL_PORT_2) && DGUS_SERIAL_PORT == SERIAL_PORT_2
+    #error "DGUS_SERIAL_PORT must be different than SERIAL_PORT_2. Please update your configuration."
+  #endif
+  #define DGUS_SERIAL internalDgusSerial
+  */
+
+  #define DGUS_SERIAL_GET_TX_BUFFER_FREE DGUS_SERIAL.get_tx_buffer_free
 #endif
 
 // ------------------------
@@ -131,102 +148,18 @@ extern "C" {
 }
 #pragma GCC diagnostic pop
 
-// timers
-#define HAL_TIMER_RATE          ((F_CPU) / 8)    // i.e., 2MHz or 2.5MHz
-
-#define STEP_TIMER_NUM          1
-#define TEMP_TIMER_NUM          0
-#define PULSE_TIMER_NUM         STEP_TIMER_NUM
-
-#define TEMP_TIMER_FREQUENCY    ((F_CPU) / 64.0 / 256.0)
-
-#define STEPPER_TIMER_RATE      HAL_TIMER_RATE
-#define STEPPER_TIMER_PRESCALE  8
-#define STEPPER_TIMER_TICKS_PER_US ((STEPPER_TIMER_RATE) / 1000000) // Cannot be of type double
-
-#define PULSE_TIMER_RATE       STEPPER_TIMER_RATE   // frequency of pulse timer
-#define PULSE_TIMER_PRESCALE   STEPPER_TIMER_PRESCALE
-#define PULSE_TIMER_TICKS_PER_US STEPPER_TIMER_TICKS_PER_US
-
-#define ENABLE_STEPPER_DRIVER_INTERRUPT() // SBI(TIMSK1, OCIE1A)
-#define DISABLE_STEPPER_DRIVER_INTERRUPT() //CBI(TIMSK1, OCIE1A)
-#define STEPPER_ISR_ENABLED()        {}    // TEST(TIMSK1, OCIE1A)
-
-#define ENABLE_TEMPERATURE_INTERRUPT()     SBI(TIMSK0, OCIE0B)
-#define DISABLE_TEMPERATURE_INTERRUPT()    CBI(TIMSK0, OCIE0B)
-#define TEMPERATURE_ISR_ENABLED()         TEST(TIMSK0, OCIE0B)
-
-FORCE_INLINE void HAL_timer_start(const uint8_t timer_num, const uint32_t) {
-  switch (timer_num) {
-    case STEP_TIMER_NUM:
-      // waveform generation = 0100 = CTC
-   //   SET_WGM(1, CTC_OCRnA);
-
-      // output mode = 00 (disconnected)
-     // SET_COMA(1, NORMAL);
-
-      // Set the timer pre-scaler
-      // Generally we use a divider of 8, resulting in a 2MHz timer
-      // frequency on a 16MHz MCU. If you are going to change this, be
-      // sure to regenerate speed_lookuptable.h with
-      // create_speed_lookuptable.py
-     // SET_CS(1, PRESCALER_8);  //  CS 2 = 1/8 prescaler
-
-      // Init Stepper ISR to 122 Hz for quick starting
-      // (F_CPU) / (STEPPER_TIMER_PRESCALE) / frequency
-      OCR1A = 0x4000;
-      TCNT1 = 0;
-      break;
-
-    case TEMP_TIMER_NUM:
-      // Use timer0 for temperature measurement
-      // Interleave temperature interrupt with millies interrupt
-      OCR0B = 128;
-      break;
-  }
-}
-
-#define TIMER_OCR_1             OCR1A
-#define TIMER_COUNTER_1         TCNT1
-
-#define TIMER_OCR_0          //   OCR0A
-#define TIMER_COUNTER_0      //   TCNT0
-
-#define _CAT(a,V...) a##V
-#define HAL_timer_set_compare(timer, compare)   motor_next_isr( compare)
 //PANDAPI
 #define HAL_timer_get_compare(timer)   0
 #define HAL_timer_get_count(timer)  0
-
-/**
- * On AVR there is no hardware prioritization and preemption of
- * interrupts, so this emulates it. The UART has first priority
- * (otherwise, characters will be lost due to UART overflow).
- * Then: Stepper, Endstops, Temperature, and -finally- all others.
- */
-#define HAL_timer_isr_prologue(TIMER_NUM)  NOOP
-#define HAL_timer_isr_epilogue(TIMER_NUM)  NOOP
-
-/* 18 cycles maximum latency */
-//#define HAL_STEP_TIMER_ISR() \
-//void TIMER1_COMPA_vect()   {}
-//void TIMER1_COMPA_vect_bottom(){}
-
-/* 14 cycles maximum latency */
-void HAL_TEMP_TIMER_ISR() ;
-
-//void TIMER0_COMPB_vect() {}  
-//void TIMER0_COMPB_vect_bottom(){}
-
 // ADC
 #ifdef DIDR2
-  #define HAL_ANALOG_SELECT(pin) do{ if (pin < 8) SBI(DIDR0, pin); else SBI(DIDR2, pin & 0x07); }while(0)
+  #define HAL_ANALOG_SELECT(ind) do{ if (ind < 8) SBI(DIDR0, ind); else SBI(DIDR2, ind & 0x07); }while(0)
 #else
-  #define HAL_ANALOG_SELECT(pin) do{ SBI(DIDR0, pin); }while(0)
+  #define HAL_ANALOG_SELECT(ind) SBI(DIDR0, ind);
 #endif
 
 inline void HAL_adc_init() {
-/*
+/* PANDAPI
   ADCSRA = _BV(ADEN) | _BV(ADSC) | _BV(ADIF) | 0x07;
   DIDR0 = 0;
   #ifdef DIDR2
@@ -235,15 +168,16 @@ inline void HAL_adc_init() {
   */
 }
 
-#define SET_ADMUX_ADCSRA(pin) ADMUX = _BV(REFS0) | (pin & 0x07); SBI(ADCSRA, ADSC)
+#define SET_ADMUX_ADCSRA(ch) ADMUX = _BV(REFS0) | (ch & 0x07); SBI(ADCSRA, ADSC)
 #ifdef MUX5
-  #define HAL_START_ADC(pin) if (pin > 7) ADCSRB = _BV(MUX5); else ADCSRB = 0; SET_ADMUX_ADCSRA(pin)
+  #define HAL_START_ADC(ch) if (ch > 7) ADCSRB = _BV(MUX5); else ADCSRB = 0; SET_ADMUX_ADCSRA(ch)
 #else
-  #define HAL_START_ADC(pin) ADCSRB = 0; SET_ADMUX_ADCSRA(pin)
+  #define HAL_START_ADC(ch) ADCSRB = 0; SET_ADMUX_ADCSRA(ch)
 #endif
 
+#define HAL_ADC_VREF        5.0
 #define HAL_ADC_RESOLUTION 10
-#define HAL_READ_ADC()  //ADC
+#define HAL_READ_ADC()  ADC
 #define HAL_ADC_READY() !TEST(ADCSRA, ADSC)
 
 #define GET_PIN_MAP_PIN(index) index
@@ -252,9 +186,14 @@ inline void HAL_adc_init() {
 
 #define HAL_SENSITIVE_PINS 0, 1
 
+#ifdef __AVR_AT90USB1286__
+  #define JTAG_DISABLE() do{ MCUCR = 0x80; MCUCR = 0x80; }while(0)
+#endif
 
 // AVR compatibility
 #define strtof strtod
+
+#define HAL_CAN_SET_PWM_FREQ   // This HAL supports PWM Frequency adjustment
 
 /**
  *  set_pwm_frequency
