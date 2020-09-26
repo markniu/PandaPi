@@ -29,6 +29,8 @@
 
 #include "temperature.h"
 #include "endstops.h"
+#include "../pins_PANDA_PI.h"
+
 
 #include "../MarlinCore.h"
 #include "planner.h"
@@ -1659,7 +1661,10 @@ void Temperature::updateTemperaturesFromRawValues() {
 #else
   #define INIT_CHAMBER_AUTO_FAN_PIN(P) SET_OUTPUT(P)
 #endif
-
+//PANDAPI
+#if ENABLED(MAX31856_PANDAPI)
+void init_PT100_max31865(void);
+#endif
 /**
  * Initialize the temperature manager
  * The manager is implemented by periodic calls to manage_heater()
@@ -1677,7 +1682,9 @@ void Temperature::init() {
 		usleep(50);
 		wiringPiI2CReadReg8(i2c_fd,8);
 	}
-	
+#if ENABLED(MAX31856_PANDAPI)
+	init_PT100_max31865();
+#endif
 /////////////////// 
 
   TERN_(MAX6675_IS_MAX31865, max31865.begin(MAX31865_2WIRE)); // MAX31865_2WIRE, MAX31865_3WIRE, MAX31865_4WIRE
@@ -2628,6 +2635,188 @@ int Temperature::read_with_check()
 	return ret;
 }
 
+
+#if ENABLED(MAX31856_PANDAPI)
+
+//https://github.com/steve71/MAX31865/blob/master/max31865.py#L185
+
+
+#define SPI_CLK_PIN  MAX31856_CLK_PIN
+#define SPI_MISO_PIN MAX31856_MISO_PIN
+#define SPI_MOSI_PIN MAX31856_MOSI_PIN
+#define SPI_CS_PIN   MAX31856_CS_PIN
+
+
+
+void sendByte(unsigned char send_d)
+{
+	int i=0;
+	for(i=0;i<8;i++)
+	{
+		WRITE(SPI_CLK_PIN,1);
+		delay(1); 
+		if (send_d & 0x80)
+			WRITE(SPI_MOSI_PIN,1);
+		else
+			WRITE(SPI_MOSI_PIN,0);
+		send_d <<=1;
+		WRITE(SPI_CLK_PIN,0);
+		delay(1); 
+	}
+
+}
+unsigned char spi_recvByte(void)
+{
+	unsigned char rec_data=0;
+	int i=0;
+	for(i=0;i<8;i++)
+	{
+		WRITE(SPI_CLK_PIN,1);
+		delay(1); 
+		rec_data<<=1;
+		if(READ(SPI_MISO_PIN))
+			rec_data|= 0x1;
+		WRITE(SPI_CLK_PIN,0);
+		delay(1); 
+	}
+	return rec_data;
+}
+
+void writeRegister(int regNum, unsigned char dataByte)
+{
+	unsigned char addressByte = 0x80 | regNum;
+	WRITE(SPI_CS_PIN,0);
+	delay(1); 
+	// 0x8x to specify 'write register value'
+	
+	// first byte is address byte
+	sendByte(addressByte);
+	//# the rest are data bytes
+	sendByte(dataByte);
+	WRITE(SPI_CS_PIN,1);
+	delay(1); 
+
+}		
+
+char readRegisters(int regNumStart, int numRegisters,unsigned char *data_t) 
+{
+	int i=0;
+	WRITE(SPI_CS_PIN,0);
+	delay(1); 
+	// 0x to specify 'read register value'
+	sendByte(regNumStart);
+	for(i=0;i<numRegisters;i++)
+	{
+		data_t[i]=spi_recvByte();
+		
+	}
+	WRITE(SPI_CS_PIN,1);
+	delay(1); 
+}		
+void init_PT100_max31865(void)
+{
+
+	SET_OUTPUT(SPI_CLK_PIN);
+	SET_OUTPUT(SPI_MOSI_PIN);
+	SET_INPUT(SPI_MISO_PIN);
+	SET_OUTPUT(SPI_CS_PIN);
+    if(MAX31856_WIRES==3)
+		writeRegister(0, 0xB2);
+	else
+		writeRegister(0, 0xC2);
+	 
+	//# conversion time is less than 100ms
+	//time.sleep(.1) #give it 100ms for conversion
+	 delay(100); 
+
+}
+
+float calcPT100Temp(int RTD_ADC_Code)
+{
+		float R_REF = 430.0;// # Reference Resistor
+		float Res0 = 100.0;// # Resistance at 0 degC for 400ohm R_Ref
+		float a = 0.00390830;
+		float b = -0.000000577500;
+		//# c = -4.18301e-12 # for -200 <= T <= 0 (degC)
+		float c = -0.00000000000418301;
+		float Res_RTD;
+		float temp_C;
+		float temp_C_line;
+		//# c = 0 # for 0 <= T <= 850 (degC)
+	//	printf ("RTD ADC Code: %d\n", RTD_ADC_Code);
+		Res_RTD = (RTD_ADC_Code * R_REF) / 32768.0;// # PT100 Resistance
+	// 	printf ("PT100 Resistance: %f ohms\n" ,Res_RTD);
+	/*	#
+		# Callendar-Van Dusen equation
+		# Res_RTD = Res0 * (1 + a*T + b*T**2 + c*(T-100)*T**3)
+		# Res_RTD = Res0 + a*Res0*T + b*Res0*T**2 # c = 0
+		# (c*Res0)T**4 - (c*Res0)*100*T**3  
+		# + (b*Res0)*T**2 + (a*Res0)*T + (Res0 - Res_RTD) = 0
+		#
+		# quadratic formula:
+		# for 0 <= T <= 850 (degC)*/
+		temp_C = -(a*Res0) + sqrt(a*a*Res0*Res0 - 4*(b*Res0)*(Res0 - Res_RTD));
+		temp_C = temp_C / (2*(b*Res0));
+		temp_C_line = (RTD_ADC_Code/32.0) - 256.0;
+	//	# removing numpy.roots will greatly speed things up
+	//	#temp_C_numpy = numpy.roots([c*Res0, -c*Res0*100, b*Res0, a*Res0, (Res0 - Res_RTD)])
+	//	#temp_C_numpy = abs(temp_C_numpy[-1])
+	//	printf("Straight Line Approx. Temp: %f degC\n",temp_C_line);
+		printf("Callendar-Van Dusen Temp (degC > 0): %f degC\n" ,temp_C);
+	//	#print "Solving Full Callendar-Van Dusen using numpy: %f" %  temp_C_numpy
+		if (temp_C < 0)// #use straight line approximation if less than 0
+			//# Can also use python lib numpy to solve cubic
+			//# Should never get here in this application
+			temp_C = (RTD_ADC_Code/32) - 256;
+		return temp_C;
+}
+
+float readTemp(void)
+{
+		unsigned char out[64];
+		int rtd_ADC_Code;
+		float temp_C;
+		 
+		//one shot
+		// read all registers
+		 readRegisters(0,8,out);
+
+		//conf_reg = out[0];
+	//	printf("config register byte: %x\n" , out[0]);
+
+		//[rtd_msb, rtd_lsb] = [out[1], out[2]]
+		rtd_ADC_Code = (( out[1] << 8 ) | out[2] ) >> 1;
+			
+		temp_C =  calcPT100Temp(rtd_ADC_Code);
+/*
+		[hft_msb, hft_lsb] = [out[3], out[4]]
+		hft = (( hft_msb << 8 ) | hft_lsb ) >> 1
+		print "high fault threshold: %d" % hft
+
+		[lft_msb, lft_lsb] = [out[5], out[6]]
+		lft = (( lft_msb << 8 ) | lft_lsb ) >> 1
+		print "low fault threshold: %d" % lft
+
+		status = out[7]
+
+
+		if ((status & 0x80) == 1):
+			raise FaultError("High threshold limit (Cable fault/open)")
+		if ((status & 0x40) == 1):
+			raise FaultError("Low threshold limit (Cable fault/short)")
+		if ((status & 0x04) == 1):
+			raise FaultError("Overvoltage or Undervoltage Error") 	
+			*/
+		if(temp_C>1000.0)
+			temp_C=0.0;
+		else if(temp_C<-200.0)
+			temp_C=0.0;
+	return temp_C;
+}
+#endif
+
+
+
 /**
  * Handle various ~1KHz tasks associated with temperature
  *  - Heater PWM (~1KHz with scaler)
@@ -2693,7 +2882,11 @@ void Temperature::tick() {
 		
 	 // parse_string(cmd_buf,"T:","B",out,&k);  
 	//  float f= atof(out); 
-	  temp_hotend[0].celsius=temp_data[HOTEND_0_CODE];   
+		temp_hotend[0].celsius=temp_data[HOTEND_0_CODE];   
+#if ENABLED(MAX31856_PANDAPI)
+    
+	temp_hotend[0].celsius=readTemp();
+#endif
 #if HAS_HEATED_BED 
 	//  parse_string(cmd_buf,"B:","",out,&k);   
 	 // f= atof(out);

@@ -72,6 +72,16 @@
 #define Z2_ENABLE_PIN      0
 */
 
+
+#if   ENABLED(MAX31856_PANDAPI)
+#define MAX31856_CLK_PIN  29
+#define MAX31856_MISO_PIN 24
+#define MAX31856_MOSI_PIN 28
+#define MAX31856_CS_PIN   27
+#endif
+
+
+
 /**
  * Default pins for TMC software SPI
  */
@@ -84,10 +94,9 @@
   #define Z_HARDWARE_SERIAL  customizedSerial1
   // #define Z2_HARDWARE_SERIAL customizedSerial1
   #define E0_HARDWARE_SERIAL customizedSerial1
-  //#define E1_HARDWARE_SERIAL customizedSerial1
-  //#define E2_HARDWARE_SERIAL customizedSerial1
-  //#define E3_HARDWARE_SERIAL customizedSerial1
-  //#define E4_HARDWARE_SERIAL customizedSerial1
+  #define E1_HARDWARE_SERIAL customizedSerial1
+  #define E2_HARDWARE_SERIAL customizedSerial1
+
 
 
 
@@ -137,6 +146,8 @@
 #define FAN1_PIN         255
 #define FAN2_PIN         255
 #define FAN3_PIN         255
+
+//#define CASE_LIGHT_PIN 255
 
 
 //////////////////////////

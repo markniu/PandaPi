@@ -141,6 +141,13 @@
 // :[0, 1, 2, 3, 4, 5, 6, 7, 8]
 #define EXTRUDERS 1
 
+//#define MAX31856_PANDAPI  
+#if ENABLED(MAX31856_PANDAPI)
+    // 2, 3, 4 wire
+	#define MAX31856_WIRES         2
+   
+#endif
+
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -2353,3 +2360,34 @@
 
 // Allow servo angle to be edited and saved to EEPROM
 //#define EDITABLE_SERVO_ANGLES
+
+
+//only for TMC2209
+#define X_CURRENT_PI		500 	   // (mA) RMS current. Multiply by 1.414 for peak current.
+#define Y_CURRENT_PI		600 	   // (mA) RMS current. Multiply by 1.414 for peak current.
+#define Z_CURRENT_PI		500 	   // (mA) RMS current. Multiply by 1.414 for peak current.
+#define E0_CURRENT_PI		600 	   // (mA) RMS current. Multiply by 1.414 for peak current.
+#define E1_CURRENT_PI		600 	   // (mA) RMS current. Multiply by 1.414 for peak current.
+#define E2_CURRENT_PI		600 	   // (mA) RMS current. Multiply by 1.414 for peak current.
+
+
+ /**
+  * Use StallGuard2 to home / probe X, Y, Z.
+  * only for TMC2209
+  */
+ #define SENSORLESS_HOMING  
+ 
+#if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
+   // TMC2209: 0...255. TMC2130: -64...63
+  #define X_STALL_SENSITIVITY  72
+  #define X2_STALL_SENSITIVITY X_STALL_SENSITIVITY
+  #define Y_STALL_SENSITIVITY  92
+  #define Y2_STALL_SENSITIVITY Y_STALL_SENSITIVITY
+   //#define Z_STALL_SENSITIVITY  8
+   //#define Z2_STALL_SENSITIVITY Z_STALL_SENSITIVITY
+   //#define Z3_STALL_SENSITIVITY Z_STALL_SENSITIVITY
+   //#define Z4_STALL_SENSITIVITY Z_STALL_SENSITIVITY
+   //#define SPI_ENDSTOPS			   // TMC2130 only
+   //#define IMPROVE_HOMING_RELIABILITY
+#endif
+
