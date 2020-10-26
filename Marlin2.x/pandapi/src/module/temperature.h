@@ -528,7 +528,8 @@ class Temperature {
      * Called from the Temperature ISR
      */
     static void readings_ready();
-    static void tick();
+    static void get_from_mcu();
+	static void tick();
     static int read_with_check();//  PANDAPI
 
     /**
@@ -580,6 +581,9 @@ class Temperature {
     #if HAS_HOTEND
 
       static void setTargetHotend(const int16_t celsius, const uint8_t E_NAME) {
+#if ENABLED(MAX31856_PANDAPI)	  
+      return;
+#endif	  
         const uint8_t ee = HOTEND_INDEX;
         #ifdef MILLISECONDS_PREHEAT_TIME
           if (celsius == 0)

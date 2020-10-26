@@ -515,21 +515,21 @@
                                   // Set/get with gcode: M301 E[extruder number, 0-2]
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
-  
-  // //  PANDAPI
+  //////// PANDAPI
+  // //  Ender3
   #define DEFAULT_Kp 25
-  #define DEFAULT_Ki 2.0//1.08
+  #define DEFAULT_Ki 2.0
   #define DEFAULT_Kd 440
 
-  // MakerGear
-  //#define DEFAULT_Kp 7.0
-  //#define DEFAULT_Ki 0.1
-  //#define DEFAULT_Kd 12
-
-  // Mendel Parts V9 on 12V
-  //#define DEFAULT_Kp 63.0
-  //#define DEFAULT_Ki 2.25
+  // Ender5
+  //#define DEFAULT_Kp 25
+  //#define DEFAULT_Ki 1.08
   //#define DEFAULT_Kd 440
+
+  // PT100
+  //#define DEFAULT_Kp 25
+  //#define DEFAULT_Ki 0.001
+  //#define DEFAULT_Kd 10
 
 #endif // PIDTEMP
 
@@ -728,23 +728,6 @@
 //#define E6_DRIVER_TYPE A4988
 //#define E7_DRIVER_TYPE A4988
 
-// Enable this feature if all enabled endstop pins are interrupt-capable.
-// This will remove the need to poll the interrupt pins, saving many CPU cycles.
-//#define ENDSTOP_INTERRUPTS_FEATURE
-
-/**
- * Endstop Noise Threshold
- *
- * Enable if your probe or endstops falsely trigger due to noise.
- *
- * - Higher values may affect repeatability or accuracy of some bed probes.
- * - To fix noise install a 100nF ceramic capacitor in parallel with the switch.
- * - This feature is not required for common micro-switches mounted on PCBs
- *   based on the Makerbot design, which already have the 100nF capacitor.
- *
- * :[2,3,4,5,6,7]
- */
-//#define ENDSTOP_NOISE_THRESHOLD 2
 
 // Check for stuck or disconnected endstops during homing moves.
 //#define DETECT_BROKEN_ENDSTOP
@@ -2375,7 +2358,7 @@
   * Use StallGuard2 to home / probe X, Y, Z.
   * only for TMC2209
   */
- #define SENSORLESS_HOMING  
+ //#define SENSORLESS_HOMING  
  
 #if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
    // TMC2209: 0...255. TMC2130: -64...63
@@ -2389,5 +2372,24 @@
    //#define Z4_STALL_SENSITIVITY Z_STALL_SENSITIVITY
    //#define SPI_ENDSTOPS			   // TMC2130 only
    //#define IMPROVE_HOMING_RELIABILITY
+#else
+// Enable this feature if all enabled endstop pins are interrupt-capable.
+// This will remove the need to poll the interrupt pins, saving many CPU cycles.
+//#define ENDSTOP_INTERRUPTS_FEATURE
+
+/**
+ * Endstop Noise Threshold
+ *
+ * Enable if your probe or endstops falsely trigger due to noise.
+ *
+ * - Higher values may affect repeatability or accuracy of some bed probes.
+ * - To fix noise install a 100nF ceramic capacitor in parallel with the switch.
+ * - This feature is not required for common micro-switches mounted on PCBs
+ *   based on the Makerbot design, which already have the 100nF capacitor.
+ *
+ * :[2,3,4,5,6,7]
+ */
+#define ENDSTOP_NOISE_THRESHOLD 2
+
 #endif
 

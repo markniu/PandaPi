@@ -133,8 +133,11 @@
 #define HOTEND_0_CODE     1  
 #define HOTEND_1_CODE     2  
 
-
+#if ENABLED(MAX31856_PANDAPI)
+#define HEATER_0_PIN     30
+#else
 #define HEATER_0_PIN     255
+#endif
 #define HEATER_1_PIN     255
 #define HEATER_BED_PIN   255
 #define TEMP_0_PIN       255
@@ -147,7 +150,7 @@
 #define FAN2_PIN         255
 #define FAN3_PIN         255
 
-//#define CASE_LIGHT_PIN 255
+#define CASE_LIGHT_PIN 255
 
 
 //////////////////////////
