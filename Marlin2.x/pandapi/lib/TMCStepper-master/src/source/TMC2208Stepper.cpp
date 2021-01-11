@@ -129,7 +129,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	uint8_t datagram[] = {TMC2208_SYNC, slave_address, addr, (uint8_t)(regVal>>24), (uint8_t)(regVal>>16), (uint8_t)(regVal>>8), (uint8_t)(regVal>>0), 0x00};
 	datagram[len] = calcCRC(datagram, len);
    
-    printf("TMC2208 WR ");
+    //printf("TMC2208 WR ");
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != nullptr) {
 				for(uint8_t i=0; i<=len; i++){

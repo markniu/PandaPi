@@ -105,12 +105,12 @@
 
   #endif
 
-#elif defined(__AVR__)
+#elif 1// PANDA defined(__AVR__)
 
   #define nop() __asm__ __volatile__("nop;\n\t":::)
 
   FORCE_INLINE static void __delay_4cycles(uint8_t cy) {
-    __asm__ __volatile__(
+/*    __asm__ __volatile__(
       L("1")
       A("dec %[cnt]")
       A("nop")
@@ -118,7 +118,7 @@
       : [cnt] "+r"(cy)  // output: +r means input+output
       :                 // input:
       : "cc"            // clobbers:
-    );
+    );*/
   }
 
   // Delay in cycles

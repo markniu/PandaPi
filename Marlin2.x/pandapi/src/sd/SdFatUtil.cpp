@@ -38,7 +38,7 @@
  * Amount of free RAM
  * \return The number of free bytes.
  */
-#ifdef __arm__
+#if 1 //PANDA def __arm__
 
   extern "C" char* sbrk(int incr);
   int SdFatUtil::FreeRam() {

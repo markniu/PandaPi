@@ -1,5 +1,5 @@
 
-CROSS_COMPILE = arm-linux-gnueabihf-
+CROSS_COMPILE = 
 CC=$(CROSS_COMPILE)g++
 LD :=$(CROSS_COMPILE)g++
 LINK=$(CROSS_COMPILE)g++
@@ -38,7 +38,7 @@ all: $(TARGET)
 	
 $(TARGET): $(OBJ)
 	@$(LINK) -o $(TARGET) $(OBJ) ${LIBS} 
-	arm-linux-gnueabihf-strip pi_marlin
+	$(CROSS_COMPILE)strip pi_marlin
 
 
 

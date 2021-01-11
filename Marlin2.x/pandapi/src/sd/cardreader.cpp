@@ -515,10 +515,10 @@ int read_u_path()
 		    printf("root_path:%s\n", root_path);
 		}
 		else
-			sprintf(root_path,"/media/usb");
+			sprintf(root_path,"/media/");
 	}
 	else
-		sprintf(root_path,"/media/usb");
+		sprintf(root_path,"/media/");
 }
 
 
