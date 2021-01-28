@@ -19,18 +19,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+      
 // NOTE - the HAL version of the rrd device uses a generic ST7920 device.  See the
 // file u8g_dev_st7920_128x64_HAL.cpp for the HAL version.
 
 #include "../../inc/MarlinConfigPre.h"
-
-#if !defined(U8G_HAL_LINKS) && ANY(PANDAPI, ARDUINO_ARCH_STM32)
   
+#if !defined(U8G_HAL_LINKS) && ANY(PANDAPI, ARDUINO_ARCH_STM32)
+       
 #include "../../inc/MarlinConfig.h"
 
 #if ENABLED(U8GLIB_ST7920)
-
+    
 #include "ultralcd_st7920_u8glib_rrd_AVR.h"
 
 #ifndef ST7920_DELAY_1
@@ -41,7 +41,7 @@
   #endif
 #endif
 #ifndef ST7920_DELAY_2
-  #ifdef BOARD_ST7920_DELAY_2
+  #ifdef BOARD_ST7920_DELAY_2 
     #define ST7920_DELAY_2 BOARD_ST7920_DELAY_2
   #else
     #define ST7920_DELAY_2 CPU_ST7920_DELAY_2
@@ -50,11 +50,11 @@
 #ifndef ST7920_DELAY_3
   #ifdef BOARD_ST7920_DELAY_3
     #define ST7920_DELAY_3 BOARD_ST7920_DELAY_3
-  #else
+  #else 
     #define ST7920_DELAY_3 CPU_ST7920_DELAY_3
   #endif
 #endif
-
+  
 // Optimize this code with -O3
 #pragma GCC optimize (3)
 
@@ -63,10 +63,16 @@
 #else
   #define ST7920_DAT(V) ((V) & 0x80)
 #endif
+///PANDAPI  control gpio as the delay
 #define ST7920_SND_BIT do{ \
-  WRITE(ST7920_CLK_PIN, LOW);             ST7920_DELAY_1; \
-  WRITE(ST7920_DAT_PIN, ST7920_DAT(val)); ST7920_DELAY_2; \
-  WRITE(ST7920_CLK_PIN, HIGH);            ST7920_DELAY_3; \
+  OUT_WRITE(ST7920_CLK_PIN, LOW);OUT_WRITE(ST7920_CLK_PIN, LOW);              \
+	OUT_WRITE(ST7920_DAT_PIN, ST7920_DAT(val));  \
+	OUT_WRITE(ST7920_DAT_PIN, ST7920_DAT(val));  \
+	OUT_WRITE(ST7920_DAT_PIN, ST7920_DAT(val));  \
+	OUT_WRITE(ST7920_DAT_PIN, ST7920_DAT(val));  \
+	OUT_WRITE(ST7920_DAT_PIN, ST7920_DAT(val));  \
+	OUT_WRITE(ST7920_DAT_PIN, ST7920_DAT(val));  \
+  OUT_WRITE(ST7920_CLK_PIN, HIGH);OUT_WRITE(ST7920_CLK_PIN, HIGH);              \
   val <<= 1; }while(0)
 
 // Optimize this code with -O3
