@@ -16,10 +16,10 @@
 5. ####  no wiring for TMC driver sensorless homing and uart mode.
 
 
-<img width="800"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/504185717.jpg"/> 
+<img width="800"  src="https://gitee.com/luojin/bob_robot/raw/master/imges/504185717.jpg"/> 
 
 If you want to run PandaPi on RPi, you need one PandaPi extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
-<img  width="550"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/60202.jpg"/>
+<img  width="550"  src="https://gitee.com/luojin/bob_robot/raw/master/imges/60202.jpg"/>
 
 
 * ##   [Hardware resources](https://github.com/markniu/PandaPi/wiki/Hardware-resources) 
@@ -47,7 +47,7 @@ Bed leveling    | 	  BLtouch  | 	 support wild range voltage 5V~36V Inductive se
 Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board for over-current and reverse polarity protection for board,drivers,raspberry pi.
 
 * ## Block diagram
-<img width="450" src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/dlg2.png"/>
+<img width="450" src="https://gitee.com/luojin/bob_robot/raw/master/imges/dlg2.png"/>
 
 * ##   [Guides](https://github.com/markniu/PandaPi/wiki) 
 **Quick start guide**：
@@ -77,7 +77,7 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 3. how do this assure the real time control?
 
    about the real-time, here is the result that is almost perfect for real time control drivers. the output signal of the one raspberryPI's GPIO,and displayed by the oscilloscope.
-<img  width="750"  src="https://raw.githubusercontent.com/markniu/doc_test/master/imges/60632064_o.jpg"/>
+<img  width="750"  src="https://gitee.com/luojin/bob_robot/raw/master/imges/60632064_o.jpg"/>
 
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
