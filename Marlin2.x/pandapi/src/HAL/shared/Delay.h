@@ -159,10 +159,19 @@
 #include <unistd.h>
 #include <time.h>
 
+void inline delay_ns0 (unsigned int howLong)
+{
+  struct timespec sleeper, dummy ;
+
+  sleeper.tv_sec  = (time_t)(howLong / 1000000) ;
+  sleeper.tv_nsec = (long)(howLong % 1000000) ;
+
+  nanosleep (&sleeper, &dummy) ;
+}
 
 
 // Delay in nanoseconds
-#define DELAY_NS(x)   delay_ns(x)//  //DELAY_CYCLES( (x) * (F_CPU*30000 ) / 1UL )//  PANDAPI
+#define DELAY_NS(x)   delay_ns0(x)//  //DELAY_CYCLES( (x) * (F_CPU*30000 ) / 1UL )//  PANDAPI
 
 // Delay in microseconds
-#define DELAY_US(x) usleep(x);//DELAY_CYCLES( (x) * (F_CPU*30000 / 1000000UL) )//  PANDAPI
+#define DELAY_US(x) usleep(x) //DELAY_CYCLES( (x) * (F_CPU*30000 / 1000000UL) )//  PANDAPI
