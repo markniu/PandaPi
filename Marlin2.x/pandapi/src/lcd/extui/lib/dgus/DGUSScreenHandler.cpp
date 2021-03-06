@@ -425,47 +425,51 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
   void DGUSScreenHandler::DGUSLCD_SD_FileSelected(DGUS_VP_Variable &var, void *val_ptr) {
     uint16_t touched_nr = (int16_t)swap16(*(uint16_t*)val_ptr) + top_file;
 	//PANDAPI
-	int k=0,len=0,i=0;
-	
-	 if (touched_nr > octopi_file_num) return;
-	 file_to_print = touched_nr;
-	 for(i=0;i<=touched_nr;i++)
-	 {
-		 parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",print_filename,&k);
-		 len+=k;
-		 if(len>=(sizeof(buffer)-10))
+	if(octopi_choose_status)
+	{
+		 int k=0,len=0,i=0;
+		
+		 if (touched_nr > octopi_file_num) return;
+		 file_to_print = touched_nr;
+		 for(i=0;i<=touched_nr;i++)
 		 {
-			 
-			 memset(print_filename,0,sizeof(print_filename));
+			 parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",print_filename,&k);
+			 len+=k;
+			 if(len>=(sizeof(buffer)-10))
+			 {
+				 
+				 memset(print_filename,0,sizeof(print_filename));
+			 }
+			 //printf("%s : %d\n",tmpfilename,i);
 		 }
-		 //printf("%s : %d\n",tmpfilename,i);
-	 }
 
-	#if ENABLED(DGUS_PRINT_FILENAME)
-      // Send print filename
-      dgusdisplay.WriteVariable(VP_SD_Print_Filename, print_filename, VP_SD_FileName_LEN, true);
-    #endif
-	 HandleUserConfirmationPopUp(VP_SD_FileSelectConfirm, nullptr, PSTR("Print file"), print_filename, PSTR("from SD Card?"), true, true, false, true);
+		#if ENABLED(DGUS_PRINT_FILENAME)
+	      // Send print filename
+	      dgusdisplay.WriteVariable(VP_SD_Print_Filename, print_filename, VP_SD_FileName_LEN, true);
+	    #endif
+		 HandleUserConfirmationPopUp(VP_SD_FileSelectConfirm, nullptr, PSTR("Print file"), print_filename, PSTR("from SD Card?"), true, true, false, true);
+	}
+	else
+	{
 	 
-	 /*
-    if (touched_nr > filelist.count()) return;
-    if (!filelist.seek(touched_nr)) return;
-    if (filelist.isDir()) {
-      filelist.changeDir(filelist.filename());
-      top_file = 0;
-      ForceCompleteUpdate();
-      return;
-    }
+	    if (touched_nr > filelist.count()) return;
+	    if (!filelist.seek(touched_nr)) return;
+	    if (filelist.isDir()) {
+	      filelist.changeDir(filelist.filename());
+	      top_file = 0;
+	      ForceCompleteUpdate();
+	      return;
+	    }
 
-    #if ENABLED(DGUS_PRINT_FILENAME)
-      // Send print filename
-      dgusdisplay.WriteVariable(VP_SD_Print_Filename, filelist.filename(), VP_SD_FileName_LEN, true);
-    #endif
+	    #if ENABLED(DGUS_PRINT_FILENAME)
+	      // Send print filename
+	      dgusdisplay.WriteVariable(VP_SD_Print_Filename, filelist.filename(), VP_SD_FileName_LEN, true);
+	    #endif
 
-    // Setup Confirmation screen
-    file_to_print = touched_nr;
-    HandleUserConfirmationPopUp(VP_SD_FileSelectConfirm, nullptr, PSTR("Print file"), filelist.filename(), PSTR("from SD Card?"), true, true, false, true);
-*/
+	    // Setup Confirmation screen
+	    file_to_print = touched_nr;
+	    HandleUserConfirmationPopUp(VP_SD_FileSelectConfirm, nullptr, PSTR("Print file"), filelist.filename(), PSTR("from SD Card?"), true, true, false, true);
+	}
   }
 
   void DGUSScreenHandler::DGUSLCD_SD_StartPrint(DGUS_VP_Variable &var, void *val_ptr) {
@@ -509,11 +513,10 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 		  printf("%s\n", buffer);	
 		  pclose(pf); 
 		}
-		else
-		{
-			if (ExtUI::isPrintingFromMediaPaused()) ExtUI::resumePrint();
+		
+		if (ExtUI::isPrintingFromMediaPaused()) ExtUI::resumePrint();
 
-		}
+		
         break;
       case 1:  // Pause
        // 
@@ -524,10 +527,9 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 			printf("%s\n", buffer);	 
 			pclose(pf); 
 		}
-		else
-		{
-			if (!ExtUI::isPrintingFromMediaPaused()) ExtUI::pausePrint();
-		}
+		
+		if (!ExtUI::isPrintingFromMediaPaused()) ExtUI::pausePrint();
+		
 		break;
       case 2:  // Abort
         ScreenHandler.HandleUserConfirmationPopUp(VP_SD_AbortPrintConfirmed, nullptr, PSTR("Abort printing"), filelist.filename(), PSTR("?"), true, true, false, true);
