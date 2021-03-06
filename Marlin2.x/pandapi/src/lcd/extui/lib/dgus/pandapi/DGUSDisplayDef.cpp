@@ -252,6 +252,7 @@ const uint16_t VPList_PIDBED[] PROGMEM = {
 const uint16_t VPList_Infos[] PROGMEM = {
   VP_MARLIN_VERSION,
   VP_PrintTime,
+  VP_OctoPI_choose,
   #if ENABLED(PRINTCOUNTER)
     VP_PrintAccTime,
     VP_PrintsTotal,
@@ -431,7 +432,10 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
 
   // Print Progress
   VPHELPER(VP_PrintProgress_Percentage, nullptr, nullptr, ScreenHandler.DGUSLCD_SendPrintProgressToDisplay ),
-
+//PANDAPI
+  VPHELPER(VP_OctoPI_choose, nullptr, nullptr, ScreenHandler.DGUSLCD_SendOctoPi_ChooseToDisplay ),
+  VPHELPER(VP_OctoPI_CLOSE, nullptr, &ScreenHandler.HandleOCTOPIClose, nullptr),
+///
   // Print Time
   VPHELPER_STR(VP_PrintTime, nullptr, VP_PrintTime_LEN, nullptr, ScreenHandler.DGUSLCD_SendPrintTimeToDisplay),
   #if ENABLED(PRINTCOUNTER)

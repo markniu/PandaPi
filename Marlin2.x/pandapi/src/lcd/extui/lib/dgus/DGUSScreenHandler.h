@@ -151,6 +151,12 @@ public:
   static void DGUSLCD_SendTemperaturePID(DGUS_VP_Variable &var);
   static void DGUSLCD_SendPercentageToDisplay(DGUS_VP_Variable &var);
   static void DGUSLCD_SendPrintProgressToDisplay(DGUS_VP_Variable &var);
+  
+  //PANDAPI
+  static void DGUSLCD_SendOctoPi_ChooseToDisplay(DGUS_VP_Variable &var);
+  static void HandleOCTOPIClose(DGUS_VP_Variable &var, void *val_ptr);
+  //
+
   static void DGUSLCD_SendPrintTimeToDisplay(DGUS_VP_Variable &var);
   #if ENABLED(PRINTCOUNTER)
     static void DGUSLCD_SendPrintAccTimeToDisplay(DGUS_VP_Variable &var);

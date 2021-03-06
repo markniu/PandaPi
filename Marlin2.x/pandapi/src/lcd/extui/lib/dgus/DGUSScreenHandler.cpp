@@ -23,6 +23,8 @@
 #include "../../../../inc/MarlinConfigPre.h"
 
 #if HAS_DGUS_LCD
+//PANDAPI
+#include <stdio.h>
 
 #include "DGUSScreenHandler.h"
 #include "DGUSDisplay.h"
@@ -139,13 +141,83 @@ void DGUSScreenHandler::DGUSLCD_SendPercentageToDisplay(DGUS_VP_Variable &var) {
     dgusdisplay.WriteVariable(var.VP, tmp);
   }
 }
-
+////PANDAPI
+extern char parse_string(char *src,char *start,char *end,char *out,int *e_pos);
+uint16_t octopi_choose_status=0;
+FILE *pf;
+char buffer[1024*10]; 
+int octopi_file_num=0;
+char print_filename[128];
+//////
 // Send the current print progress to the display.
 void DGUSScreenHandler::DGUSLCD_SendPrintProgressToDisplay(DGUS_VP_Variable &var) {
   //DEBUG_ECHOPAIR(" DGUSLCD_SendPrintProgressToDisplay ", var.VP);
-  uint16_t tmp = ExtUI::getProgress_percent();
+  //PANDAPI
+  uint16_t tmp =0;
+  if(octopi_choose_status)
+  {
+	  int k=0;
+	  char out_t[128];
+	  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	  fread(buffer, sizeof(buffer), 1, pf);
+	//  printf("%s\n", buffer);	
+	  pclose(pf); 
+
+	  parse_string(buffer,"\"size\":","}",out_t,&k);
+	  unsigned int tlen=atol(out_t);
+	  parse_string(buffer,"\"filepos\":",",",out_t,&k);
+	  unsigned int plen=atol(out_t);
+	  tmp =plen*100/tlen;
+  }
+  else
+  	tmp = ExtUI::getProgress_percent();
+ // printf("tlen:%d,plen:%d,tmp:%d\n",tlen,plen,tmp);
   //DEBUG_ECHOLNPAIR(" data ", tmp);
   dgusdisplay.WriteVariable(var.VP, tmp);
+}
+
+
+void DGUSScreenHandler::HandleOCTOPIClose(DGUS_VP_Variable &var, void *val_ptr) {
+  DEBUG_ECHOLNPGM("HandleFilamentClose");
+    //PANDAPI
+	int k=0;
+	char out_t[128];
+  printf("DGUSLCD_SendOctoPi_ChooseToDisplay\n");
+  if(octopi_choose_status)
+  {
+  	 
+	//connect to octopi
+    pf = popen("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\":\\\"disconnect\\\"}\" http://localhost/api/connection -H @/boot/octopi_key.txt", "r");
+    fread(buffer, sizeof(buffer), 1, pf);
+    printf("%s\n", buffer);   
+    pclose(pf);	
+	
+	if(parse_string(buffer,"403","FORBIDDEN",out_t,&k)!=2)
+		octopi_choose_status=0;
+  }
+  else
+  {
+  	
+	//disconnect to octopi
+    pf = popen("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\": \\\"connect\\\",\\\"port\\\": \\\"/dev/tnt0\\\",\\\"baudrate\\\": 115200,\\\"save\\\": true,\\\"autoconnect\\\": true}\" http://localhost/api/connection -H @/boot/octopi_key.txt", "r");
+    fread(buffer, sizeof(buffer), 1, pf);
+    printf("%s\n", buffer);   
+    pclose(pf);	
+	if(parse_string(buffer,"403","FORBIDDEN",out_t,&k)!=2)
+		octopi_choose_status=0;
+		
+	
+  }
+ 
+}
+
+//  
+void DGUSScreenHandler::DGUSLCD_SendOctoPi_ChooseToDisplay(DGUS_VP_Variable &var) {
+ // static uint16_t tmp=0;
+
+   
+  //DEBUG_ECHOLNPAIR(" data ", tmp);
+  dgusdisplay.WriteVariable(var.VP, octopi_choose_status);
 }
 
 // Send the current print time to the display.
@@ -279,7 +351,26 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 #if ENABLED(SDSUPPORT)
 
   void DGUSScreenHandler::ScreenChangeHookIfSD(DGUS_VP_Variable &var, void *val_ptr) {
-    // default action executed when there is a SD card, but not printing
+  //PANDAPI
+	if(octopi_choose_status)
+  	{
+	  int k=0;
+	  char out_t[128];
+	  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	  fread(buffer, sizeof(buffer), 1, pf);
+	//	printf("%s\n", buffer); 
+	  pclose(pf); 
+
+	  parse_string(buffer,"\"state\":\"","\"",out_t,&k);
+	  if((strncmp(out_t,"Printing",sizeof("Printing"))==0)||
+		  (strncmp(out_t,"Paused",sizeof("Paused"))==0)||
+		  (strncmp(out_t,"Pausing",sizeof("Pausing"))==0)||
+		  (strncmp(out_t,"Cancelling",sizeof("Cancelling"))==0))
+			  
+		  return GotoScreen(DGUSLCD_SCREEN_SDPRINTMANIPULATION);
+	 }
+
+	// default action executed when there is a SD card, but not printing
     if (ExtUI::isMediaInserted() && !ExtUI::isPrintingFromMedia()) {
       ScreenChangeHook(var, val_ptr);
       dgusdisplay.RequestScreen(current_screen);
@@ -333,6 +424,30 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 
   void DGUSScreenHandler::DGUSLCD_SD_FileSelected(DGUS_VP_Variable &var, void *val_ptr) {
     uint16_t touched_nr = (int16_t)swap16(*(uint16_t*)val_ptr) + top_file;
+	//PANDAPI
+	int k=0,len=0,i=0;
+	
+	 if (touched_nr > octopi_file_num) return;
+	 file_to_print = touched_nr;
+	 for(i=0;i<=touched_nr;i++)
+	 {
+		 parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",print_filename,&k);
+		 len+=k;
+		 if(len>=(sizeof(buffer)-10))
+		 {
+			 
+			 memset(print_filename,0,sizeof(print_filename));
+		 }
+		 //printf("%s : %d\n",tmpfilename,i);
+	 }
+
+	#if ENABLED(DGUS_PRINT_FILENAME)
+      // Send print filename
+      dgusdisplay.WriteVariable(VP_SD_Print_Filename, print_filename, VP_SD_FileName_LEN, true);
+    #endif
+	 HandleUserConfirmationPopUp(VP_SD_FileSelectConfirm, nullptr, PSTR("Print file"), print_filename, PSTR("from SD Card?"), true, true, false, true);
+	 
+	 /*
     if (touched_nr > filelist.count()) return;
     if (!filelist.seek(touched_nr)) return;
     if (filelist.isDir()) {
@@ -350,29 +465,70 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
     // Setup Confirmation screen
     file_to_print = touched_nr;
     HandleUserConfirmationPopUp(VP_SD_FileSelectConfirm, nullptr, PSTR("Print file"), filelist.filename(), PSTR("from SD Card?"), true, true, false, true);
+*/
   }
 
   void DGUSScreenHandler::DGUSLCD_SD_StartPrint(DGUS_VP_Variable &var, void *val_ptr) {
-    if (!filelist.seek(file_to_print)) return;
-    ExtUI::printFile(filelist.shortFilename());
-    ScreenHandler.GotoScreen(
-      #if ENABLED(DGUS_LCD_UI_ORIGIN)
-        DGUSLCD_SCREEN_STATUS
-      #else
-        DGUSLCD_SCREEN_SDPRINTMANIPULATION
-      #endif
-    );
+//PANDAPI
+	if(octopi_choose_status)
+	{
+
+		char tmpdata[256];
+		sprintf(tmpdata,"curl -s     -X POST -H \"Content-Type: application/json\" -d	\"{\\\"command\\\":\\\"select\\\",\\\"print\\\":true}\" http://localhost/api/files/%s	-H @/boot/octopi_key.txt",print_filename);
+	//	printf("\ntmpdata====%s\n",tmpdata);
+		pf = popen(tmpdata, "r");
+	    fread(buffer, sizeof(buffer), 1, pf);
+	 //   printf("%s\n", buffer);   
+	    pclose(pf);
+	}	
+	else
+	{
+	    if (!filelist.seek(file_to_print)) return;
+	    ExtUI::printFile(filelist.shortFilename());
+	}
+	ScreenHandler.GotoScreen(
+  #if ENABLED(DGUS_LCD_UI_ORIGIN)
+		DGUSLCD_SCREEN_STATUS
+  #else
+		DGUSLCD_SCREEN_SDPRINTMANIPULATION
+  #endif
+	);
+    
   }
 
   void DGUSScreenHandler::DGUSLCD_SD_ResumePauseAbort(DGUS_VP_Variable &var, void *val_ptr) {
-    if (!ExtUI::isPrintingFromMedia()) return; // avoid race condition when user stays in this menu and printer finishes.
+  //PANDAPI
+ //   if (!ExtUI::isPrintingFromMedia()) return; // avoid race condition when user stays in this menu and printer finishes.
     switch (swap16(*(uint16_t*)val_ptr)) {
-      case 0:  // Resume
-        if (ExtUI::isPrintingFromMediaPaused()) ExtUI::resumePrint();
+      case 0:  // Resume 
+      //  
+		if(octopi_choose_status)	
+		{
+		  pf = popen("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"resume\\\"}\" http://localhost/api/job  -H @/boot/octopi_key.txt", "r");
+		  fread(buffer, sizeof(buffer), 1, pf);
+		  printf("%s\n", buffer);	
+		  pclose(pf); 
+		}
+		else
+		{
+			if (ExtUI::isPrintingFromMediaPaused()) ExtUI::resumePrint();
+
+		}
         break;
       case 1:  // Pause
-        if (!ExtUI::isPrintingFromMediaPaused()) ExtUI::pausePrint();
-        break;
+       // 
+		if(octopi_choose_status)
+		{
+			pf = popen("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"pause\\\"}\" http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+			fread(buffer, sizeof(buffer), 1, pf);
+			printf("%s\n", buffer);	 
+			pclose(pf); 
+		}
+		else
+		{
+			if (!ExtUI::isPrintingFromMediaPaused()) ExtUI::pausePrint();
+		}
+		break;
       case 2:  // Abort
         ScreenHandler.HandleUserConfirmationPopUp(VP_SD_AbortPrintConfirmed, nullptr, PSTR("Abort printing"), filelist.filename(), PSTR("?"), true, true, false, true);
         break;
@@ -380,7 +536,16 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
   }
 
   void DGUSScreenHandler::DGUSLCD_SD_ReallyAbort(DGUS_VP_Variable &var, void *val_ptr) {
-    ExtUI::stopPrint();
+  //PANDAPI
+  	if(octopi_choose_status)
+  	{
+	  pf = popen("curl -s    -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"cancel\\\"}\" http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	  fread(buffer, sizeof(buffer), 1, pf);
+	  printf("%s\n", buffer);	
+	  pclose(pf); 
+
+  	}
+	ExtUI::stopPrint();
     GotoScreen(DGUSLCD_SCREEN_MAIN);
   }
 
@@ -391,12 +556,47 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 
   void DGUSScreenHandler::DGUSLCD_SD_SendFilename(DGUS_VP_Variable& var) {
     uint16_t target_line = (var.VP - VP_SD_FileName0) / VP_SD_FileName_LEN;
-    if (target_line > DGUS_SD_FILESPERSCREEN) return;
-    char tmpfilename[VP_SD_FileName_LEN + 1] = "";
-    var.memadr = (void*)tmpfilename;
-    if (filelist.seek(top_file + target_line))
-      snprintf(tmpfilename, VP_SD_FileName_LEN, PSTR("%s%c"), filelist.filename(), filelist.isDir() ? '/' : 0);
-	 printf(" list:%s___%s\n",tmpfilename,filelist.filename());
+	if (target_line > DGUS_SD_FILESPERSCREEN) return;
+	char tmpfilename[VP_SD_FileName_LEN + 1] = "";
+	var.memadr = (void*)tmpfilename;
+	//PANDAPI
+	if(octopi_choose_status)
+	{
+		int k=0,len=0,i=0;
+	    pf = popen("curl -s   http://localhost//api/files?recursive=true -H @/boot/octopi_key.txt", "r");
+	    fread(buffer, sizeof(buffer), 1, pf);
+	    // printf("%s\n", buffer);   
+	    pclose(pf);	
+	    while(i<50)
+	    {
+			if(parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",tmpfilename,&k)==1)
+				break;
+			len+=k;
+			i++; 
+				
+			 
+		}
+		octopi_file_num=i++;// total files
+		printf("===%d/%d\n",target_line,octopi_file_num); 
+		k=len=0;
+		for(i=0;i<=target_line;i++)
+		{
+			parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",tmpfilename,&k);
+			len+=k;
+		 	if(len>=(sizeof(buffer)-10))
+		 	{
+		 		
+				memset(tmpfilename,0,sizeof(tmpfilename));
+		 	}
+			 printf("%s : %d\n",tmpfilename,i);
+		}
+	}
+	else
+	{
+	    if (filelist.seek(top_file + target_line))
+	      snprintf(tmpfilename, VP_SD_FileName_LEN, PSTR("%s%c"), filelist.filename(), filelist.isDir() ? '/' : 0);
+	}
+	// printf(" list:%s___%s\n",tmpfilename,filelist.filename());
 	DGUSLCD_SendStringToDisplay(var);
   }
 
@@ -1119,10 +1319,45 @@ bool DGUSScreenHandler::loop() {
  
   const millis_t ms = millis();
   static millis_t next_event_ms = 0;
+  //PANDAPI
+  static millis_t next_octopi_ms = 0;
+  static uint16_t octopi_choose_status_old=0;
 
   if (!IsScreenComplete() || ELAPSED(ms, next_event_ms)) {
     next_event_ms = ms + DGUS_UPDATE_INTERVAL_MS;
     UpdateScreenVPData();
+	//PANDAPI
+	if((current_screen==DGUSLCD_SCREEN_INFOS||current_screen==DGUSLCD_SCREEN_MAIN)&&ELAPSED(ms, next_octopi_ms))
+	{
+	  int k=0;
+	  char out_t[128];
+	  next_octopi_ms=ms+DGUS_UPDATE_INTERVAL_MS*2;
+	  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	  fread(buffer, sizeof(buffer), 1, pf);
+	//	printf("%s\n", buffer); 
+	  pclose(pf); 
+
+	  parse_string(buffer,"\"state\":\"","\"",out_t,&k);
+
+	  if(strncmp(out_t,"Operational",sizeof("Operational"))==0)
+		  octopi_choose_status=1;
+	  else if(strncmp(out_t,"Printing",sizeof("Printing"))==0)
+	  	  octopi_choose_status=2;
+	  else if(strncmp(out_t,"Paused",sizeof("Paused"))==0)
+	  	  octopi_choose_status=3;
+	  
+	  else
+	  	  octopi_choose_status=0;
+	  if(octopi_choose_status_old!=octopi_choose_status) 
+	  {
+	  	octopi_choose_status_old=octopi_choose_status;
+		if(octopi_choose_status==2)
+			GotoScreen(DGUSLCD_SCREEN_SDPRINTMANIPULATION);
+	  }
+	  
+			  
+		//  return GotoScreen(DGUSLCD_SCREEN_SDPRINTMANIPULATION);
+	}
   }
 
   #if ENABLED(SHOW_BOOTSCREEN)

@@ -208,6 +208,10 @@ constexpr uint16_t VP_Fan2_Percentage = 0x3104;  // 2 Byte Integer (0..100)
 constexpr uint16_t VP_Fan3_Percentage = 0x3106;  // 2 Byte Integer (0..100)
 constexpr uint16_t VP_Feedrate_Percentage = 0x3108; // 2 Byte Integer (0..100)
 
+//PANDAPI
+constexpr uint16_t VP_OctoPI_choose = 0x3132; // 2 Byte Integer (0..100)
+constexpr uint16_t VP_OctoPI_CLOSE = 0x2132;
+//
 // Actual Position
 constexpr uint16_t VP_XPos = 0x3110;  // 4 Byte Fixed point number; format xxx.yy
 constexpr uint16_t VP_YPos = 0x3112;  // 4 Byte Fixed point number; format xxx.yy
