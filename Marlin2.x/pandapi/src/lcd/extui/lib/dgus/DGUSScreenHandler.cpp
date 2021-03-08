@@ -148,6 +148,41 @@ FILE *pf;
 char buffer[1024*10]; 
 int octopi_file_num=0;
 char print_filename[128];
+//PANDAPI
+
+void send_to_curl(char *comand1)
+{
+	static int kk=0,k=0;
+	static char key_buf[1024];
+	char cmd_buf[1024];
+	if(kk==0)
+	{
+		kk=1;
+		FILE * fpd; 
+		memset(key_buf, 0, sizeof(key_buf));
+		if((fpd=fopen("/boot/octopi_key.txt","r"))!=NULL)  //  PANDAPI
+		{
+			unsigned int n = fread(cmd_buf,sizeof(char),sizeof(cmd_buf),fpd);
+			fclose(fpd);
+		}
+		parse_string(cmd_buf,"X-Api-Key:","\n",key_buf,&k);
+		printf("key_buf:%s\n", key_buf); 
+	/*	for(int i=0;i<strlen(key_buf);i++)
+		{
+			if(key_buf[i]=='\n')
+				key_buf[i]=0;
+		}*/
+	
+	}
+	memset(cmd_buf, 0, sizeof(cmd_buf));
+	sprintf(cmd_buf,"%s -H \"X-Api-Key:%s\"",comand1,key_buf);
+	// printf("cmd_buf:%s\n", cmd_buf); 
+	pf = popen(cmd_buf, "r");
+	fread(buffer, sizeof(buffer), 1, pf);
+	// printf("%s\n", buffer); 
+	pclose(pf); 
+
+}
 //////
 // Send the current print progress to the display.
 void DGUSScreenHandler::DGUSLCD_SendPrintProgressToDisplay(DGUS_VP_Variable &var) {
@@ -158,15 +193,17 @@ void DGUSScreenHandler::DGUSLCD_SendPrintProgressToDisplay(DGUS_VP_Variable &var
   {
 	  int k=0;
 	  char out_t[128];
-	  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
-	  fread(buffer, sizeof(buffer), 1, pf);
+	//  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	 // fread(buffer, sizeof(buffer), 1, pf);
 	//  printf("%s\n", buffer);	
-	  pclose(pf); 
-
+	 // pclose(pf); 
+	  send_to_curl("curl -s   http://localhost/api/job");	
 	  parse_string(buffer,"\"size\":","}",out_t,&k);
 	  unsigned int tlen=atol(out_t);
 	  parse_string(buffer,"\"filepos\":",",",out_t,&k);
 	  unsigned int plen=atol(out_t);
+	  if(tlen<=0)
+	  	return;
 	  tmp =plen*100/tlen;
   }
   else
@@ -187,11 +224,11 @@ void DGUSScreenHandler::HandleOCTOPIClose(DGUS_VP_Variable &var, void *val_ptr) 
   {
   	 
 	//connect to octopi
-    pf = popen("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\":\\\"disconnect\\\"}\" http://localhost/api/connection -H @/boot/octopi_key.txt", "r");
-    fread(buffer, sizeof(buffer), 1, pf);
-    printf("%s\n", buffer);   
-    pclose(pf);	
-	
+    //pf = popen("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\":\\\"disconnect\\\"}\" http://localhost/api/connection -H @/boot/octopi_key.txt", "r");
+    //fread(buffer, sizeof(buffer), 1, pf);
+    //printf("%s\n", buffer);   
+    //pclose(pf);	
+	send_to_curl("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\":\\\"disconnect\\\"}\" http://localhost/api/connection  ");
 	if(parse_string(buffer,"403","FORBIDDEN",out_t,&k)!=2)
 		octopi_choose_status=0;
   }
@@ -199,10 +236,11 @@ void DGUSScreenHandler::HandleOCTOPIClose(DGUS_VP_Variable &var, void *val_ptr) 
   {
   	
 	//disconnect to octopi
-    pf = popen("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\": \\\"connect\\\",\\\"port\\\": \\\"/dev/tnt0\\\",\\\"baudrate\\\": 115200,\\\"save\\\": true,\\\"autoconnect\\\": true}\" http://localhost/api/connection -H @/boot/octopi_key.txt", "r");
-    fread(buffer, sizeof(buffer), 1, pf);
-    printf("%s\n", buffer);   
-    pclose(pf);	
+   // pf = popen("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\": \\\"connect\\\",\\\"port\\\": \\\"/dev/tnt0\\\",\\\"baudrate\\\": 115200,\\\"save\\\": true,\\\"autoconnect\\\": true}\" http://localhost/api/connection -H @/boot/octopi_key.txt", "r");
+   // fread(buffer, sizeof(buffer), 1, pf);
+   // printf("%s\n", buffer);   
+   // pclose(pf);	
+   send_to_curl("curl -s     -X POST -H \"Content-Type: application/json\"  -d  \"{\\\"command\\\": \\\"connect\\\",\\\"port\\\": \\\"/dev/tnt0\\\",\\\"baudrate\\\": 115200,\\\"save\\\": true,\\\"autoconnect\\\": true}\" http://localhost/api/connection  ");
 	if(parse_string(buffer,"403","FORBIDDEN",out_t,&k)!=2)
 		octopi_choose_status=0;
 		
@@ -355,18 +393,19 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 	if(octopi_choose_status)
   	{
 	  int k=0;
-	  char out_t[128];
-	  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
-	  fread(buffer, sizeof(buffer), 1, pf);
+	  char out_t[128], out_2[128];
+	 // pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	//  fread(buffer, sizeof(buffer), 1, pf);
 	//	printf("%s\n", buffer); 
-	  pclose(pf); 
+	//  pclose(pf); 
+	 send_to_curl("curl -s   http://localhost/api/job");
 
-	  parse_string(buffer,"\"state\":\"","\"",out_t,&k);
-	  if((strncmp(out_t,"Printing",sizeof("Printing"))==0)||
-		  (strncmp(out_t,"Paused",sizeof("Paused"))==0)||
-		  (strncmp(out_t,"Pausing",sizeof("Pausing"))==0)||
-		  (strncmp(out_t,"Cancelling",sizeof("Cancelling"))==0))
-			  
+	  parse_string(buffer,"\"state\":","}",out_t,&k);
+	  if((parse_string(out_t,"Printing","\"",out_2,&k)!=1)||
+		  (parse_string(out_t,"Paused","\"",out_2,&k)!=1)||
+		  (parse_string(out_t,"Pausing","\"",out_2,&k)!=1)||
+		  (parse_string(out_t,"Cancelling","\"",out_2,&k)!=1))
+  
 		  return GotoScreen(DGUSLCD_SCREEN_SDPRINTMANIPULATION);
 	 }
 
@@ -428,13 +467,16 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 	if(octopi_choose_status)
 	{
 		 int k=0,len=0,i=0;
-		
-		 if (touched_nr > octopi_file_num) return;
+		 char out_t[1024];
+		 if (touched_nr >= octopi_file_num) return;
+		 printf("touched_nr:%d/%d\n",touched_nr,octopi_file_num);
 		 file_to_print = touched_nr;
 		 for(i=0;i<=touched_nr;i++)
 		 {
-			 parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",print_filename,&k);
+			 parse_string(buffer+len,"\"resource\":","}",out_t,&k);
 			 len+=k;
+			 parse_string(out_t,"http://localhost/api/files/","\"",print_filename,&k);
+			 
 			 if(len>=(sizeof(buffer)-10))
 			 {
 				 
@@ -477,13 +519,14 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 	if(octopi_choose_status)
 	{
 
-		char tmpdata[256];
-		sprintf(tmpdata,"curl -s     -X POST -H \"Content-Type: application/json\" -d	\"{\\\"command\\\":\\\"select\\\",\\\"print\\\":true}\" http://localhost/api/files/%s	-H @/boot/octopi_key.txt",print_filename);
+		 char tmpdata[256];
+		 sprintf(tmpdata,"curl -s     -X POST -H \"Content-Type: application/json\" -d	\"{\\\"command\\\":\\\"select\\\",\\\"print\\\":true}\" http://localhost/api/files/%s	 ",print_filename);
 	//	printf("\ntmpdata====%s\n",tmpdata);
-		pf = popen(tmpdata, "r");
-	    fread(buffer, sizeof(buffer), 1, pf);
+		//pf = popen(tmpdata, "r");
+	  //  fread(buffer, sizeof(buffer), 1, pf);
 	 //   printf("%s\n", buffer);   
-	    pclose(pf);
+	  //  pclose(pf);
+	  send_to_curl(tmpdata);
 	}	
 	else
 	{
@@ -508,10 +551,11 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
       //  
 		if(octopi_choose_status)	
 		{
-		  pf = popen("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"resume\\\"}\" http://localhost/api/job  -H @/boot/octopi_key.txt", "r");
-		  fread(buffer, sizeof(buffer), 1, pf);
-		  printf("%s\n", buffer);	
-		  pclose(pf); 
+		  //pf = popen("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"resume\\\"}\" http://localhost/api/job  -H @/boot/octopi_key.txt", "r");
+		  //fread(buffer, sizeof(buffer), 1, pf);
+		  //printf("%s\n", buffer);	
+		  //pclose(pf); 
+		  send_to_curl("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"resume\\\"}\" http://localhost/api/job  ");
 		}
 		
 		if (ExtUI::isPrintingFromMediaPaused()) ExtUI::resumePrint();
@@ -522,10 +566,11 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
        // 
 		if(octopi_choose_status)
 		{
-			pf = popen("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"pause\\\"}\" http://localhost/api/job -H @/boot/octopi_key.txt", "r");
-			fread(buffer, sizeof(buffer), 1, pf);
-			printf("%s\n", buffer);	 
-			pclose(pf); 
+		//	pf = popen("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"pause\\\"}\" http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+		//	fread(buffer, sizeof(buffer), 1, pf);
+		//	printf("%s\n", buffer);	 
+		//	pclose(pf); 
+			send_to_curl("curl -s     -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"pause\\\",\\\"action\\\":\\\"pause\\\"}\" http://localhost/api/job");
 		}
 		
 		if (!ExtUI::isPrintingFromMediaPaused()) ExtUI::pausePrint();
@@ -541,10 +586,11 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
   //PANDAPI
   	if(octopi_choose_status)
   	{
-	  pf = popen("curl -s    -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"cancel\\\"}\" http://localhost/api/job -H @/boot/octopi_key.txt", "r");
-	  fread(buffer, sizeof(buffer), 1, pf);
-	  printf("%s\n", buffer);	
-	  pclose(pf); 
+	//  pf = popen("curl -s    -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"cancel\\\"}\" http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	//  fread(buffer, sizeof(buffer), 1, pf);
+	 // printf("%s\n", buffer);	
+	 // pclose(pf); 
+	 send_to_curl("curl -s    -X POST -H \"Content-Type: application/json\" -d  \"{\\\"command\\\":\\\"cancel\\\"}\" http://localhost/api/job");
 
   	}
 	ExtUI::stopPrint();
@@ -565,13 +611,17 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 	if(octopi_choose_status)
 	{
 		int k=0,len=0,i=0;
-	    pf = popen("curl -s   http://localhost//api/files?recursive=true -H @/boot/octopi_key.txt", "r");
-	    fread(buffer, sizeof(buffer), 1, pf);
+		char out_t[1024];
+	   // pf = popen("curl -s   http://localhost//api/files?recursive=true -H @/boot/octopi_key.txt", "r");
+	   // fread(buffer, sizeof(buffer), 1, pf);
 	    // printf("%s\n", buffer);   
-	    pclose(pf);	
+	   // pclose(pf);	
+	   send_to_curl("curl -s   http://localhost//api/files?recursive=true");
 	    while(i<50)
 	    {
-			if(parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",tmpfilename,&k)==1)
+	    	parse_string(buffer+len,"\"resource\":","}",out_t,&k);
+			len+=k;
+			if(parse_string(out_t,"http://localhost/api/files/","\"",tmpfilename,&k)==1)
 				break;
 			len+=k;
 			i++; 
@@ -583,7 +633,9 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
 		k=len=0;
 		for(i=0;i<=target_line;i++)
 		{
-			parse_string(buffer+len,"\"resource\":\"http://localhost/api/files/","\"}",tmpfilename,&k);
+			parse_string(buffer+len,"\"resource\":","}",out_t,&k);
+			len+=k;
+			parse_string(out_t,"http://localhost/api/files/","\"",tmpfilename,&k);
 			len+=k;
 		 	if(len>=(sizeof(buffer)-10))
 		 	{
@@ -1332,25 +1384,33 @@ bool DGUSScreenHandler::loop() {
 	if((current_screen==DGUSLCD_SCREEN_INFOS||current_screen==DGUSLCD_SCREEN_MAIN)&&ELAPSED(ms, next_octopi_ms))
 	{
 	  int k=0;
-	  char out_t[128];
+	  char out_t[128],out_2[128];;
 	  next_octopi_ms=ms+DGUS_UPDATE_INTERVAL_MS*2;
-	  pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
-	  fread(buffer, sizeof(buffer), 1, pf);
+	 // pf = popen("curl -s   http://localhost/api/job -H @/boot/octopi_key.txt", "r");
+	 // fread(buffer, sizeof(buffer), 1, pf);
 	//	printf("%s\n", buffer); 
-	  pclose(pf); 
+	 // pclose(pf); 
+      send_to_curl("curl -s   http://localhost/api/job");
+	  parse_string(buffer,"\"state\":","}",out_t,&k);
 
-	  parse_string(buffer,"\"state\":\"","\"",out_t,&k);
-
+	  if(parse_string(out_t,"Operational","\"",out_2,&k)!=1)
+		  octopi_choose_status=1;
+	  else if(parse_string(out_t,"Printing","\"",out_2,&k)!=1)
+	  	  octopi_choose_status=2;
+	  else if(parse_string(out_t,"Paused","\"",out_2,&k)!=1)
+	  	  octopi_choose_status=3;
+/*
 	  if(strncmp(out_t,"Operational",sizeof("Operational"))==0)
 		  octopi_choose_status=1;
 	  else if(strncmp(out_t,"Printing",sizeof("Printing"))==0)
 	  	  octopi_choose_status=2;
 	  else if(strncmp(out_t,"Paused",sizeof("Paused"))==0)
 	  	  octopi_choose_status=3;
-	  
+	  */
 	  else
 	  	  octopi_choose_status=0;
-	  if(octopi_choose_status_old!=octopi_choose_status) 
+//printf("out_t:%s octopi_choose_status:%d\n",out_t,octopi_choose_status);
+	if(octopi_choose_status_old!=octopi_choose_status) 
 	  {
 	  	octopi_choose_status_old=octopi_choose_status;
 		if(octopi_choose_status==2)
