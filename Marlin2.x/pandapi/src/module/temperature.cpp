@@ -1866,6 +1866,9 @@ void init_PT100_max31865(void);
 void Temperature::init() {
 ////////////PANDAPI
 	i2c_fd=-1;
+	system("gpio -g mode 2 alt0");
+	system("gpio -g mode 3 alt0");
+
 	i2c_fd = wiringPiI2CSetup(0x3c);
 	//////////reboot the MCU
 	wiringPiI2CWriteReg8(i2c_fd, 8, 'r');
