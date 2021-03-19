@@ -2854,7 +2854,7 @@ void Temperature::get_from_mcu()
 	  //////////////////////////////////   
 	  if(ret==1)
 	  {
-		  printf("%s  |   \n",cmd_buf);
+		 // printf("%s  |   \n",cmd_buf);
 		  memset(cmd_buf,0,sizeof(cmd_buf));
 		  wiringPiI2CWriteReg8(i2c_fd, 8, 'g');
 		  wiringPiI2CWriteReg8(i2c_fd, 8, ';');
@@ -2874,7 +2874,7 @@ void Temperature::get_from_mcu()
 				  break;
 			  }
 		  }
-		  printf("%s  +   \n",cmd_buf);
+		 // printf("%s  +   \n",cmd_buf);
 			if(parse_checksum(cmd_buf))
 				return ;
 			/////////////
