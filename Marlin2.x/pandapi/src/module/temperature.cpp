@@ -1868,6 +1868,7 @@ void Temperature::init() {
 	i2c_fd=-1;
 	system("gpio -g mode 2 alt0");
 	system("gpio -g mode 3 alt0");
+	system("sudo service klipper stop");
 
 	i2c_fd = wiringPiI2CSetup(0x3c);
 	//////////reboot the MCU
