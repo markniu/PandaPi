@@ -81,6 +81,8 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 ## [Join Facebook](https://www.facebook.com/groups/380795976169477/)
 
+<img width="1024"  src="https://gitee.com/markyue/pandapi_wiki/raw/master/imges/V28/2192018.png"/> 
+
 ## [Where to buy](https://www.pandapi3d.com/)  
 thanks for your support! and have fun with 3D printer world!
 
