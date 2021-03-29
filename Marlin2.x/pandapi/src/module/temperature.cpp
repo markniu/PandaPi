@@ -1250,6 +1250,7 @@ void Temperature::manage_heater() {
 			fanSpeeds_old[0]=fan_speed[0];
 			set_fan_speed(0,fan_speed[0]);
 		}
+#if DISABLED(SET_FAN2_ON)		
 		// set board Fan
 		//if(digitalRead(X_ENABLE_PIN)==0)
 		if(fanSpeeds_old[2]!=digitalRead(X_ENABLE_PIN))
@@ -1259,7 +1260,7 @@ void Temperature::manage_heater() {
 			set_fan_speed(2,(!fanSpeeds_old[2])*255);
 			
 		}
-	  
+#endif	  
   }
   if((time_s-time_1ms)>=1)
   {

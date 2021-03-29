@@ -127,7 +127,7 @@
 #define BAUDRATE 115200 
 //  PANDAPI
 #define BAUDRATE_TNT   115200  // for octoprint serial//  PANDAPI [ 57600, 115200,  500000, 1000000]
-
+#define SET_FAN2_ON    // set Fan2 on at startup
 //  PANDAPI
 #define DGUS_LCD_UI_PANDAPI
 #if DISABLED(DGUS_LCD_UI_PANDAPI)
