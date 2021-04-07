@@ -16,7 +16,7 @@
 5. ####  no wiring for TMC driver sensorless homing and uart mode.
 
 
-<img width="800"  src="https://gitee.com/luojin/bob_robot/raw/master/imges/504185717.jpg"/> 
+<img width="1000"  src="https://gitee.com/luojin/bob_robot/raw/master/imges/V28/407172250.jpg"/> 
 
 If you want to run PandaPi on RPi, you need one PandaPi extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 <img  width="550"  src="https://gitee.com/luojin/bob_robot/raw/master/imges/60202.jpg"/>
