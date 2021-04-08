@@ -2920,7 +2920,7 @@ void Temperature::get_from_mcu()
 			  SERIAL_ECHO(k);
 			  
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)			
-			  if((temp_hotend[0].celsius>130||temp_hotend[1].celsius>130)&&(IS_SD_PRINTING() || print_job_timer.isRunning()))
+			  if((temp_hotend[0].celsius>130||temp_hotend[1].celsius>130)&&(print_job_timer.isPaused()||IS_SD_PAUSED() ||IS_SD_PRINTING() || print_job_timer.isRunning()))
 			  {
 				   runout_pin[0]=((k>>1)&0x01);// C(DEBUG_SCL PA14)
 				   runout_pin[1]=(k&0x01);// D(DEBUG_SDA PA13 )
