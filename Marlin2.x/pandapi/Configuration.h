@@ -2344,7 +2344,7 @@
 // Allow servo angle to be edited and saved to EEPROM
 //#define EDITABLE_SERVO_ANGLES
 
-
+//PANDAPI
 //only for TMC2209
 #define X_CURRENT_PI		500 	   // (mA) RMS current. Multiply by 1.414 for peak current.
 #define Y_CURRENT_PI		600 	   // (mA) RMS current. Multiply by 1.414 for peak current.

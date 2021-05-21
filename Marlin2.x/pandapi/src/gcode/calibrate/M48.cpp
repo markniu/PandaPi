@@ -124,7 +124,7 @@ void GcodeSuite::M48() {
   bool probing_good = !isnan(t);
 
   if (probing_good) {
-    randomSeed(millis());
+  //PANDAPI  randomSeed(millis());
 
     LOOP_L_N(n, n_samples) {
       #if HAS_SPI_LCD
@@ -132,9 +132,10 @@ void GcodeSuite::M48() {
         ui.status_printf_P(0, PSTR(S_FMT ": %d/%d"), GET_TEXT(MSG_M48_POINT), int(n + 1), int(n_samples));
       #endif
       if (n_legs) {
-        const int dir = (random(0, 10) > 5.0) ? -1 : 1;  // clockwise or counter clockwise
-        float angle = random(0, 360);
-        const float radius = random(
+//PANDAPI
+        const int dir = (linux_random(0, 10) > 5.0) ? -1 : 1;  // clockwise or counter clockwise
+        float angle = linux_random(0, 360);
+        const float radius = linux_random(
           #if ENABLED(DELTA)
             int(0.1250000000 * (DELTA_PRINTABLE_RADIUS)),
             int(0.3333333333 * (DELTA_PRINTABLE_RADIUS))
@@ -160,7 +161,8 @@ void GcodeSuite::M48() {
           else {
             // If we do this line, we are just trying to move further
             // around the circle.
-            delta_angle = dir * (float) random(25, 45);
+			//PANDAPI
+            delta_angle = dir * (float) linux_random(25, 45);
           }
 
           angle += delta_angle;

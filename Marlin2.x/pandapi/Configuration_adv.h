@@ -1404,7 +1404,7 @@
     #define DGUS_PREHEAT_UI               // Display a preheat screen during heatup
 
     #if ENABLED(DGUS_LCD_UI_HIPRECY)
-     #define DGUS_UI_MOVE_DIS_OPTION   // Disabled by default for UI_FYSETC
+   // PANDAPI  #define DGUS_UI_MOVE_DIS_OPTION   // Disabled by default for UI_FYSETC
   //  #else
    //   #define DGUS_UI_MOVE_DIS_OPTION     // Enabled by default for UI_HIPRECY
     #endif

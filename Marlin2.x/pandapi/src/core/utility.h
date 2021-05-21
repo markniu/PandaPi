@@ -24,6 +24,7 @@
 #include "../inc/MarlinConfigPre.h"
 #include "../core/types.h"
 #include "../core/millis_t.h"
+//PANDAPI
 int linux_random(int x,int y);
 char * dtostrf(double number, signed char width, unsigned char prec, char *s);
 
