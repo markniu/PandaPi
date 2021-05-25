@@ -26,7 +26,7 @@
 
 #if ENABLED(DGUS_LCD_UI_PANDAPI)
 
-#include "../DGUSDisplayDef.h"
+#include "DGUSDisplayDef.h"
 #include "../DGUSDisplay.h"
 #include "../DGUSScreenHandler.h"
 
@@ -35,7 +35,7 @@
 #include "../../../../../module/planner.h"
 
 #include "../../../ui_api.h"
-#include "../../../../ultralcd.h"
+#include "../../../../marlinui.h"
 
 #if ENABLED(DGUS_UI_MOVE_DIS_OPTION)
   uint16_t distanceToMove = 10;
@@ -303,7 +303,7 @@ const struct VPMapping VPMap[] PROGMEM = {
   { DGUSLCD_SCREEN_FILAMENT_UNLOADING, VPList_Filament_load_unload },
   { DGUSLCD_SCREEN_SDPRINTMANIPULATION, VPList_SD_PrintManipulation },
   { DGUSLCD_SCREEN_SDFILELIST, VPList_SDFileList },
- // { DGUSLCD_SCREEN_SDPRINTTUNE, VPList_SDPrintTune },
+  { DGUSLCD_SCREEN_SDPRINTTUNE, VPList_SDPrintTune },
   { DGUSLCD_SCREEN_WAITING, VPList_PIDTuningWaiting },
   { DGUSLCD_SCREEN_FLC_PREHEAT, VPList_FLCPreheat },
   { DGUSLCD_SCREEN_FLC_PRINTING, VPList_FLCPrinting },

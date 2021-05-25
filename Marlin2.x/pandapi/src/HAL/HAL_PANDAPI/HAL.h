@@ -60,6 +60,7 @@
 // AVR PROGMEM extension for string define
 #define PGMSTR(NAM,STR) const char NAM[] PROGMEM = STR
 
+
 #ifndef CRITICAL_SECTION_START
   #define CRITICAL_SECTION_START NOOP//pandapi unsigned char _sreg = SREG; //cli()
   #define CRITICAL_SECTION_END   NOOP//pandapi SREG = _sreg
@@ -85,6 +86,9 @@ typedef int8_t pin_t;
 // ------------------------
 
 //extern uint8_t MCUSR;
+#define DGUS_SERIAL customizedSerial1//MYSERIAL0 
+
+#define LCD_SERIAL DGUS_SERIAL
 
 // Serial ports
 #ifdef USBCON
@@ -107,6 +111,7 @@ typedef int8_t pin_t;
     #elif SERIAL_PORT_2 == SERIAL_PORT
       #error "SERIAL_PORT_2 must be different than SERIAL_PORT. Please update your configuration."
     #endif
+	 
     #define MYSERIAL1 customizedSerial2
     #define NUM_SERIAL 2
   #else

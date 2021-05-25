@@ -354,7 +354,7 @@
     #endif
   #endif
 
-#elif EXTRUDERS > 1 || ENABLED(MIXING_EXTRUDER)
+#elif EITHER(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
 
   #undef _E1_PINS
   #define _E1_PINS E1_STEP_PIN, E1_DIR_PIN, E1_ENABLE_PIN, _E1_CS _E1_MS1 _E1_MS2 _E1_MS3
@@ -383,7 +383,7 @@
     #endif // EXTRUDERS > 3 || MIXING_EXTRUDER > 3
   #endif // EXTRUDERS > 2 || MIXING_EXTRUDER > 2
 
-#endif // EXTRUDERS > 1 || MIXING_EXTRUDER
+#endif // HAS_MULTI_EXTRUDER || MIXING_EXTRUDER
 
 //
 // Heaters, Fans, Temp Sensors
@@ -608,12 +608,6 @@
   #define _Z_PROBE
 #endif
 
-#if TEMP_SENSOR_BED && PIN_EXISTS(HEATER_BED)
-  #define _HEATER_BED HEATER_BED_PIN,
-#else
-  #define _HEATER_BED
-#endif
-
 #if PIN_EXISTS(FAN)
   #define _FAN0 FAN_PIN,
 #else
@@ -660,21 +654,44 @@
   #define _FANC
 #endif
 
-#if PIN_EXISTS(HEATER_BED) && PIN_EXISTS(TEMP_BED)
+#if TEMP_SENSOR_BED && PINS_EXIST(TEMP_BED, HEATER_BED)
   #define _BED_PINS HEATER_BED_PIN, analogInputToDigitalPin(TEMP_BED_PIN),
 #else
   #define _BED_PINS
 #endif
 
-#if PIN_EXISTS(TEMP_CHAMBER)
-  #define __CHAMBER_PINS CHAMBER_AUTO_FAN_PIN, analogInputToDigitalPin(TEMP_CHAMBER_PIN),
+#if TEMP_SENSOR_CHAMBER && PIN_EXISTS(TEMP_CHAMBER)
+  #define _CHAMBER_TEMP analogInputToDigitalPin(TEMP_CHAMBER_PIN),
 #else
-  #define __CHAMBER_PINS
+  #define _CHAMBER_TEMP
 #endif
-#if PIN_EXISTS(HEATER_CHAMBER)
-  #define _CHAMBER_PINS __CHAMBER_PINS HEATER_CHAMBER_PIN,
+#if TEMP_SENSOR_CHAMBER && PINS_EXIST(TEMP_CHAMBER, HEATER_CHAMBER)
+  #define _CHAMBER_HEATER HEATER_CHAMBER_PIN,
 #else
-  #define _CHAMBER_PINS
+  #define _CHAMBER_HEATER
+#endif
+#if TEMP_SENSOR_CHAMBER && PINS_EXIST(TEMP_CHAMBER, CHAMBER_AUTO_FAN)
+  #define _CHAMBER_FAN CHAMBER_AUTO_FAN_PIN,
+#else
+  #define _CHAMBER_FAN
+#endif
+
+#if TEMP_SENSOR_COOLER && PIN_EXISTS(TEMP_COOLER)
+  #define _COOLER_TEMP analogInputToDigitalPin(TEMP_COOLER_PIN),
+#else
+  #define _COOLER_TEMP
+#endif
+
+#if TEMP_SENSOR_COOLER && PIN_EXISTS(COOLER)
+  #define _COOLER COOLER_PIN,
+#else
+  #define _COOLER
+#endif
+
+#if TEMP_SENSOR_COOLER && PINS_EXIST(TEMP_COOLER, COOLER_AUTO_FAN)
+  #define _COOLER_FAN COOLER_AUTO_FAN_PIN,
+#else
+  #define _COOLER_FAN
 #endif
 
 #ifndef HAL_SENSITIVE_PINS

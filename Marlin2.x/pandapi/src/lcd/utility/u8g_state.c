@@ -1,38 +1,38 @@
 /*
 
   u8g_state.c
-  
+
   backup and restore hardware state
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
-  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
   state callback: backup env U8G_STATE_MSG_BACKUP_ENV
   device callback: DEV_MSG_INIT
@@ -66,7 +66,7 @@ void u8g_SetHardwareBackup(u8g_t *u8g, u8g_state_cb backup_cb)
 /*===============================================================*/
 /* register variable for restoring interrupt state */
 
-#if defined(__AVR__)
+#ifdef __AVR__
 uint8_t global_SREG_backup;
 #endif
 
@@ -75,7 +75,7 @@ uint8_t global_SREG_backup;
 /*===============================================================*/
 /* AVR */
 
-#if defined(__AVR__)
+#ifdef __AVR__
 #define U8G_ATMEGA_HW_SPI
 
 /* remove the definition for attiny */
@@ -87,7 +87,7 @@ uint8_t global_SREG_backup;
 #endif
 #endif
 
-#if defined(U8G_ATMEGA_HW_SPI)
+#ifdef U8G_ATMEGA_HW_SPI
 #include <avr/interrupt.h>
 static uint8_t u8g_state_avr_spi_memory[2];
 
@@ -123,7 +123,7 @@ struct sam_backup_struct
 {
   uint32_t mr;
   uint32_t sr;
-  uint32_t csr[4];  
+  uint32_t csr[4];
 } sam_backup[2];
 
 void u8g_backup_spi(uint8_t msg)

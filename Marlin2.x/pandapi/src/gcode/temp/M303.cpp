@@ -25,7 +25,7 @@
 #if HAS_PID_HEATING
 
 #include "../gcode.h"
-#include "../../lcd/ultralcd.h"
+#include "../../lcd/marlinui.h"
 #include "../../module/temperature.h"
 
 #if ENABLED(EXTENSIBLE_UI)
@@ -40,44 +40,48 @@
  *  C<cycles>       Number of times to repeat the procedure. (Minimum: 3, Default: 5)
  *  U<bool>         Flag to apply the result to the current PID values
  *
- * With PID_DEBUG:
+ * With PID_DEBUG, PID_BED_DEBUG, or PID_CHAMBER_DEBUG:
  *  D               Toggle PID debugging and EXIT without further action.
  */
 
-#if ENABLED(PID_DEBUG)
-  bool pid_debug_flag = 0;
-#endif
-
 void GcodeSuite::M303() {
 
-  #if ENABLED(PID_DEBUG)
+  #if ANY(PID_DEBUG, PID_BED_DEBUG, PID_CHAMBER_DEBUG)
     if (parser.seen('D')) {
-      pid_debug_flag = !pid_debug_flag;
+      thermalManager.pid_debug_flag ^= true;
       SERIAL_ECHO_START();
       SERIAL_ECHOPGM("PID Debug ");
-      serialprintln_onoff(pid_debug_flag);
+      serialprintln_onoff(thermalManager.pid_debug_flag);
       return;
     }
   #endif
 
-  #define SI TERN(PIDTEMPBED, H_BED, H_E0)
-  #define EI TERN(PIDTEMP, HOTENDS - 1, H_BED)
-  const heater_ind_t e = (heater_ind_t)parser.intval('E');
-  if (!WITHIN(e, SI, EI)) {
-    SERIAL_ECHOLNPGM(STR_PID_BAD_EXTRUDER_NUM);
-    TERN_(EXTENSIBLE_UI, ExtUI::onPidTuning(ExtUI::result_t::PID_BAD_EXTRUDER_NUM));
-    return;
+  const heater_id_t hid = (heater_id_t)parser.intval('E');
+  celsius_t default_temp;
+  switch (hid) {
+    #if ENABLED(PIDTEMP)
+      case 0 ... HOTENDS - 1: default_temp = PREHEAT_1_TEMP_HOTEND; break;
+    #endif
+    #if ENABLED(PIDTEMPBED)
+      case H_BED: default_temp = PREHEAT_1_TEMP_BED; break;
+    #endif
+    #if ENABLED(PIDTEMPCHAMBER)
+      case H_CHAMBER: default_temp = PREHEAT_1_TEMP_CHAMBER; break;
+    #endif
+    default:
+      SERIAL_ECHOLNPGM(STR_PID_BAD_HEATER_ID);
+      TERN_(EXTENSIBLE_UI, ExtUI::onPidTuning(ExtUI::result_t::PID_BAD_EXTRUDER_NUM));
+      return;
   }
 
+  const celsius_t temp = parser.celsiusval('S', default_temp);
   const int c = parser.intval('C', 5);
   const bool u = parser.boolval('U');
-  const int16_t temp = parser.celsiusval('S', e < 0 ? PREHEAT_1_TEMP_BED : PREHEAT_1_TEMP_HOTEND);
 
   #if DISABLED(BUSY_WHILE_HEATING)
     KEEPALIVE_STATE(NOT_BUSY);
   #endif
 
-  ui.set_status(GET_TEXT(MSG_PID_AUTOTUNE));
  #if  PANDAPI 
 	 ////////////////
 	char tmp_data[32],cmd_buf[64],tmpe_k;
@@ -87,7 +91,7 @@ void GcodeSuite::M303() {
 	memset(tmp_data,0,sizeof(tmp_data));
 
 	//////////P
-	sprintf(tmp_data,"a E%d,C%d,U%d,S%d;\n",e,c,u,temp);
+	sprintf(tmp_data,"a E%d,C%d,U%d,S%d;\n",hid,c,u,temp);
 	printf(tmp_data);printf("\n");
 	for(int i=0;i<strlen(tmp_data);i++)
 		wiringPiI2CWriteReg8(i2c_fd, 8, tmp_data[i]);
@@ -114,7 +118,7 @@ void GcodeSuite::M303() {
 		{
 			thermalManager.manage_heater();
 		//	thermalManager.print_heaterstates();
-			thermalManager.print_heater_states(e
+			thermalManager.print_heater_states(hid
 #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
 			, parser.boolval('R')
 #endif
@@ -157,7 +161,7 @@ void GcodeSuite::M303() {
 	
   ///////////////////
 #endif
- // thermalManager.PID_autotune(temp, e, c, u);
+  thermalManager.PID_autotune(temp, hid, c, u);
   ui.reset_status();
 }
 

@@ -156,7 +156,7 @@
 //////////////////////////
 // LCDs and Controllers //
 //////////////////////////
-#if ENABLED(ULTRA_LCD)
+//#if ENABLED(ULTRA_LCD)
   // LCD Display output pins
   #ifdef REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 	#define LCD_PINS_RS      28 
@@ -166,11 +166,11 @@
 
 	#define SD_DETECT_PIN   255   
    // LCD Display input pins
-  #if ENABLED(NEWPANEL)
+ // #if ENABLED(NEWPANEL)
 	#define BEEPER_PIN		24 
 	#define BTN_ENC 		30 
 	#define BTN_EN1 		22 
 	#define BTN_EN2 		23 
-  #endif // NEWPANEL
+//  #endif // NEWPANEL
 
-#endif // ULTRA_LCD
+//#endif // ULTRA_LCD

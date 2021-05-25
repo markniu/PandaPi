@@ -249,12 +249,25 @@ class Stepper {
       static bool separate_multi_axis;
     #endif
 
-    #if HAS_MOTOR_CURRENT_PWM
-      #ifndef PWM_MOTOR_CURRENT
-        #define PWM_MOTOR_CURRENT DEFAULT_PWM_MOTOR_CURRENT
+    #if HAS_MOTOR_CURRENT_SPI || HAS_MOTOR_CURRENT_PWM
+      #if HAS_MOTOR_CURRENT_PWM
+        #ifndef PWM_MOTOR_CURRENT
+          #define PWM_MOTOR_CURRENT DEFAULT_PWM_MOTOR_CURRENT
+        #endif
+        #define MOTOR_CURRENT_COUNT 3
+      #elif HAS_MOTOR_CURRENT_SPI
+        static constexpr uint32_t digipot_count[] = DIGIPOT_MOTOR_CURRENT;
+        #define MOTOR_CURRENT_COUNT COUNT(Stepper::digipot_count)
       #endif
-      static uint32_t motor_current_setting[3];
       static bool initialized;
+      static uint32_t motor_current_setting[MOTOR_CURRENT_COUNT]; // Initialized by settings.load()
+    #endif
+
+    // Last-moved extruder, as set when the last movement was fetched from planner
+    #if HAS_MULTI_EXTRUDER
+      static uint8_t last_moved_extruder;
+    #else
+      static constexpr uint8_t last_moved_extruder = 0;
     #endif
 
   private:
@@ -265,13 +278,6 @@ class Stepper {
                    axis_did_move;           // Last Movement in the given direction is not null, as computed when the last movement was fetched from planner
 
     static bool abort_current_block;        // Signals to the stepper that current block should be aborted
-
-    // Last-moved extruder, as set when the last movement was fetched from planner
-    #if EXTRUDERS < 2
-      static constexpr uint8_t last_moved_extruder = 0;
-    #elif DISABLED(MIXING_EXTRUDER)
-      static uint8_t last_moved_extruder;
-    #endif
 
     #if ENABLED(X_DUAL_ENDSTOPS)
       static bool locked_X_motor, locked_X2_motor;
@@ -308,7 +314,7 @@ class Stepper {
                     decelerate_after,       // The point from where we need to start decelerating
                     step_event_count;       // The total event count for the current block
 
-    #if EXTRUDERS > 1 || ENABLED(MIXING_EXTRUDER)
+    #if EITHER(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
       static uint8_t stepper_extruder;
     #else
       static constexpr uint8_t stepper_extruder = 0;
@@ -421,7 +427,7 @@ class Stepper {
     #endif
 
     // Check if the given block is busy or not - Must not be called from ISR contexts
-    static bool is_block_busy(const block_t* const block);
+    static bool is_block_busy(const block_t * const block);
 
     // Get the position of a stepper, in steps
     static int32_t position(const AxisEnum axis);
@@ -455,20 +461,15 @@ class Stepper {
     // The last movement direction was not null on the specified axis. Note that motor direction is not necessarily the same.
     FORCE_INLINE static bool axis_is_moving(const AxisEnum axis) { return TEST(axis_did_move, axis); }
 
-    // The extruder associated to the last movement
-    FORCE_INLINE static uint8_t movement_extruder() {
-      return (EXTRUDERS > 1 && DISABLED(MIXING_EXTRUDER)) ? last_moved_extruder : 0;
-    }
-
     // Handle a triggered endstop
     static void endstop_triggered(const AxisEnum axis);
 
     // Triggered position of an axis in steps
     static int32_t triggered_position(const AxisEnum axis);
 
-    #if HAS_DIGIPOTSS || HAS_MOTOR_CURRENT_PWM
-      static void digitalPotWrite(const int16_t address, const int16_t value);
-      static void digipot_current(const uint8_t driver, const int16_t current);
+    #if HAS_MOTOR_CURRENT_SPI || HAS_MOTOR_CURRENT_PWM
+      static void set_digipot_value_spi(const int16_t address, const int16_t value);
+      static void set_digipot_current(const uint8_t driver, const int16_t current);
     #endif
 
     #if HAS_MICROSTEPS
@@ -517,8 +518,14 @@ class Stepper {
       static void refresh_motor_power();
     #endif
 
-    // Set direction bits for all steppers
+    // Update direction states for all steppers
     static void set_directions();
+
+    // Set direction bits and update all stepper DIR states
+    static void set_directions(const uint8_t bits) {
+      last_direction_bits = bits;
+      set_directions();
+    }
 
   private:
 
@@ -526,7 +533,7 @@ class Stepper {
     static void _set_position(const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &e);
     FORCE_INLINE static void _set_position(const abce_long_t &spos) { _set_position(spos.a, spos.b, spos.c, spos.e); }
 
-    FORCE_INLINE static uint32_t calc_timer_interval(uint32_t step_rate, uint8_t* loops) {
+    FORCE_INLINE static uint32_t calc_timer_interval(uint32_t step_rate, uint8_t *loops) {
       uint32_t timer;
 
       // Scale the frequency, as requested by the caller
@@ -568,14 +575,13 @@ class Stepper {
         step_rate -= min_step_rate; // Correct for minimal speed
         if (step_rate >= (8 * 256)) { // higher step rate
           const uint8_t tmp_step_rate = (step_rate & 0x00FF);
-		  //  PANDAPI
-          const uint32_t table_address = (uint32_t)&speed_lookuptable_fast[(uint8_t)(step_rate >> 8)][0];
-          const uint32_t  gain = (uint32_t)pgm_read_word(table_address + 2);
+          const uint16_t table_address = (uint16_t)&speed_lookuptable_fast[(uint8_t)(step_rate >> 8)][0],
+                         gain = (uint16_t)pgm_read_word(table_address + 2);
           timer = MultiU16X8toH16(tmp_step_rate, gain);
           timer = (uint16_t)pgm_read_word(table_address) - timer;
         }
         else { // lower step rates
-          uint32_t table_address = (uint32_t)&speed_lookuptable_slow[0][0];
+          uint16_t table_address = (uint16_t)&speed_lookuptable_slow[0][0];
           table_address += ((step_rate) >> 1) & 0xFFFC;
           timer = (uint16_t)pgm_read_word(table_address)
                 - (((uint16_t)pgm_read_word(table_address + 2) * (uint8_t)(step_rate & 0x0007)) >> 3);
@@ -592,7 +598,7 @@ class Stepper {
       static int32_t _eval_bezier_curve(const uint32_t curr_step);
     #endif
 
-    #if HAS_DIGIPOTSS || HAS_MOTOR_CURRENT_PWM
+    #if HAS_MOTOR_CURRENT_SPI || HAS_MOTOR_CURRENT_PWM
       static void digipot_init();
     #endif
 

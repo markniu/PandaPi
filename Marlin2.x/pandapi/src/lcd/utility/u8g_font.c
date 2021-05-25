@@ -1,38 +1,38 @@
 /*
 
   u8g_font.c
-  
+
   U8G Font High Level Interface
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
-  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 */
 
 #include "u8g.h"
@@ -46,8 +46,8 @@ typedef void * u8g_glyph_t;
 #define U8G_FONT_DATA_STRUCT_SIZE 17
 
 /*
-  ... instead the fields of the font data structure are accessed directly by offset 
-  font information 
+  ... instead the fields of the font data structure are accessed directly by offset
+  font information
   offset
   0             font format
   1             FONTBOUNDINGBOX width           unsigned
@@ -61,10 +61,10 @@ typedef void * u8g_glyph_t;
   11            encoding end
   12            descent 'g'                     negative: below baseline
   13            font max ascent
-  14            font min decent             negative: below baseline 
+  14            font min decent             negative: below baseline
   15            font xascent
-  16            font xdecent             negative: below baseline 
-  
+  16            font xdecent             negative: below baseline
+
 */
 
 /* use case: What is the width and the height of the minimal box into which string s fints? */
@@ -85,19 +85,19 @@ void u8g_font_GetStrMinBox(u8g_t *u8g, const void *font, const char *s, u8g_uint
 
 /* removed NOINLINE, because it leads to smaller code, might also be faster */
 //static uint8_t u8g_font_get_byte(const u8g_fntpgm_uint8_t *font, uint8_t offset) U8G_NOINLINE;
-static uint8_t u8g_font_get_byte(const void *font, uint8_t offset)
+static uint8_t u8g_font_get_byte(const u8g_fntpgm_uint8_t *font, uint8_t offset)
 {
   font += offset;
-  return u8g_pgm_read( (u8g_pgm_uint8_t *)font );  
+  return u8g_pgm_read( (u8g_pgm_uint8_t *)font );
 }
 
-static uint16_t u8g_font_get_word(const void *font, uint8_t offset) U8G_NOINLINE; 
-static uint16_t u8g_font_get_word(const void *font, uint8_t offset)
+static uint16_t u8g_font_get_word(const u8g_fntpgm_uint8_t *font, uint8_t offset) U8G_NOINLINE;
+static uint16_t u8g_font_get_word(const u8g_fntpgm_uint8_t *font, uint8_t offset)
 {
     uint16_t pos;
     font += offset;
     pos = u8g_pgm_read( (u8g_pgm_uint8_t *)font );
-    font+=1;
+    font++;
     pos <<= 8;
     pos += u8g_pgm_read( (u8g_pgm_uint8_t *)font);
     return pos;
@@ -106,14 +106,14 @@ static uint16_t u8g_font_get_word(const void *font, uint8_t offset)
 /*========================================================================*/
 /* direct access on the font */
 
-static uint8_t u8g_font_GetFormat(const void *font) U8G_NOINLINE;
-static uint8_t u8g_font_GetFormat(const void *font)
+static uint8_t u8g_font_GetFormat(const u8g_fntpgm_uint8_t *font) U8G_NOINLINE;
+static uint8_t u8g_font_GetFormat(const u8g_fntpgm_uint8_t *font)
 {
   return u8g_font_get_byte(font, 0);
 }
 
-static uint8_t u8g_font_GetFontGlyphStructureSize(const void *font) U8G_NOINLINE;
-static uint8_t u8g_font_GetFontGlyphStructureSize(const void *font)
+static uint8_t u8g_font_GetFontGlyphStructureSize(const u8g_fntpgm_uint8_t *font) U8G_NOINLINE;
+static uint8_t u8g_font_GetFontGlyphStructureSize(const u8g_fntpgm_uint8_t *font)
 {
   switch(u8g_font_GetFormat(font))
   {
@@ -126,102 +126,102 @@ static uint8_t u8g_font_GetFontGlyphStructureSize(const void *font)
 
 static uint8_t u8g_font_GetBBXWidth(const void *font)
 {
-  return u8g_font_get_byte(font, 1);
+  return u8g_font_get_byte((uint8_t *)font, 1);
 }
 
 static uint8_t u8g_font_GetBBXHeight(const void *font)
 {
-  return u8g_font_get_byte(font, 2);
+  return u8g_font_get_byte((uint8_t *)font, 2);
 }
 
 static int8_t u8g_font_GetBBXOffX(const void *font)
 {
-  return u8g_font_get_byte(font, 3);
+  return u8g_font_get_byte((uint8_t *)font, 3);
 }
 
 static int8_t u8g_font_GetBBXOffY(const void *font)
 {
-  return u8g_font_get_byte(font, 4);
+  return u8g_font_get_byte((uint8_t *)font, 4);
 }
 
 uint8_t u8g_font_GetCapitalAHeight(const void *font)
 {
-  return u8g_font_get_byte(font, 5);
+  return u8g_font_get_byte((uint8_t *)font, 5);
 }
 
 uint16_t u8g_font_GetEncoding65Pos(const void *font) U8G_NOINLINE;
 uint16_t u8g_font_GetEncoding65Pos(const void *font)
 {
-    return u8g_font_get_word(font, 6);
+    return u8g_font_get_word((uint8_t *)font, 6);
 }
 
 uint16_t u8g_font_GetEncoding97Pos(const void *font) U8G_NOINLINE;
 uint16_t u8g_font_GetEncoding97Pos(const void *font)
 {
-    return u8g_font_get_word(font, 8);
+    return u8g_font_get_word((uint8_t *)font, 8);
 }
 
 uint8_t u8g_font_GetFontStartEncoding(const void *font)
 {
-  return u8g_font_get_byte(font, 10);
+  return u8g_font_get_byte((uint8_t *)font, 10);
 }
 
 uint8_t u8g_font_GetFontEndEncoding(const void *font)
 {
-  return u8g_font_get_byte(font, 11);
+  return u8g_font_get_byte((uint8_t *)font, 11);
 }
 
 int8_t u8g_font_GetLowerGDescent(const void *font)
 {
-  return u8g_font_get_byte(font, 12);
+  return u8g_font_get_byte((uint8_t *)font, 12);
 }
 
 int8_t u8g_font_GetFontAscent(const void *font)
 {
-  return u8g_font_get_byte(font, 13);
+  return u8g_font_get_byte((uint8_t *)font, 13);
 }
 
 int8_t u8g_font_GetFontDescent(const void *font)
 {
-  return u8g_font_get_byte(font, 14);
+  return u8g_font_get_byte((uint8_t *)font, 14);
 }
 
 int8_t u8g_font_GetFontXAscent(const void *font)
 {
-  return u8g_font_get_byte(font, 15);
+  return u8g_font_get_byte((uint8_t *)font, 15);
 }
 
 int8_t u8g_font_GetFontXDescent(const void *font)
 {
-  return u8g_font_get_byte(font, 16);
+  return u8g_font_get_byte((uint8_t *)font, 16);
 }
 
 
 /* return the data start for a font and the glyph pointer */
 static uint8_t *u8g_font_GetGlyphDataStart(const void *font, u8g_glyph_t g)
 {
-  return ((u8g_fntpgm_uint8_t *)g) + u8g_font_GetFontGlyphStructureSize(font);
+  return ((u8g_fntpgm_uint8_t *)g) + u8g_font_GetFontGlyphStructureSize((uint8_t *)font);
 }
 
 /* calculate the overall length of the font, only used to create the picture for the google wiki */
 size_t u8g_font_GetSize(const void *font)
 {
   uint8_t *p = (uint8_t *)(font);
-  uint8_t font_format = u8g_font_GetFormat(font);
-  uint8_t data_structure_size = u8g_font_GetFontGlyphStructureSize(font);
+  uint8_t font_format = u8g_font_GetFormat((uint8_t *)font);
+  uint8_t data_structure_size = u8g_font_GetFontGlyphStructureSize((uint8_t *)font);
   uint8_t start, end;
   uint8_t i;
   uint8_t mask = 255;
-  
+
   start = u8g_font_GetFontStartEncoding(font);
   end = u8g_font_GetFontEndEncoding(font);
 
   if ( font_format == 1 )
     mask = 15;
 
-  p += U8G_FONT_DATA_STRUCT_SIZE;       /* skip font general information */  
+  p += U8G_FONT_DATA_STRUCT_SIZE;       /* skip font general information */
 
-  i = start;  
+  i = start;
   for(;;)
   {
     if ( u8g_pgm_read((u8g_pgm_uint8_t *)(p)) == 255 )
@@ -237,7 +237,7 @@ size_t u8g_font_GetSize(const void *font)
       break;
     i++;
   }
-    
+
   return p - (uint8_t *)font;
 }
 
@@ -266,7 +266,7 @@ int8_t u8g_GetFontBBXOffY(u8g_t *u8g)
   return u8g_font_GetBBXOffY(u8g->font);
 }
 
-uint8_t u8g_GetFontCapitalAHeight(u8g_t *u8g) U8G_NOINLINE; 
+uint8_t u8g_GetFontCapitalAHeight(u8g_t *u8g) U8G_NOINLINE;
 uint8_t u8g_GetFontCapitalAHeight(u8g_t *u8g)
 {
   return u8g_font_GetCapitalAHeight(u8g->font);
@@ -284,7 +284,7 @@ static void u8g_CopyGlyphDataToCache(u8g_t *u8g, u8g_glyph_t g)
     case 2:
   /*
     format 0
-    glyph information 
+    glyph information
     offset
     0             BBX width                                       unsigned
     1             BBX height                                      unsigned
@@ -312,23 +312,23 @@ format 1
   2             DWIDTH                                          signed --> upper  4 Bit
   byte 0 == 255 indicates empty glyph
       */
-    
+
       tmp = u8g_pgm_read( ((u8g_pgm_uint8_t *)g) + 0 );
       u8g->glyph_y =  tmp & 15;
       u8g->glyph_y-=2;
       tmp >>= 4;
       u8g->glyph_x =  tmp;
-    
+
       tmp = u8g_pgm_read( ((u8g_pgm_uint8_t *)g) + 1 );
       u8g->glyph_height =  tmp & 15;
       tmp >>= 4;
       u8g->glyph_width =  tmp;
-      
+
       tmp = u8g_pgm_read( ((u8g_pgm_uint8_t *)g) + 2 );
       tmp >>= 4;
       u8g->glyph_dx = tmp;
-    
-      
+
+
       break;
   }
 }
@@ -359,7 +359,7 @@ u8g_glyph_t u8g_GetGlyph(u8g_t *u8g, uint8_t requested_encoding)
 
   if ( font_format == 1 )
     mask = 15;
-  
+
   start = u8g_font_GetFontStartEncoding(u8g->font);
   end = u8g_font_GetFontEndEncoding(u8g->font);
 
@@ -369,7 +369,7 @@ u8g_glyph_t u8g_GetGlyph(u8g_t *u8g, uint8_t requested_encoding)
     p+= pos;
     start = 97;
   }
-  else 
+  else
   {
     pos = u8g_font_GetEncoding65Pos(u8g->font);
     if ( requested_encoding >= 65 && pos > 0 )
@@ -378,15 +378,15 @@ u8g_glyph_t u8g_GetGlyph(u8g_t *u8g, uint8_t requested_encoding)
       start = 65;
     }
     else
-      p += U8G_FONT_DATA_STRUCT_SIZE;       /* skip font general information */  
+      p += U8G_FONT_DATA_STRUCT_SIZE;       /* skip font general information */
   }
-  
+
   if ( requested_encoding > end )
   {
     u8g_FillEmptyGlyphCache(u8g);
     return NULL;                      /* not found */
   }
-  
+
   i = start;
   if ( i <= end )
   {
@@ -411,9 +411,9 @@ u8g_glyph_t u8g_GetGlyph(u8g_t *u8g, uint8_t requested_encoding)
       i++;
     }
   }
-  
+
   u8g_FillEmptyGlyphCache(u8g);
-    
+
   return NULL;
 }
 
@@ -457,7 +457,7 @@ int8_t u8g_DrawGlyphDir(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t dir, uin
   bytes_per_line = w;
   bytes_per_line += 7;
   bytes_per_line /= 8;
-  
+
   data = u8g_font_GetGlyphDataStart(u8g->font, g);
 
   switch(dir)
@@ -469,11 +469,11 @@ int8_t u8g_DrawGlyphDir(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t dir, uin
       //u8g_DrawFrame(u8g, x, y-h+1, w, h);
       if ( u8g_IsBBXIntersection(u8g, x, y-h+1, w, h) == 0 )
         return u8g->glyph_dx;
-      
+
       iy = y;
       iy -= h;
       iy++;
-      
+
       for( j = 0; j < h; j++ )
       {
         ix = x;
@@ -494,7 +494,7 @@ int8_t u8g_DrawGlyphDir(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t dir, uin
       //u8g_DrawFrame(u8g, x, y, h, w);
       if ( u8g_IsBBXIntersection(u8g, x, y, h, w) == 0 )
         return u8g->glyph_dx;
-      
+
       ix = x;
       ix += h;
       ix--;
@@ -516,7 +516,7 @@ int8_t u8g_DrawGlyphDir(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t dir, uin
       y++;
       if ( u8g_IsBBXIntersection(u8g, x-w-1, y, w, h) == 0 )
         return u8g->glyph_dx;
-      
+
       iy = y;
       iy += h;
       iy--;
@@ -536,14 +536,14 @@ int8_t u8g_DrawGlyphDir(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t dir, uin
       x -= u8g->glyph_y;
       x--;
       y -= u8g->glyph_x;
-      
+
       if ( u8g_IsBBXIntersection(u8g, x-h-1, y-w-1, h, w) == 0 )
         return u8g->glyph_dx;
-      
+
       ix = x;
       ix -= h;
       ix++;
-      
+
       for( j = 0; j < h; j++ )
       {
         iy = y;
@@ -555,7 +555,7 @@ int8_t u8g_DrawGlyphDir(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t dir, uin
         }
         ix++;
       }
-      break;    
+      break;
   }
   return u8g->glyph_dx;
 }
@@ -574,21 +574,21 @@ int8_t u8g_draw_glyph(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t encoding)
       return 0;
     data = u8g_font_GetGlyphDataStart(u8g->font, g);
   }
-  
+
   w = u8g->glyph_width;
   h = u8g->glyph_height;
-  
+
   x += u8g->glyph_x;
   y -= u8g->glyph_y;
   y--;
-  
+
   if ( u8g_IsBBXIntersection(u8g, x, y-h+1, w, h) == 0 )
     return u8g->glyph_dx;
 
   /* now, w is reused as bytes per line */
   w += 7;
   w /= 8;
-  
+
   iy = y;
   iy -= h;
   iy++;
@@ -626,21 +626,21 @@ int8_t u8g_draw_glyph90(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t encoding
       return 0;
     data = u8g_font_GetGlyphDataStart(u8g->font, g);
   }
-  
+
   w = u8g->glyph_width;
   h = u8g->glyph_height;
-  
+
   x += u8g->glyph_y;
   x++;
   y += u8g->glyph_x;
-  
+
   if ( u8g_IsBBXIntersection(u8g, x, y, h, w) == 0 )
     return u8g->glyph_dx;
 
   /* now, w is reused as bytes per line */
   w += 7;
   w /= 8;
-  
+
   ix = x;
   ix += h;
   ix--;
@@ -678,21 +678,21 @@ int8_t u8g_draw_glyph180(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t encodin
       return 0;
     data = u8g_font_GetGlyphDataStart(u8g->font, g);
   }
-  
+
   w = u8g->glyph_width;
   h = u8g->glyph_height;
-  
+
   x -= u8g->glyph_x;
   y += u8g->glyph_y;
   y++;
-  
+
   if ( u8g_IsBBXIntersection(u8g, x-(w-1), y, w, h) == 0 )
     return u8g->glyph_dx;
 
   /* now, w is reused as bytes per line */
   w += 7;
   w /= 8;
-  
+
   iy = y;
   iy += h;
   iy--;
@@ -730,26 +730,26 @@ int8_t u8g_draw_glyph270(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t encodin
       return 0;
     data = u8g_font_GetGlyphDataStart(u8g->font, g);
   }
-  
+
   w = u8g->glyph_width;
   h = u8g->glyph_height;
-  
+
   x -= u8g->glyph_y;
   x--;
   y -= u8g->glyph_x;
-  
+
   if ( u8g_IsBBXIntersection(u8g, x-(h-1), y-(w-1), h, w) == 0 )
     return u8g->glyph_dx;
-  
+
 
   /* now, w is reused as bytes per line */
   w += 7;
-  w /= 8;  
-      
+  w /= 8;
+
   ix = x;
   ix -= h;
   ix++;
-  
+
   for( j = 0; j < h; j++ )
   {
     iy = y;
@@ -794,12 +794,12 @@ u8g_uint_t u8g_DrawStr(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const char *s)
 {
   u8g_uint_t t = 0;
   int8_t d;
-  
+
   //u8g_uint_t u8g_GetStrWidth(u8g, s);
   //u8g_font_GetFontAscent(u8g->font)-u8g_font_GetFontDescent(u8g->font);
-  
+
   y += u8g->font_calc_vref(u8g);
-  
+
   while( *s != '\0' )
   {
     d = u8g_draw_glyph(u8g, x, y, *s);
@@ -814,7 +814,7 @@ u8g_uint_t u8g_DrawStr90(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const char *s)
 {
   u8g_uint_t t = 0;
   int8_t d;
-    
+
   x -= u8g->font_calc_vref(u8g);
 
   while( *s != '\0' )
@@ -833,7 +833,7 @@ u8g_uint_t u8g_DrawStr180(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const char *s)
   int8_t d;
 
   y -= u8g->font_calc_vref(u8g);
-  
+
   while( *s != '\0' )
   {
     d = u8g_draw_glyph180(u8g, x, y, *s);
@@ -882,9 +882,9 @@ u8g_uint_t u8g_DrawStrP(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const u8g_pgm_ui
   u8g_uint_t t = 0;
   int8_t d;
   uint8_t c;
-  
+
   y += u8g->font_calc_vref(u8g);
-  
+
   for(;;)
   {
     c = u8g_pgm_read(s);
@@ -903,7 +903,7 @@ u8g_uint_t u8g_DrawStr90P(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const u8g_pgm_
   u8g_uint_t t = 0;
   int8_t d;
   uint8_t c;
-  
+
   x -= u8g->font_calc_vref(u8g);
 
   for(;;)
@@ -926,7 +926,7 @@ u8g_uint_t u8g_DrawStr180P(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const u8g_pgm
   uint8_t c;
 
   y -= u8g->font_calc_vref(u8g);
-  
+
   for(;;)
   {
     c = u8g_pgm_read(s);
@@ -1001,7 +1001,7 @@ void u8g_UpdateRefHeight(u8g_t *u8g)
     u8g->font_ref_ascent = u8g_font_GetFontAscent(u8g->font);
     u8g->font_ref_descent = u8g_font_GetFontDescent(u8g->font);
   }
-  
+
   ls = u8g->font_ref_ascent - u8g->font_ref_descent;
   if ( u8g->font_line_spacing_factor != 64 )
   {
@@ -1090,7 +1090,7 @@ u8g_uint_t u8g_font_calc_vref_center(u8g_t *u8g)
   tmp = u8g->font_ref_ascent;
   tmp -= u8g->font_ref_descent;
   tmp /= 2;
-  tmp += u8g->font_ref_descent;  
+  tmp += u8g->font_ref_descent;
   /* y += (u8g_uint_t)(u8g_int_t)(tmp); */
   return tmp;
 }
@@ -1120,18 +1120,18 @@ u8g_uint_t u8g_font_calc_str_pixel_width(u8g_t *u8g, const char *s, u8g_font_get
 {
   u8g_uint_t  w;
   uint8_t enc;
-  
+
   /* reset the total minimal width to zero, this will be expanded during calculation */
   w = 0;
-    
+
   enc = get_char(s);
-  
+
   /* check for empty string, width is already 0 */
   if ( enc == '\0' )
   {
     return w;
   }
-  
+
   /* get the glyph information of the first char. This must be valid, because we already checked for the empty string */
   /* if *s is not inside the font, then the cached parameters of the glyph are all zero */
   u8g_GetGlyph(u8g, enc);
@@ -1139,28 +1139,28 @@ u8g_uint_t u8g_font_calc_str_pixel_width(u8g_t *u8g, const char *s, u8g_font_get
   /* strlen(s) == 1:       width = width(s[0]) */
   /* strlen(s) == 2:       width = - offx(s[0]) + deltax(s[0]) + offx(s[1]) + width(s[1]) */
   /* strlen(s) == 3:       width = - offx(s[0]) + deltax(s[0]) + deltax(s[1]) + offx(s[2]) + width(s[2]) */
-  
+
   /* assume that the string has size 2 or more, than start with negative offset-x */
   /* for string with size 1, this will be nullified after the loop */
-  w = -u8g->glyph_x;  
+  w = -u8g->glyph_x;
   for(;;)
   {
-    
+
     /* check and stop if the end of the string is reached */
     s++;
     if ( get_char(s) == '\0' )
       break;
-    
+
     /* if there are still more characters, add the delta to the next glyph */
     w += u8g->glyph_dx;
-    
+
     /* store the encoding in a local variable, used also after the for(;;) loop */
     enc = get_char(s);
-    
+
     /* load the next glyph information */
     u8g_GetGlyph(u8g, enc);
   }
-  
+
   /* finally calculate the width of the last char */
   /* here is another exception, if the last char is a black, use the dx value instead */
   if ( enc != ' ' )
@@ -1173,8 +1173,8 @@ u8g_uint_t u8g_font_calc_str_pixel_width(u8g_t *u8g, const char *s, u8g_font_get
   {
     w += u8g->glyph_dx;
   }
-  
-  
+
+
   return w;
 }
 
@@ -1191,13 +1191,13 @@ u8g_uint_t u8g_GetStrPixelWidthP(u8g_t *u8g, const u8g_pgm_uint8_t *s)
 int8_t u8g_GetStrX(u8g_t *u8g, const char *s)
 {
   u8g_GetGlyph(u8g, *s);
-  return u8g->glyph_x;  
+  return u8g->glyph_x;
 }
 
 int8_t u8g_GetStrXP(u8g_t *u8g, const u8g_pgm_uint8_t *s)
 {
   u8g_GetGlyph(u8g, u8g_pgm_read(s));
-  return u8g->glyph_x;  
+  return u8g->glyph_x;
 }
 
 /*========================================================================*/
@@ -1207,10 +1207,10 @@ u8g_uint_t u8g_GetStrWidth(u8g_t *u8g, const char *s)
 {
   u8g_uint_t  w;
   uint8_t encoding;
-  
+
   /* reset the total width to zero, this will be expanded during calculation */
   w = 0;
-  
+
   for(;;)
   {
     encoding = *s;
@@ -1219,13 +1219,13 @@ u8g_uint_t u8g_GetStrWidth(u8g_t *u8g, const char *s)
 
     /* load glyph information */
     u8g_GetGlyph(u8g, encoding);
-    w += u8g->glyph_dx;    
-    
+    w += u8g->glyph_dx;
+
     /* goto next char */
     s++;
   }
-  
-  return w;  
+
+  return w;
 }
 
 
@@ -1233,10 +1233,10 @@ u8g_uint_t u8g_GetStrWidthP(u8g_t *u8g, const u8g_pgm_uint8_t *s)
 {
   u8g_uint_t  w;
   uint8_t encoding;
-  
+
   /* reset the total width to zero, this will be expanded during calculation */
   w = 0;
-  
+
   for(;;)
   {
     encoding = u8g_pgm_read(s);
@@ -1245,13 +1245,13 @@ u8g_uint_t u8g_GetStrWidthP(u8g_t *u8g, const u8g_pgm_uint8_t *s)
 
     /* load glyph information */
     u8g_GetGlyph(u8g, encoding);
-    w += u8g->glyph_dx;    
-    
+    w += u8g->glyph_dx;
+
     /* goto next char */
     s++;
   }
-  
-  return w;  
+
+  return w;
 }
 
 
@@ -1280,10 +1280,10 @@ static void u8g_font_calc_str_min_box(u8g_t *u8g, const char *s, u8g_str_size_t 
 {
   /* u8g_glyph_t g; */
   int8_t tmp;
-  
+
   /* reset the total minimal width to zero, this will be expanded during calculation */
   buf->w = 0;
-    
+
   /* check for empty string, width is already 0, but also reset y_min and y_max to 0 */
   if ( *s == '\0' )
   {
@@ -1293,7 +1293,7 @@ static void u8g_font_calc_str_min_box(u8g_t *u8g, const char *s, u8g_str_size_t 
     buf->y = 0;
     return;
   }
-  
+
   /* reset y_min to the largest possible value. Later we search for the smallest value */
   /* y_min contains the position [pixel] of the lower left edge of the glyph above (y_min>0) or below (y_min<0) baseline  */
   buf->y_min = 127;
@@ -1307,47 +1307,47 @@ static void u8g_font_calc_str_min_box(u8g_t *u8g, const char *s, u8g_str_size_t 
   /* strlen(s) == 1:       width = width(s[0]) */
   /* strlen(s) == 2:       width = - offx(s[0]) + deltax(s[0]) + offx(s[1]) + width(s[1]) */
   /* strlen(s) == 3:       width = - offx(s[0]) + deltax(s[0]) + deltax(s[1]) + offx(s[2]) + width(s[2]) */
-  
+
   /* assume that the string has size 2 or more, than start with negative offset-x */
   /* for string with size 1, this will be nullified after the loop */
   // buf->w = - u8g_font_GetGlyphBBXOffX(u8g->font, g);
   buf->w = - u8g->glyph_x;
-  
+
   /* Also copy the position of the first glyph. This is the reference point of the string (negated) */
   buf->x = u8g->glyph_x;
   buf->y = u8g->glyph_y;
-  
+
   for(;;)
   {
-    
+
     /* calculated y position of the upper left corner (y_max) and lower left corner (y_min) of the string */
     /* relative to the base line */
-    
+
     tmp = u8g->glyph_y;
     if ( buf->y_min > tmp )
       buf->y_min = tmp;
-    
+
     tmp +=u8g->glyph_height;
     if ( buf->y_max < tmp )
       buf->y_max = tmp;
-    
+
     /* check and stop if the end of the string is reached */
     s++;
     if ( *s == '\0' )
       break;
-    
+
     /* if there are still more characters, add the delta to the next glyph */
     buf->w += u8g->glyph_dx;
-    
+
     /* load the next glyph information */
     u8g_GetGlyph(u8g, *s);
   }
-  
+
   /* finally calculate the width of the last char */
   /* if g was not updated in the for loop (strlen() == 1), then the initial offset x gets removed */
   buf->w += u8g->glyph_width;
   // buf->w += u8g_font_GetGlyphBBXOffX(u8g->font, g);
-  
+
   buf->w += u8g->glyph_x;
 }
 
@@ -1360,13 +1360,13 @@ void u8g_font_box_min(u8g_t *u8g, const char *s, u8g_str_size_t *buf)
 /* calculate gA box, but do not calculate the overall width */
 void u8g_font_box_left_gA(u8g_t *u8g, const char *s, u8g_str_size_t *buf)
 {
-  
+
 }
 
 /* calculate gA box, including overall width */
 void u8g_font_box_all_gA(u8g_t *u8g, const char *s, u8g_str_size_t *buf)
 {
-  
+
 }
 
 
@@ -1375,13 +1375,13 @@ static void u8g_font_get_str_box_fill_args(u8g_t *u8g, const char *s, u8g_str_si
   /*
   u8g_glyph_t g;
   g =
-  */  
+  */
   u8g_GetGlyph(u8g, *s);
   *x += u8g->glyph_x;
   *width = buf->w;
   *y -= buf->y_max;
   /* +1 because y_max is a height, this compensates the next step */
-  //*y += 1;                      
+  //*y += 1;
   /* because the reference point is one below the string, this compensates the previous step */
   //*y -= 1;
   *height = buf->y_max;
@@ -1392,14 +1392,14 @@ static void u8g_font_get_str_box_fill_args(u8g_t *u8g, const char *s, u8g_str_si
 void u8g_GetStrMinBox(u8g_t *u8g, const char *s, u8g_uint_t *x, u8g_uint_t *y, u8g_uint_t *width, u8g_uint_t *height)
 {
   u8g_str_size_t buf;
-  
+
   if ( *s == '\0' )
   {
     *width= 0;
     *height = 0;
     return;
   }
-  
+
   u8g_font_calc_str_min_box(u8g, s, &buf);
   u8g_font_get_str_box_fill_args(u8g, s, &buf, x, y, width, height);
 }
@@ -1409,14 +1409,14 @@ void u8g_GetStrAMinBox(u8g_t *u8g, const char *s, u8g_uint_t *x, u8g_uint_t *y, 
 {
   u8g_str_size_t buf;
   uint8_t cap_a;
-  
+
   if ( *s == '\0' )
   {
     *width= 0;
     *height = 0;
     return;
   }
-  
+
   cap_a = u8g_font_GetCapitalAHeight(u8g->font);
   u8g_font_calc_str_min_box(u8g, s, &buf);
   if ( buf.y_max < cap_a )
@@ -1450,21 +1450,21 @@ int8_t u8g_draw_aa_glyph(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, uint8_t encodin
       return 0;
     data = u8g_font_GetGlyphDataStart(u8g->font, g);
   }
-  
+
   w = u8g->glyph_width;
   h = u8g->glyph_height;
-  
+
   x += u8g->glyph_x;
   y -= u8g->glyph_y;
   y--;
-  
+
   if ( u8g_IsBBXIntersection(u8g, x, y-h+1, w, h) == 0 )
     return u8g->glyph_dx;
 
   /* now, w is reused as bytes per line */
   w += 3;
   w /= 4;
-  
+
   iy = y;
   iy -= h;
   iy++;
@@ -1498,9 +1498,9 @@ u8g_uint_t u8g_DrawAAStr(u8g_t *u8g, u8g_uint_t x, u8g_uint_t y, const char *s)
     return 0;
   //u8g_uint_t u8g_GetStrWidth(u8g, s);
   //u8g_font_GetFontAscent(u8g->font)-u8g_font_GetFontDescent(u8g->font);
-  
+
   y += u8g->font_calc_vref(u8g);
-  
+
   while( *s != '\0' )
   {
     d = u8g_draw_aa_glyph(u8g, x, y, *s);

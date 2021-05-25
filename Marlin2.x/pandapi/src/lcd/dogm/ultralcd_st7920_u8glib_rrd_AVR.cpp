@@ -19,19 +19,51 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-      
+
 // NOTE - the HAL version of the rrd device uses a generic ST7920 device.  See the
 // file u8g_dev_st7920_128x64_HAL.cpp for the HAL version.
 
 #include "../../inc/MarlinConfigPre.h"
-  
-#if !defined(U8G_HAL_LINKS) && ANY(PANDAPI, ARDUINO_ARCH_STM32)
-       
+
+#if !defined(U8G_HAL_LINKS) && ANY(PANDAPI, ARDUINO_ARCH_STM32, ARDUINO_ARCH_ESP32)
+
 #include "../../inc/MarlinConfig.h"
 
 #if ENABLED(U8GLIB_ST7920)
-    
+
 #include "ultralcd_st7920_u8glib_rrd_AVR.h"
+
+#if 1// F_CPU >= 20000000 //  PANDAPI
+  #define CPU_ST7920_DELAY_1 DELAY_NS(150)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(150)
+#elif MB(3DRAG, K8200, K8400)
+  #define CPU_ST7920_DELAY_1 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(188)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(0)
+#elif MB(MINIRAMBO, EINSY_RAMBO, EINSY_RETRO, SILVER_GATE)
+  #define CPU_ST7920_DELAY_1 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(250)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(0)
+#elif MB(RAMBO)
+  #define CPU_ST7920_DELAY_1 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(0)
+#elif MB(BQ_ZUM_MEGA_3D)
+  #define CPU_ST7920_DELAY_1 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(189)
+#elif defined(ARDUINO_ARCH_STM32)
+  #define CPU_ST7920_DELAY_1 DELAY_NS(300)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(40)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(340)
+#elif F_CPU == 16000000
+  #define CPU_ST7920_DELAY_1 DELAY_NS(125)
+  #define CPU_ST7920_DELAY_2 DELAY_NS(0)
+  #define CPU_ST7920_DELAY_3 DELAY_NS(188)
+#else
+  #error "No valid condition for delays in 'ultralcd_st7920_u8glib_rrd_AVR.h'"
+#endif
 
 #ifndef ST7920_DELAY_1
   #ifdef BOARD_ST7920_DELAY_1
@@ -41,7 +73,7 @@
   #endif
 #endif
 #ifndef ST7920_DELAY_2
-  #ifdef BOARD_ST7920_DELAY_2 
+  #ifdef BOARD_ST7920_DELAY_2
     #define ST7920_DELAY_2 BOARD_ST7920_DELAY_2
   #else
     #define ST7920_DELAY_2 CPU_ST7920_DELAY_2
@@ -50,11 +82,11 @@
 #ifndef ST7920_DELAY_3
   #ifdef BOARD_ST7920_DELAY_3
     #define ST7920_DELAY_3 BOARD_ST7920_DELAY_3
-  #else 
+  #else
     #define ST7920_DELAY_3 CPU_ST7920_DELAY_3
   #endif
 #endif
-  
+
 // Optimize this code with -O3
 #pragma GCC optimize (3)
 
@@ -123,8 +155,8 @@ uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
     case U8G_DEV_MSG_STOP: break;
 
     case U8G_DEV_MSG_PAGE_NEXT: {
-      uint8_t* ptr;
-      u8g_pb_t* pb = (u8g_pb_t*)(dev->dev_mem);
+      uint8_t *ptr;
+      u8g_pb_t *pb = (u8g_pb_t*)(dev->dev_mem);
       y = pb->p.page_y0;
       ptr = (uint8_t*)pb->buf;
 

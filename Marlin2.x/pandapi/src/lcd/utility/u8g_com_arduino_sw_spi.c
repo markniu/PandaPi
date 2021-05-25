@@ -1,63 +1,63 @@
 /*
-  
+
   u8g_arduino_sw_spi.c
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
-  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
   Update for ATOMIC operation done (01 Jun 2013)
     U8G_ATOMIC_OR(ptr, val)
     U8G_ATOMIC_AND(ptr, val)
     U8G_ATOMIC_START();
     U8G_ATOMIC_END();
- 
+
 
 */
 
 #include "u8g.h"
 
-#if defined(ARDUINO)
+#if defined(ARDUINO) && !defined(ARDUINO_ARCH_STM32)
 
-#if ARDUINO < 100 
-#include <WProgram.h>    
+#if ARDUINO < 100
+#include <WProgram.h>
 #include "wiring_private.h"
 #include "pins_arduino.h"
 
-#else 
-#include <Arduino.h> 
+#else
+#include <Arduino.h>
 #include "wiring_private.h"
 #endif
 
 /*=========================================================*/
 /* Arduino, AVR */
 
-#if defined(__AVR__)
+#ifdef __AVR__
 
 uint8_t u8g_bitData, u8g_bitNotData;
 uint8_t u8g_bitClock, u8g_bitNotClock;
@@ -95,7 +95,7 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
       *outData |= bitData;
     else
       *outData &= bitNotData;
-   
+
     *outClock |= bitClock;
     val <<= 1;
     cnt--;
@@ -137,7 +137,7 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
     if ( val & 128 )
 	*dog_outData |= dog_bitData;
     else
-	*dog_outData &= dog_bitNotData;    
+	*dog_outData &= dog_bitNotData;
     val <<= 1;
     /*
 	There must be some delay here. However
@@ -148,8 +148,8 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
     *dog_outClock |= dog_bitClock;
     cnt--;
     *dog_outClock &= dog_bitNotClock;
-    /* 
-	little additional delay after clk pulse, done by 3x32bit reads 
+    /*
+	little additional delay after clk pulse, done by 3x32bit reads
 	from I/O. Optimized for PIC32 with 80 MHz.
     */
     dog_pic32_spi_tmp = *dog_outClock;
@@ -194,11 +194,11 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
     else
       u8g_digital_write_sam_low(u8g_sam_data_pin);
     val <<= 1;
-    //u8g_MicroDelay();	
+    //u8g_MicroDelay();
     u8g_digital_write_sam_high(u8g_sam_clock_pin);
-    u8g_MicroDelay();	
+    u8g_MicroDelay();
     u8g_digital_write_sam_low(u8g_sam_clock_pin);
-    u8g_MicroDelay();	
+    u8g_MicroDelay();
     i--;
   } while( i != 0 );
 }
@@ -215,7 +215,7 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
 {
 }
 
-#endif 
+#endif
 
 
 uint8_t u8g_com_arduino_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr)
@@ -228,7 +228,7 @@ uint8_t u8g_com_arduino_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void
       u8g_com_arduino_digital_write(u8g, U8G_PI_MOSI, LOW);
       u8g_com_arduino_init_shift_out(u8g->pin_list[U8G_PI_MOSI], u8g->pin_list[U8G_PI_SCK]);
       break;
-    
+
     case U8G_COM_MSG_STOP:
       break;
 
@@ -236,7 +236,7 @@ uint8_t u8g_com_arduino_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void
       if ( u8g->pin_list[U8G_PI_RESET] != U8G_PIN_NONE )
         u8g_com_arduino_digital_write(u8g, U8G_PI_RESET, arg_val);
       break;
-      
+
     case U8G_COM_MSG_CHIP_SELECT:
       if ( arg_val == 0 )
       {
@@ -257,7 +257,7 @@ uint8_t u8g_com_arduino_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void
       u8g_com_arduino_do_shift_out_msb_first( arg_val );
       //u8g_arduino_sw_spi_shift_out(u8g->pin_list[U8G_PI_MOSI], u8g->pin_list[U8G_PI_SCK], arg_val);
       break;
-    
+
     case U8G_COM_MSG_WRITE_SEQ:
       {
         register uint8_t *ptr = arg_ptr;
@@ -282,7 +282,7 @@ uint8_t u8g_com_arduino_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void
         }
       }
       break;
-      
+
     case U8G_COM_MSG_ADDRESS:                     /* define cmd (arg_val = 0) or data mode (arg_val = 1) */
       u8g_com_arduino_digital_write(u8g, U8G_PI_A0, arg_val);
       break;
@@ -298,4 +298,3 @@ uint8_t u8g_com_arduino_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void
 }
 
 #endif /* ARDUINO */
-

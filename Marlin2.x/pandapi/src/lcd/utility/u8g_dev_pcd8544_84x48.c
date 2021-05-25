@@ -1,42 +1,42 @@
 /*
 
   u8g_dev_pcd8544_84x48.c
-  
+
   Display: Nokia 84x48
-  
+
   Status: Tested with PCF8812 Display
-  
+
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
-  
-  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
 */
 
 #include "u8g.h"
@@ -73,7 +73,7 @@ static const uint8_t u8g_dev_pcd8544_init_seq[] PROGMEM = {
 static const uint8_t u8g_dev_pcd8544_sleep_on[] PROGMEM = {
   U8G_ESC_ADR(0),           	/* instruction mode */
   U8G_ESC_CS(1),             	/* enable chip */
-  
+
   0x020,		                /* activate chip (PD=0), horizontal increment (V=0), enter normal command set (H=0) */
   0x00c,		                /* display on, normal */
   U8G_ESC_CS(0),             	/* disable chip, bugfix 12 nov 2014 */
@@ -86,7 +86,7 @@ static const uint8_t u8g_dev_pcd8544_sleep_off[] PROGMEM = {
   0x020,		                /* activate chip (PD=0), horizontal increment (V=0), enter normal command set (H=0) */
   0x008,		                /* display blank */
   0x024,		                /* power down (PD=1), horizontal increment (V=0), enter normal command set (H=0) */
-  
+
   U8G_ESC_DLY(50),       	/* delay 50 ms */
   U8G_ESC_CS(0),             	/* disable chip, bugfix 12 nov 2014 */
   U8G_ESC_END                	/* end of sequence */
@@ -126,10 +126,10 @@ uint8_t u8g_dev_pcd8544_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       u8g_SetChipSelect(u8g, dev, 0);
       return 1;
     case U8G_DEV_MSG_SLEEP_ON:
-      u8g_WriteEscSeqP(u8g, dev, u8g_dev_pcd8544_sleep_on);    
+      u8g_WriteEscSeqP(u8g, dev, u8g_dev_pcd8544_sleep_on);
       return 1;
     case U8G_DEV_MSG_SLEEP_OFF:
-      u8g_WriteEscSeqP(u8g, dev, u8g_dev_pcd8544_sleep_off);    
+      u8g_WriteEscSeqP(u8g, dev, u8g_dev_pcd8544_sleep_off);
       return 1;
   }
   return u8g_dev_pb8v1_base_fn(u8g, dev, msg, arg);

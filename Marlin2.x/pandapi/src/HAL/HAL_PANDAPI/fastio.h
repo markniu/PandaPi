@@ -73,8 +73,8 @@
 
 #define _TOGGLE(IO)         //  (DIO ## IO ## _RPORT = _BV(DIO ## IO ## _PIN))
 
-#define _SET_INPUT(IO)       pinMode(IO, INPUT) // CBI(DIO ## IO ## _DDR, DIO ## IO ## _PIN)
-#define _SET_OUTPUT(IO)      pinMode(IO, OUTPUT) // SBI(DIO ## IO ## _DDR, DIO ## IO ## _PIN)
+#define _SET_INPUT(IO)      pinMode(IO, INPUT)   // CBI(DIO ## IO ## _DDR, DIO ## IO ## _PIN)
+#define _SET_OUTPUT(IO)    pinMode(IO, OUTPUT)  // SBI(DIO ## IO ## _DDR, DIO ## IO ## _PIN)
 
 #define _IS_INPUT(IO)         !TEST(DIO ## IO ## _DDR, DIO ## IO ## _PIN)
 #define _IS_OUTPUT(IO)        TEST(DIO ## IO ## _DDR, DIO ## IO ## _PIN)

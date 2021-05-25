@@ -1,38 +1,38 @@
 /*
-  
+
   u8g_com_arduino_st7920_custom.c
-  
+
   Additional COM device, initially introduced for 3D Printer community
   Implements a fast SW SPI com subsystem
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   A special SPI interface for ST7920 controller
 
@@ -47,19 +47,19 @@
 
 #include "u8g.h"
 
-#if defined(ARDUINO)
+#if defined(ARDUINO) && !defined(ARDUINO_ARCH_STM32)
 
-#if ARDUINO < 100 
-#include <WProgram.h>    
+#if ARDUINO < 100
+#include <WProgram.h>
 #include "wiring_private.h"
 #include "pins_arduino.h"
 
-#else 
-#include <Arduino.h> 
+#else
+#include <Arduino.h>
 #include "wiring_private.h"
 #endif
 
-#if defined(__AVR__)
+#ifdef __AVR__
 
 static uint8_t u8g_bitData, u8g_bitNotData;
 static uint8_t u8g_bitClock, u8g_bitNotClock;
@@ -90,8 +90,8 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
   uint8_t bitNotClock = u8g_bitNotClock;
   volatile uint8_t *outData = u8g_outData;
   volatile uint8_t *outClock = u8g_outClock;
-  
-  
+
+
   U8G_ATOMIC_START();
   bitData |= *outData;
   bitNotData &= *outData;
@@ -151,7 +151,7 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
     if ( val & 128 )
 	*dog_outData |= dog_bitData;
     else
-	*dog_outData &= dog_bitNotData;    
+	*dog_outData &= dog_bitNotData;
     val <<= 1;
     //u8g_MicroDelay();
     //*dog_outClock |= dog_bitClock;
@@ -161,7 +161,7 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
     //*dog_outClock &= dog_bitNotClock;
     *dog_outClock |= dog_bitClock;
     u8g_MicroDelay();
-    
+
   } while( cnt != 0 );
   U8G_ATOMIC_END();
 }
@@ -194,11 +194,11 @@ static void u8g_com_arduino_do_shift_out_msb_first(uint8_t val)
     cnt--;
     u8g_MicroDelay();
     digitalWrite(u8g_clock_custom_pin, HIGH);
-    u8g_MicroDelay();    
+    u8g_MicroDelay();
   } while( cnt != 0 );
 }
 
-#endif 
+#endif
 
 
 static void u8g_com_arduino_st7920_write_byte_seq(uint8_t rs, uint8_t *ptr, uint8_t len)
@@ -224,7 +224,7 @@ static void u8g_com_arduino_st7920_write_byte_seq(uint8_t rs, uint8_t *ptr, uint
     len--;
     u8g_10MicroDelay();
   }
-  
+
   for( i = 0; i < 4; i++ )
     u8g_10MicroDelay();
 }
@@ -243,13 +243,13 @@ static void u8g_com_arduino_st7920_write_byte(uint8_t rs, uint8_t val)
     /* data */
     u8g_com_arduino_do_shift_out_msb_first(0x0fa);
   }
-  
+
   u8g_com_arduino_do_shift_out_msb_first(val & 0x0f0);
   u8g_com_arduino_do_shift_out_msb_first(val << 4);
-  
+
   for( i = 0; i < 4; i++ )
     u8g_10MicroDelay();
-    
+
 }
 
 
@@ -266,7 +266,7 @@ uint8_t u8g_com_arduino_st7920_custom_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
       u8g_com_arduino_init_shift_out(u8g->pin_list[U8G_PI_MOSI], u8g->pin_list[U8G_PI_SCK]);
       u8g->pin_list[U8G_PI_A0_STATE] = 0;       /* inital RS state: command mode */
       break;
-    
+
     case U8G_COM_MSG_STOP:
       break;
 
@@ -274,7 +274,7 @@ uint8_t u8g_com_arduino_st7920_custom_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
       if ( u8g->pin_list[U8G_PI_RESET] != U8G_PIN_NONE )
 	u8g_com_arduino_digital_write(u8g, U8G_PI_RESET, arg_val);
       break;
-      
+
     case U8G_COM_MSG_CHIP_SELECT:
       if ( arg_val == 0 )
       {
@@ -291,10 +291,10 @@ uint8_t u8g_com_arduino_st7920_custom_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
 
     case U8G_COM_MSG_WRITE_BYTE:
       u8g_com_arduino_st7920_write_byte( u8g->pin_list[U8G_PI_A0_STATE], arg_val);
-      //u8g->pin_list[U8G_PI_A0_STATE] = 2; 
+      //u8g->pin_list[U8G_PI_A0_STATE] = 2;
       //u8g_arduino_sw_spi_shift_out(u8g->pin_list[U8G_PI_MOSI], u8g->pin_list[U8G_PI_SCK], arg_val);
       break;
-    
+
     case U8G_COM_MSG_WRITE_SEQ:
       u8g_com_arduino_st7920_write_byte_seq(u8g->pin_list[U8G_PI_A0_STATE], (uint8_t *)arg_ptr, arg_val);
       break;
@@ -305,13 +305,13 @@ uint8_t u8g_com_arduino_st7920_custom_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
         while( arg_val > 0 )
         {
           u8g_com_arduino_st7920_write_byte(u8g->pin_list[U8G_PI_A0_STATE], u8g_pgm_read(ptr) );
-          //u8g->pin_list[U8G_PI_A0_STATE] = 2; 
+          //u8g->pin_list[U8G_PI_A0_STATE] = 2;
           ptr++;
           arg_val--;
         }
       }
       break;
-      
+
     case U8G_COM_MSG_ADDRESS:                     /* define cmd (arg_val = 0) or data mode (arg_val = 1) */
       u8g->pin_list[U8G_PI_A0_STATE] = arg_val;
       break;
@@ -327,4 +327,3 @@ uint8_t u8g_com_arduino_st7920_custom_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
 }
 
 #endif /* ARDUINO */
-

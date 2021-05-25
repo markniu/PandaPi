@@ -28,8 +28,12 @@
 int linux_random(int x,int y);
 char * dtostrf(double number, signed char width, unsigned char prec, char *s);
 
-// Delay that ensures heaters and watchdog are kept alive
-void safe_delay(millis_t ms);
+void safe_delay(millis_t ms);           // Delay ensuring that temperatures are updated and the watchdog is kept alive.
+#if ENABLED(MARLIN_DEV_MODE)
+  void early_safe_delay(millis_t ms);   // Delay ensuring that the watchdog is kept alive. Can be used before the Temperature ISR starts.
+#else
+  inline void early_safe_delay(millis_t ms) { safe_delay(ms); }
+#endif
 
 #if ENABLED(SERIAL_OVERRUN_PROTECTION)
   void serial_delay(const millis_t ms);
@@ -37,7 +41,7 @@ void safe_delay(millis_t ms);
   inline void serial_delay(const millis_t) {}
 #endif
 
-#if GRID_MAX_POINTS_X && GRID_MAX_POINTS_Y
+#if (GRID_MAX_POINTS_X) && (GRID_MAX_POINTS_Y)
 
   // 16x16 bit arrays
   template <int W, int H>
@@ -73,9 +77,8 @@ public:
   ~restorer() { restore(); }
   inline void restore() { ref_ = val_; }
 };
-//PANDAPI
-#define REMEMBER(N,X,V...)   restorer<__typeof__(X)> restorer_##N(X, ##V)
 
+#define REMEMBER(N,X,V...) restorer<__typeof__(X)> restorer_##N(X, ##V)
 #define RESTORE(N) restorer_##N.restore()
 
 // Converts from an uint8_t in the range of 0-255 to an uint8_t

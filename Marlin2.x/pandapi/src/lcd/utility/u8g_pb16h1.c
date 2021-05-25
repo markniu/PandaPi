@@ -1,38 +1,38 @@
 /*
 
   u8g_pb16h1.c
-  
+
   2x 8bit height monochrom (1 bit) page buffer
   byte has horizontal orientation
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2012, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
   total buffer size is limited to 2*256 bytes because of the calculation inside the set pixel procedure
@@ -65,7 +65,7 @@ void u8g_pb16h1_Clear(u8g_pb_t *b)
 
 void u8g_pb16h1_Init(u8g_pb_t *b, void *buf, u8g_uint_t width)
 {
-  b->buf = (uint8_t *)buf;
+  b->buf = buf;
   b->width = width;
   u8g_pb16h1_Clear(b);
 }
@@ -76,8 +76,8 @@ void u8g_pb16h1_set_pixel(u8g_pb_t *b, u8g_uint_t x, u8g_uint_t y, uint8_t color
 {
   register uint8_t mask;
   u8g_uint_t tmp;
-  uint8_t *ptr = b->buf;
-  
+  uint8_t *ptr =(uint8_t *) b->buf;
+
   y -= b->p.page_y0;
   if ( y >= 8 )
   {
@@ -88,7 +88,7 @@ void u8g_pb16h1_set_pixel(u8g_pb_t *b, u8g_uint_t x, u8g_uint_t y, uint8_t color
   tmp >>= 3;
   tmp *= (uint8_t)y;
   ptr += tmp;
-  
+
   mask = 0x080;
   mask >>= x & 7;
   x >>= 3;
@@ -102,7 +102,7 @@ void u8g_pb16h1_set_pixel(u8g_pb_t *b, u8g_uint_t x, u8g_uint_t y, uint8_t color
     mask ^=0xff;
     *ptr &= mask;
   }
-  
+
 }
 
 
@@ -142,7 +142,7 @@ void u8g_pb16h1_Set8PixelOpt2(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel)
   register uint8_t pixel = arg_pixel->pixel;
   u8g_uint_t dx = 0;
   u8g_uint_t dy = 0;
-  
+
   switch( arg_pixel->dir )
   {
     case 0: dx++; break;
@@ -150,7 +150,7 @@ void u8g_pb16h1_Set8PixelOpt2(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel)
     case 2: dx--; break;
     case 3: dy--; break;
   }
-  
+
   do
   {
     if ( pixel & 128 )
@@ -158,7 +158,7 @@ void u8g_pb16h1_Set8PixelOpt2(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel)
     arg_pixel->x += dx;
     arg_pixel->y += dy;
     pixel <<= 1;
-  } while( pixel != 0  );  
+  } while( pixel != 0  );
 }
 
 
@@ -209,5 +209,5 @@ uint8_t u8g_dev_pb16h1_base_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *ar
   }
   return 1;
 }
- 
-  
+
+

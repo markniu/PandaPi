@@ -1,43 +1,43 @@
 /*
 
   u8g_dev_ssd1325_nhd27oled_bw.c
-  
+
   1-Bit (BW) Driver for SSD1325 Controller (OLED Display)
   Tested with NHD-2.7-12864UCY3
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
-  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
   SSD130x       Monochrom OLED Controller
   SSD131x       Character OLED Controller
   SSD132x       Graylevel OLED Controller
-  SSD1331       Color OLED Controller       
+  SSD1331       Color OLED Controller
 
 */
 
@@ -97,31 +97,31 @@ static const uint8_t u8g_dev_ssd1325_1bit_nhd_27_12864ucy3_prepare_page_seq[] PR
 static void u8g_dev_ssd1325_1bit_prepare_page(u8g_t *u8g, u8g_dev_t *dev)
 {
   uint8_t page = ((u8g_pb_t *)(dev->dev_mem))->p.page;
-  
+
   u8g_WriteEscSeqP(u8g, dev, u8g_dev_ssd1325_1bit_nhd_27_12864ucy3_prepare_page_seq);
-  
+
   page <<= 3;
   u8g_WriteByte(u8g, dev, page);       /* start at the selected page */
   page += 7;
-  u8g_WriteByte(u8g, dev, page);       /* end within the selected page */  
-  
+  u8g_WriteByte(u8g, dev, page);       /* end within the selected page */
+
   u8g_SetAddress(u8g, dev, 1);          /* data mode */
 }
 
 static void u8g_dev_ssd1325_1bit_2x_prepare_page(u8g_t *u8g, u8g_dev_t *dev, uint8_t is_odd)
 {
   uint8_t page = ((u8g_pb_t *)(dev->dev_mem))->p.page;
-  
+
   u8g_WriteEscSeqP(u8g, dev, u8g_dev_ssd1325_1bit_nhd_27_12864ucy3_prepare_page_seq);
-  
+
   page <<= 1;
   page += is_odd;
-  
+
   page <<= 3;
   u8g_WriteByte(u8g, dev, page);       /* start at the selected page */
   page += 7;
-  u8g_WriteByte(u8g, dev, page);       /* end within the selected page */  
-  
+  u8g_WriteByte(u8g, dev, page);       /* end within the selected page */
+
   u8g_SetAddress(u8g, dev, 1);          /* data mode */
 }
 
@@ -171,7 +171,7 @@ static void u8g_dev_ssd1325_1bit_write_buffer(u8g_t *u8g, u8g_dev_t *dev, uint8_
   uint8_t cnt, left, right;
   uint8_t *ptr;
   u8g_pb_t *pb = (u8g_pb_t *)(dev->dev_mem);
-  
+
   ptr = pb->buf;
   cnt = pb->width;
   if ( is_odd )
@@ -200,7 +200,7 @@ uint8_t u8g_dev_ssd1325_nhd27oled_bw_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg,
       {
         u8g_dev_ssd1325_1bit_prepare_page(u8g, dev);
         u8g_dev_ssd1325_1bit_write_buffer(u8g, dev, 0);
-        u8g_SetChipSelect(u8g, dev, 0);        
+        u8g_SetChipSelect(u8g, dev, 0);
       }
       break;
     case U8G_DEV_MSG_CONTRAST:
@@ -208,7 +208,7 @@ uint8_t u8g_dev_ssd1325_nhd27oled_bw_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg,
       u8g_SetAddress(u8g, dev, 0);          /* instruction mode */
       u8g_WriteByte(u8g, dev, 0x081);
       u8g_WriteByte(u8g, dev, (*(uint8_t *)arg) >> 1);
-      u8g_SetChipSelect(u8g, dev, 0);      
+      u8g_SetChipSelect(u8g, dev, 0);
       break;
   }
   return u8g_dev_pb8v1_base_fn(u8g, dev, msg, arg);
@@ -230,7 +230,7 @@ uint8_t u8g_dev_ssd1325_nhd27oled_2x_bw_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t m
         u8g_dev_ssd1325_1bit_write_buffer(u8g, dev, 0);
         u8g_dev_ssd1325_1bit_2x_prepare_page(u8g, dev, 1);
         u8g_dev_ssd1325_1bit_write_buffer(u8g, dev, 1);
-        u8g_SetChipSelect(u8g, dev, 0);        
+        u8g_SetChipSelect(u8g, dev, 0);
       }
       break;
     case U8G_DEV_MSG_CONTRAST:
@@ -238,7 +238,7 @@ uint8_t u8g_dev_ssd1325_nhd27oled_2x_bw_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t m
       u8g_SetAddress(u8g, dev, 0);          /* instruction mode */
       u8g_WriteByte(u8g, dev, 0x081);
       u8g_WriteByte(u8g, dev, (*(uint8_t *)arg) >> 1);
-      u8g_SetChipSelect(u8g, dev, 0);      
+      u8g_SetChipSelect(u8g, dev, 0);
       break;
   }
   return u8g_dev_pb16v1_base_fn(u8g, dev, msg, arg);
@@ -252,8 +252,8 @@ U8G_PB_DEV(u8g_dev_ssd1325_nhd27oled_bw_parallel , WIDTH, HEIGHT, PAGE_HEIGHT, u
 */
 
 /*
-uint8_t u8g_dev_ssd1325_nhd27oled_2x_bw_buf[WIDTH*2] U8G_NOCOMMON ; 
-u8g_pb_t u8g_dev_ssd1325_nhd27oled_2x_bw_pb = { {16, HEIGHT, 0, 0, 0},  WIDTH, u8g_dev_ssd1325_nhd27oled_2x_bw_buf}; 
+uint8_t u8g_dev_ssd1325_nhd27oled_2x_bw_buf[WIDTH*2] U8G_NOCOMMON ;
+u8g_pb_t u8g_dev_ssd1325_nhd27oled_2x_bw_pb = { {16, HEIGHT, 0, 0, 0},  WIDTH, u8g_dev_ssd1325_nhd27oled_2x_bw_buf};
 u8g_dev_t u8g_dev_ssd1325_nhd27oled_2x_bw_sw_spi = { u8g_dev_ssd1325_nhd27oled_2x_bw_fn, &u8g_dev_ssd1325_nhd27oled_2x_bw_pb, U8G_COM_SW_SPI };
 u8g_dev_t u8g_dev_ssd1325_nhd27oled_2x_bw_hw_spi = { u8g_dev_ssd1325_nhd27oled_2x_bw_fn, &u8g_dev_ssd1325_nhd27oled_2x_bw_pb, U8G_COM_HW_SPI };
 u8g_dev_t u8g_dev_ssd1325_nhd27oled_2x_bw_parallel = { u8g_dev_ssd1325_nhd27oled_2x_bw_fn, &u8g_dev_ssd1325_nhd27oled_2x_bw_pb, U8G_COM_FAST_PARALLEL };

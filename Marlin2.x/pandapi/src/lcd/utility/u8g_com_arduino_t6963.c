@@ -1,35 +1,35 @@
 /*
-  
+
   u8g_com_arduino_t6963.c
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
   PIN_D0 8
@@ -46,7 +46,7 @@
   PIN_RESET 16
   PIN_WR 17
   PIN_RD 18
-  
+
   u8g_InitRW8Bit(u8g, dev, d0, d1, d2, d3, d4, d5, d6, d7, cs, a0, wr, rd, reset)
   u8g_InitRW8Bit(u8g, dev,  8,  9, 10, 11,  4,  5,  6,  7, 14, 15, 17, 18, 16)
 
@@ -55,79 +55,81 @@
     U8G_ATOMIC_AND(ptr, val)
     U8G_ATOMIC_START();
     U8G_ATOMIC_END();
- 
+
 
 */
 
 #include "u8g.h"
 
-#if  defined(ARDUINO)
+#if defined(ARDUINO) && !defined(ARDUINO_ARCH_STM32)
 
-#if ARDUINO < 100 
-//#include <WProgram.h> 
-#include <wiring_private.h> 
-#include <pins_arduino.h> 
-#else 
-#include <Arduino.h> 
-#endif
-
-
-#if defined(__PIC32MX)
-/* CHIPKIT PIC32 */
-static volatile uint32_t *u8g_output_data_port[8];
-static volatile uint32_t *u8g_input_data_port[8];
-static volatile uint32_t *u8g_mode_port[8];
-static uint32_t u8g_data_mask[8];
+#if ARDUINO < 100
+//#include <WProgram.h>
+#include <wiring_private.h>
+#include <pins_arduino.h>
 #else
-static volatile uint8_t *u8g_output_data_port[8];
-static volatile uint8_t *u8g_input_data_port[8];
-static volatile uint8_t *u8g_mode_port[8];
-static uint8_t u8g_data_mask[8];
+#include <Arduino.h>
 #endif
 
 
+#ifdef __PIC32MX
+/* CHIPKIT PIC32 */
+typedef uint32_t u8g_data_t;
+#else
+typedef uint8_t u8g_data_t;
+#endif
+typedef u8g_data_t* u8g_ptr_t;
+
+static volatile u8g_ptr_t u8g_output_data_port[8];
+static volatile u8g_ptr_t u8g_input_data_port[8];
+static volatile u8g_ptr_t u8g_mode_port[8];
+static u8g_data_t u8g_data_mask[8];
+
+#ifdef ARDUINO_ARCH_SAM
+  #define portModeRegister(port) ( &(port->PIO_OSR) )
+#endif
 
 static void u8g_com_arduino_t6963_init(u8g_t *u8g)
 {
-  u8g_output_data_port[0] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D0]));
-  u8g_input_data_port[0] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D0]));
-  u8g_mode_port[0] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D0]));
-  u8g_data_mask[0] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D0]);
-  
-  u8g_output_data_port[1] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D1]));
-  u8g_input_data_port[1] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D1]));
-  u8g_mode_port[1] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D1]));
-  u8g_data_mask[1] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D1]);
-  
-  u8g_output_data_port[2] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D2]));
-  u8g_input_data_port[2] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D2]));
-  u8g_mode_port[2] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D2]));
-  u8g_data_mask[2] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D2]);
-  
-  u8g_output_data_port[3] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D3]));
-  u8g_input_data_port[3] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D3]));
-  u8g_mode_port[3] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D3]));
-  u8g_data_mask[3] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D3]);
-  
-  u8g_output_data_port[4] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D4]));
-  u8g_input_data_port[4] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D4]));
-  u8g_mode_port[4] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D4]));
-  u8g_data_mask[4] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D4]);
-  
-  u8g_output_data_port[5] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D5]));
-  u8g_input_data_port[5] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D5]));
-  u8g_mode_port[5] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D5]));
-  u8g_data_mask[5] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D5]);
-  
-  u8g_output_data_port[6] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D6]));
-  u8g_input_data_port[6] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D6]));
-  u8g_mode_port[6] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D6]));
-  u8g_data_mask[6] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D6]);
-  
-  u8g_output_data_port[7] =  portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D7]));
-  u8g_input_data_port[7] =  portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D7]));
-  u8g_mode_port[7] =  portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D7]));
-  u8g_data_mask[7] =  digitalPinToBitMask(u8g->pin_list[U8G_PI_D7]);  
+  u8g_output_data_port[0] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D0]));
+  u8g_input_data_port[0] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D0]));
+  u8g_mode_port[0] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D0]));
+  u8g_data_mask[0] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D0]);
+
+  u8g_output_data_port[1] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D1]));
+  u8g_input_data_port[1] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D1]));
+  u8g_mode_port[1] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D1]));
+  u8g_data_mask[1] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D1]);
+
+  u8g_output_data_port[2] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D2]));
+  u8g_input_data_port[2] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D2]));
+  u8g_mode_port[2] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D2]));
+  u8g_data_mask[2] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D2]);
+
+  u8g_output_data_port[3] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D3]));
+  u8g_input_data_port[3] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D3]));
+  u8g_mode_port[3] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D3]));
+  u8g_data_mask[3] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D3]);
+
+  u8g_output_data_port[4] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D4]));
+  u8g_input_data_port[4] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D4]));
+  u8g_mode_port[4] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D4]));
+  u8g_data_mask[4] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D4]);
+
+  u8g_output_data_port[5] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D5]));
+  u8g_input_data_port[5] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D5]));
+  u8g_mode_port[5] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D5]));
+  u8g_data_mask[5] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D5]);
+
+  u8g_output_data_port[6] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D6]));
+  u8g_input_data_port[6] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D6]));
+  u8g_mode_port[6] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D6]));
+  u8g_data_mask[6] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D6]);
+
+  u8g_output_data_port[7] = (u8g_ptr_t)portOutputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D7]));
+  u8g_input_data_port[7] = (u8g_ptr_t)portInputRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D7]));
+  u8g_mode_port[7] = (u8g_ptr_t)portModeRegister(digitalPinToPort(u8g->pin_list[U8G_PI_D7]));
+  u8g_data_mask[7] = (u8g_data_t)digitalPinToBitMask(u8g->pin_list[U8G_PI_D7]);
 }
 
 
@@ -144,19 +146,7 @@ static void u8g_com_arduino_t6963_set_port_output(void)
 {
   uint8_t i;
   U8G_ATOMIC_START();
-  for( i = 0; i < 8; i++ )
-  {
-#if defined(__PIC32MX)
-/* CHIPKIT PIC32 */
-      *u8g_mode_port[i] |= u8g_data_mask[i]; 
-#elif defined(__AVR__)
-      *u8g_mode_port[i] |= u8g_data_mask[i]; 
-#else
-      /* TODO: use generic Arduino API */
-      *u8g_mode_port[i] |= u8g_data_mask[i]; 
-#endif
-
-  }
+  for (i = 0; i < 8; i++) *u8g_mode_port[i] |= u8g_data_mask[i];
   U8G_ATOMIC_END();
 }
 
@@ -166,17 +156,9 @@ static void u8g_com_arduino_t6963_set_port_input(void)
   U8G_ATOMIC_START();
   for( i = 0; i < 8; i++ )
   {
-#if defined(__PIC32MX)
-/* CHIPKIT PIC32 */
-      *u8g_mode_port[i] &= ~u8g_data_mask[i]; 
-#elif defined(__AVR__)
-/* avr */
-      *u8g_mode_port[i] &= ~u8g_data_mask[i]; 
-      *u8g_output_data_port[i] &= ~u8g_data_mask[i]; 	// no pullup
-#else
-      /* TODO: use generic Arduino API */
-      *u8g_mode_port[i] &= ~u8g_data_mask[i]; 
-      *u8g_output_data_port[i] &= ~u8g_data_mask[i]; 	// no pullup
+    *u8g_mode_port[i] &= ~u8g_data_mask[i];
+#if !defined(__PIC32MX) && defined(__AVR__)
+    *u8g_output_data_port[i] &= ~u8g_data_mask[i]; 	// no pullup
 #endif
   }
   U8G_ATOMIC_END();
@@ -205,7 +187,7 @@ static void u8g_com_arduino_t6963_write(u8g_t *u8g, uint8_t val)
   u8g_com_arduino_t6963_write_data_pin( 7, val&1 );
   val >>= 1;
   U8G_ATOMIC_END();
-  
+
   u8g_com_arduino_digital_write(u8g, U8G_PI_WR, 0);
   u8g_MicroDelay(); /* 80ns, reference: t6963 datasheet */
   u8g_com_arduino_digital_write(u8g, U8G_PI_WR, 1);
@@ -215,10 +197,10 @@ static void u8g_com_arduino_t6963_write(u8g_t *u8g, uint8_t val)
 static uint8_t u8g_com_arduino_t6963_read(u8g_t *u8g)
 {
   uint8_t val = 0;
-  
+
   u8g_com_arduino_digital_write(u8g, U8G_PI_RD, 0);
   u8g_MicroDelay(); /* 150ns, reference: t6963 datasheet */
-  
+
   U8G_ATOMIC_START();
   /* only read bits 0, 1 and 3 */
   if ( (*u8g_input_data_port[3] & u8g_data_mask[3]) != 0 )
@@ -234,7 +216,7 @@ static uint8_t u8g_com_arduino_t6963_read(u8g_t *u8g)
 
   u8g_com_arduino_digital_write(u8g, U8G_PI_RD, 1);
   u8g_MicroDelay(); /* 10ns, reference: t6963 datasheet */
-  
+
   return val;
 }
 
@@ -243,13 +225,13 @@ static uint8_t u8g_com_arduino_t6963_read(u8g_t *u8g)
 static uint8_t u8g_com_arduino_t6963_until_01_ok(u8g_t *u8g)
 {
   long x;
-  
+
   u8g_com_arduino_t6963_set_port_input();
   x = millis();
   x += U8G_STATUS_TIMEOUT;
 
   for(;;)
-  {    
+  {
     if ( (u8g_com_arduino_t6963_read(u8g) & 3) == 3 )
       break;
     if ( x < millis() )
@@ -262,13 +244,13 @@ static uint8_t u8g_com_arduino_t6963_until_01_ok(u8g_t *u8g)
 static uint8_t u8g_com_arduino_t6963_until_3_ok(u8g_t *u8g)
 {
   long x;
-  
+
   u8g_com_arduino_t6963_set_port_input();
   x = millis();
   x += U8G_STATUS_TIMEOUT;
 
   for(;;)
-  {    
+  {
     if ( (u8g_com_arduino_t6963_read(u8g) & 8) == 8 )
       break;
     if ( x < millis() )
@@ -285,7 +267,7 @@ static uint8_t u8g_com_arduino_t6963_write_cmd(u8g_t *u8g, uint8_t val)
     return 0;
   u8g_com_arduino_digital_write(u8g, U8G_PI_A0, 1);
   u8g_com_arduino_t6963_write(u8g, val);
-  return 1;  
+  return 1;
 }
 
 static uint8_t u8g_com_arduino_t6963_write_data(u8g_t *u8g, uint8_t val)
@@ -295,7 +277,7 @@ static uint8_t u8g_com_arduino_t6963_write_data(u8g_t *u8g, uint8_t val)
     return 0;
   u8g_com_arduino_digital_write(u8g, U8G_PI_A0, 0);
   u8g_com_arduino_t6963_write(u8g, val);
-  return 1;  
+  return 1;
 }
 
 static uint8_t u8g_com_arduino_t6963_write_auto_data(u8g_t *u8g, uint8_t val)
@@ -305,7 +287,7 @@ static uint8_t u8g_com_arduino_t6963_write_auto_data(u8g_t *u8g, uint8_t val)
     return 0;
   u8g_com_arduino_digital_write(u8g, U8G_PI_A0, 0);
   u8g_com_arduino_t6963_write(u8g, val);
-  return 1;  
+  return 1;
 }
 
 
@@ -385,7 +367,7 @@ uint8_t u8g_com_arduino_t6963_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void 
       if ( u8g->pin_list[U8G_PI_RESET] != U8G_PIN_NONE )
         u8g_com_arduino_digital_write(u8g, U8G_PI_RESET, arg_val);
       break;
-      
+
   }
   return 1;
 }
@@ -400,4 +382,3 @@ uint8_t u8g_com_arduino_t6963_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void 
 
 
 #endif /* ARDUINO */
-

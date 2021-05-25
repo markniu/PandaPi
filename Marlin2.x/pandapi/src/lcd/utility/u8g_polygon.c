@@ -2,37 +2,37 @@
 
   u8g_polygon.c
 
-  Implementation of a polygon draw algorithm for "convex" polygons. 
- 
+  Implementation of a polygon draw algorithm for "convex" polygons.
+
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2013, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
- 
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
   See also:
   http://www.angelfire.com/linux/myp/ConvexPolRas/ConvexPolRas.html
   Computer Graphics, Principles and Practice, Foley, van Dam, Feiner, Hughes (pp 92)
@@ -42,7 +42,7 @@
   - static memory usage only
   - consistent data types
   - low flash ROM consumption
-  
+
 */
 
 
@@ -67,15 +67,15 @@ static uint8_t pge_Next(struct pg_edge_struct *pge)
 {
   if ( pge->current_y >= pge->max_y )
     return 0;
-  
+
   pge->current_x += pge->current_x_offset;
   pge->error += pge->error_offset;
   if ( pge->error > 0 )
   {
     pge->current_x += pge->x_direction;
     pge->error -= pge->height;
-  }  
-  
+  }
+
   pge->current_y++;
   return 1;
 }
@@ -103,7 +103,7 @@ static void pge_Init(struct pg_edge_struct *pge, pg_word_t x1, pg_word_t y1, pg_
     width = -dx;
     pge->error = 1 - pge->height;
   }
-  
+
   pge->current_x_offset = dx / pge->height;
   pge->error_offset = width % pge->height;
 }
@@ -134,7 +134,7 @@ static void pg_expand_min_y(pg_struct *pg, pg_word_t min_y, uint8_t pge_idx)
   {
     i = pg->pge[pge_idx].next_idx_fn(pg, i);
     if ( pg->list[i].y != min_y )
-      break;	
+      break;
     pg->pge[pge_idx].curr_idx = i;
   }
 }
@@ -148,7 +148,7 @@ static uint8_t pg_prepare(pg_struct *pg)
   /* setup the next index procedures */
   pg->pge[PG_RIGHT].next_idx_fn = pg_inc;
   pg->pge[PG_LEFT].next_idx_fn = pg_dec;
-  
+
   /* search for highest and lowest point */
   max_y = pg->list[0].y;
   min_y = pg->list[0].y;
@@ -169,16 +169,16 @@ static uint8_t pg_prepare(pg_struct *pg)
   /* calculate total number of scan lines */
   pg->total_scan_line_cnt = max_y;
   pg->total_scan_line_cnt -= min_y;
-  
+
   /* exit if polygon height is zero */
   if ( pg->total_scan_line_cnt == 0 )
     return 0;
-  
+
   /* if the minimum y side is flat, try to find the lowest and highest x points */
-  pg->pge[PG_RIGHT].curr_idx = pg->pge[PG_LEFT].curr_idx;  
+  pg->pge[PG_RIGHT].curr_idx = pg->pge[PG_LEFT].curr_idx;
   pg_expand_min_y(pg, min_y, PG_RIGHT);
   pg_expand_min_y(pg, min_y, PG_LEFT);
-  
+
   /* check if the min side is really flat (depends on the x values) */
   pg->is_min_y_not_flat = 1;
   if ( pg->list[pg->pge[PG_LEFT].curr_idx].x != pg->list[pg->pge[PG_RIGHT].curr_idx].x )
@@ -201,7 +201,7 @@ static void pg_hline(pg_struct *pg, u8g_t *u8g)
   x1 = pg->pge[PG_LEFT].current_x;
   x2 = pg->pge[PG_RIGHT].current_x;
   y = pg->pge[PG_RIGHT].current_y;
-  
+
   if ( y < 0 )
     return;
   if ( y >= u8g_GetHeight(u8g) )
@@ -235,20 +235,20 @@ static void pg_hline(pg_struct *pg, u8g_t *u8g)
 static void pg_line_init(pg_struct * pg, uint8_t pge_index)
 {
   struct pg_edge_struct  *pge = pg->pge+pge_index;
-  uint8_t idx;  
+  uint8_t idx;
   pg_word_t x1;
   pg_word_t y1;
   pg_word_t x2;
   pg_word_t y2;
 
-  idx = pge->curr_idx;  
+  idx = pge->curr_idx;
   y1 = pg->list[idx].y;
   x1 = pg->list[idx].x;
   idx = pge->next_idx_fn(pg, idx);
   y2 = pg->list[idx].y;
-  x2 = pg->list[idx].x; 
+  x2 = pg->list[idx].x;
   pge->curr_idx = idx;
-  
+
   pge_Init(pge, x1, y1, x2, y2);
 }
 
@@ -257,12 +257,12 @@ static void pg_exec(pg_struct *pg, u8g_t *u8g)
   pg_word_t i = pg->total_scan_line_cnt;
 
   /* first line is skipped if the min y line is not flat */
-  pg_line_init(pg, PG_LEFT);		
+  pg_line_init(pg, PG_LEFT);
   pg_line_init(pg, PG_RIGHT);
-  
+
   if ( pg->is_min_y_not_flat != 0 )
   {
-    pge_Next(&(pg->pge[PG_LEFT])); 
+    pge_Next(&(pg->pge[PG_LEFT]));
     pge_Next(&(pg->pge[PG_RIGHT]));
   }
 

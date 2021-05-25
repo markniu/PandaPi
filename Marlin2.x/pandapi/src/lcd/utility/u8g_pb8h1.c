@@ -1,38 +1,38 @@
 /*
 
   u8g_pb8h1.c
-  
+
   8bit height monochrom (1 bit) page buffer
   byte has horizontal orientation
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
   total buffer size is limited to 256 bytes because of the calculation inside the set pixel procedure
@@ -118,26 +118,26 @@ static void u8g_pb8h1_state_init(struct u8g_pb_h1_struct *s, u8g_pb_t *b, u8g_ui
 static void u8g_pb8h1_state_init(struct u8g_pb_h1_struct *s, u8g_pb_t *b, u8g_uint_t x, u8g_uint_t y)
 {
   u8g_uint_t tmp;
-  
+
   uint8_t *ptr = b->buf;
-  
-  s->x = x;  
+
+  s->x = x;
   s->y = y;
-  
+
   y -= b->p.page_y0;
-  
+
   tmp = b->width;
   tmp >>= 3;
   s->line_byte_len = tmp;
-  
+
   /* assume negative y values, can be down to -7, subtract this from the pointer and add correction of 8 to y */
   ptr -= tmp*8;
   y+=8;
   /* it is important that the result of tmp*y can be 16 bit value also for 8 bit mode */
   ptr += tmp*y;
-  
+
   s->mask = u8g_pb8h1_bitmask[x & 7];
-  
+
   /* assume negative x values (to -7), subtract 8 pixel from the pointer and add 8 to x */
   ptr--;
   x += 8;
@@ -149,12 +149,12 @@ static void u8g_pb8h1_state_init(struct u8g_pb_h1_struct *s, u8g_pb_t *b, u8g_ui
 static void u8g_pb8h1_state_set_pixel(struct u8g_pb_h1_struct *s, uint8_t color_index) U8G_NOINLINE;
 static void u8g_pb8h1_state_set_pixel(struct u8g_pb_h1_struct *s, uint8_t color_index)
 {
-  
+
 #ifdef __unix__
   assert( s->ptr >= u8g_buf_lower_limit );
   assert( s->ptr < u8g_buf_upper_limit );
 #endif
-  
+
   if ( color_index )
   {
     *s->ptr |= s->mask;
@@ -164,14 +164,14 @@ static void u8g_pb8h1_state_set_pixel(struct u8g_pb_h1_struct *s, uint8_t color_
     uint8_t mask = s->mask;
     mask ^=0xff;
     *s->ptr &= mask;
-  }  
+  }
 }
 #endif
 
 
 void u8g_pb8h1_Init(u8g_pb_t *b, void *buf, u8g_uint_t width)
 {
-  b->buf = (uint8_t *)buf;
+  b->buf = buf;
   b->width = width;
   u8g_pb_Clear(b);
 }
@@ -193,14 +193,14 @@ void u8g_pb8h1_set_pixel(u8g_pb_t *b, u8g_uint_t x, u8g_uint_t y, uint8_t color_
 #else
   register uint8_t mask;
   u8g_uint_t tmp;
-  uint8_t *ptr = b->buf;
-  
+  uint8_t *ptr = (uint8_t *)b->buf;
+
   y -= b->p.page_y0;
   tmp = b->width;
   tmp >>= 3;
   tmp *= (uint8_t)y;
   ptr += tmp;
-  
+
   mask = 0x080;
   mask >>= x & 7;
   x >>= 3;
@@ -254,7 +254,7 @@ void u8g_pb8h1_Set8PixelOpt2(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel)
   register uint8_t pixel = arg_pixel->pixel;
   u8g_uint_t dx = 0;
   u8g_uint_t dy = 0;
-  
+
   switch( arg_pixel->dir )
   {
     case 0: dx++; break;
@@ -262,7 +262,7 @@ void u8g_pb8h1_Set8PixelOpt2(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel)
     case 2: dx--; break;
     case 3: dy--; break;
   }
-  
+
   do
   {
     if ( pixel & 128 )
@@ -270,7 +270,7 @@ void u8g_pb8h1_Set8PixelOpt2(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel)
     arg_pixel->x += dx;
     arg_pixel->y += dy;
     pixel <<= 1;
-  } while( pixel != 0  );  
+  } while( pixel != 0  );
 }
 
 #ifdef NEW_CODE
@@ -283,48 +283,48 @@ static void u8g_pb8h1_Set8PixelState(u8g_pb_t *b, u8g_dev_arg_pixel_t *arg_pixel
   cnt = 8;
   switch( arg_pixel->dir )
   {
-    case 0: 
+    case 0:
       do
       {
 	if ( s.x < b->width )
 	  if ( pixel & 128 )
 	    u8g_pb8h1_state_set_pixel(&s, arg_pixel->color);
-	u8g_pb8h1_state_right(&s); 
+	u8g_pb8h1_state_right(&s);
 	pixel <<= 1;
 	cnt--;
       } while( cnt > 0 && pixel != 0  );
       break;
-    case 1: 
+    case 1:
       do
       {
 	if ( s.y >= b->p.page_y0 )
 	  if ( s.y <= b->p.page_y1 )
 	    if ( pixel & 128 )
 	      u8g_pb8h1_state_set_pixel(&s, arg_pixel->color);
-	u8g_pb8h1_state_down(&s); 
+	u8g_pb8h1_state_down(&s);
 	pixel <<= 1;
 	cnt--;
       } while( cnt > 0 && pixel != 0  );
       break;
-    case 2: 
+    case 2:
       do
       {
 	if ( s.x < b->width )
 	  if ( pixel & 128 )
 	    u8g_pb8h1_state_set_pixel(&s, arg_pixel->color);
-	u8g_pb8h1_state_left(&s); 
+	u8g_pb8h1_state_left(&s);
 	pixel <<= 1;
 	cnt--;
       } while( cnt > 0 && pixel != 0 );
       break;
-    case 3: 	
+    case 3:
       do
       {
 	if ( s.y >= b->p.page_y0 )
 	  if ( s.y <= b->p.page_y1 )
 	    if ( pixel & 128 )
 	      u8g_pb8h1_state_set_pixel(&s, arg_pixel->color);
-	u8g_pb8h1_state_up(&s); 
+	u8g_pb8h1_state_up(&s);
 	pixel <<= 1;
 	cnt--;
       } while( cnt > 0 && pixel != 0  );
@@ -385,5 +385,5 @@ uint8_t u8g_dev_pb8h1_base_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg
   }
   return 1;
 }
- 
-  
+
+

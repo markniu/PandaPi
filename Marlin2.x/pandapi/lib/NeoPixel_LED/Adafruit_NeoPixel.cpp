@@ -149,6 +149,7 @@ int read_version_led()
   @brief   Configure NeoPixel pin for output.
 */
 void Adafruit_NeoPixel::begin(void) {
+
   if(pin >= 0) {
     pinMode(pin, OUTPUT);
     digitalWrite(pin, LOW);

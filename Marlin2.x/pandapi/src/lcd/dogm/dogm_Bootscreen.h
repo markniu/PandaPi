@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -25,13 +25,12 @@
  * Standard Marlin Boot Screen bitmaps
  *
  * Use the Marlin Bitmap Converter to make your own:
- * http://marlinfw.org/tools/u8glib/converter.html
+ * https://marlinfw.org/tools/u8glib/converter.html
  */
 
 #include "../../inc/MarlinConfig.h"
 
 #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
-
   //#include "../../../_Bootscreen.h"// PANDAPI
    const unsigned char custom_start_bmp[] PROGMEM = {
 	  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0xF0,0x00,0x00,0x00,0x00,0xFE,0x00,0x0F,0xFC,0x00,0x3F,0xE0,0x03,0xFF,0x80,0x1F,0xFF,0x07,0xFF,0xFF,0x1F,0xFF,0xC0,0x3F,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xE0,0x7F,0xFF,0xFF,0xF8,0xFF,0xFF,0xFF,0xF0,0xFF,0xFF,0xFE,0x00,0x01,0xFF,0xFF,0xF0,
@@ -44,6 +43,20 @@
 	  
 	  };
 
+  typedef struct {
+    const unsigned char *bitmap;
+    const unsigned short duration;
+  } boot_frame_t;
+
+  #include "../../../_Bootscreen.h"
+
+  #if ENABLED(CUSTOM_BOOTSCREEN_ANIMATED) && DISABLED(CUSTOM_BOOTSCREEN_ANIMATED_FRAME_TIME) && !defined(CUSTOM_BOOTSCREEN_FRAME_TIME)
+    #define CUSTOM_BOOTSCREEN_FRAME_TIME 500 // (ms)
+  #endif
+
+  #ifndef CUSTOM_BOOTSCREEN_BMPWIDTH
+    #define CUSTOM_BOOTSCREEN_BMPWIDTH 128
+  #endif
   #ifndef CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH
     #define CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH CEILING(CUSTOM_BOOTSCREEN_BMPWIDTH, 8)
   #endif
@@ -51,6 +64,13 @@
     #define CUSTOM_BOOTSCREEN_BMPHEIGHT (sizeof(custom_start_bmp) / (CUSTOM_BOOTSCREEN_BMP_BYTEWIDTH))
   #endif
 
+  #ifndef CUSTOM_BOOTSCREEN_Y
+    #if ENABLED(CUSTOM_BOOTSCREEN_BOTTOM_JUSTIFY)
+      #define CUSTOM_BOOTSCREEN_Y (LCD_PIXEL_HEIGHT - (CUSTOM_BOOTSCREEN_BMPHEIGHT))
+    #else
+      #define CUSTOM_BOOTSCREEN_Y ((LCD_PIXEL_HEIGHT - (CUSTOM_BOOTSCREEN_BMPHEIGHT)) / 2)
+    #endif
+  #endif
 #endif
 
 #if ENABLED(BOOT_MARLIN_LOGO_SMALL)

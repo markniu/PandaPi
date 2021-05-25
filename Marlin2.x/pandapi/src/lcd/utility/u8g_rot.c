@@ -3,35 +3,35 @@
   u8g_rot.c
 
   Universal 8bit Graphics Library
-  
+
   Copyright (c) 2011, olikraus@gmail.com
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  * Redistributions of source code must retain the above copyright notice, this list 
+  * Redistributions of source code must retain the above copyright notice, this list
     of conditions and the following disclaimer.
-    
-  * Redistributions in binary form must reproduce the above copyright notice, this 
-    list of conditions and the following disclaimer in the documentation and/or other 
+
+  * Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
     materials provided with the distribution.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
-  
-  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
 */
 
 #include "u8g.h"
@@ -47,12 +47,11 @@ uint8_t u8g_dev_rot_dummy_fn(void *u8g, void *dev, uint8_t msg, void *arg)
 
 u8g_dev_t u8g_dev_rot = { (u8g_dev_fnptr)u8g_dev_rot_dummy_fn, NULL, NULL };
 
-
 void u8g_UndoRotation(u8g_t *u8g)
 {
   if ( u8g->dev != &u8g_dev_rot )
     return;
-  u8g->dev = (u8g_dev_t *)u8g_dev_rot.dev_mem;
+  u8g->dev = (u8g_dev_t* ) u8g_dev_rot.dev_mem;
   u8g_UpdateDimension(u8g);
 }
 
@@ -109,23 +108,23 @@ uint8_t u8g_dev_rot90_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       {
         u8g_dev_arg_bbx_t *bbx = (u8g_dev_arg_bbx_t *)arg;
         u8g_uint_t x, y, tmp;
-        
+
         /* transform the reference point */
         y = bbx->x;
         x = u8g->height;
         /* x = u8g_GetWidthLL(u8g, rotation_chain); */
-        x -= bbx->y; 
+        x -= bbx->y;
         x--;
-        
+
         /* adjust point to be the uppler left corner again */
         x -= bbx->h;
         x++;
-        
-        /* swap box dimensions */        
+
+        /* swap box dimensions */
         tmp = bbx->w;
         bbx->w = bbx->h;
         bbx->h = tmp;
-        
+
         /* store x,y */
         bbx->x = x;
         bbx->y = y;
@@ -140,7 +139,7 @@ uint8_t u8g_dev_rot90_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
 	u8g_box_t new_box;
 	//new_box.x0 = u8g_GetHeightLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->y1 - 1;
 	//new_box.x1 = u8g_GetHeightLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->y0 - 1;
-	
+
 	new_box.x0 = ((u8g_box_t *)arg)->y0;
 	new_box.x1 = ((u8g_box_t *)arg)->y1;
 	new_box.y0 = ((u8g_box_t *)arg)->x0;
@@ -161,7 +160,7 @@ uint8_t u8g_dev_rot90_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
         u8g_uint_t x, y;
         y = ((u8g_dev_arg_pixel_t *)arg)->x;
         x = u8g_GetWidthLL(u8g, rotation_chain);
-        x -= ((u8g_dev_arg_pixel_t *)arg)->y; 
+        x -= ((u8g_dev_arg_pixel_t *)arg)->y;
         x--;
         ((u8g_dev_arg_pixel_t *)arg)->x = x;
         ((u8g_dev_arg_pixel_t *)arg)->y = y;
@@ -175,7 +174,7 @@ uint8_t u8g_dev_rot90_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
 	//uint16_t x,y;
         y = ((u8g_dev_arg_pixel_t *)arg)->x;
         x = u8g_GetWidthLL(u8g, rotation_chain);
-        x -= ((u8g_dev_arg_pixel_t *)arg)->y; 
+        x -= ((u8g_dev_arg_pixel_t *)arg)->y;
         x--;
         ((u8g_dev_arg_pixel_t *)arg)->x = x;
         ((u8g_dev_arg_pixel_t *)arg)->y = y;
@@ -208,25 +207,25 @@ uint8_t u8g_dev_rot180_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       {
         u8g_dev_arg_bbx_t *bbx = (u8g_dev_arg_bbx_t *)arg;
         u8g_uint_t x, y;
-        
+
         /* transform the reference point */
         //y = u8g_GetHeightLL(u8g, rotation_chain);
         y = u8g->height;
-        y -= bbx->y; 
+        y -= bbx->y;
         y--;
-        
+
         //x = u8g_GetWidthLL(u8g, rotation_chain);
         x = u8g->width;
-        x -= bbx->x; 
+        x -= bbx->x;
         x--;
-        
+
         /* adjust point to be the uppler left corner again */
         y -= bbx->h;
         y++;
-        
+
         x -= bbx->w;
         x++;
-                
+
         /* store x,y */
         bbx->x = x;
         bbx->y = y;
@@ -239,7 +238,7 @@ uint8_t u8g_dev_rot180_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       //printf("pre x: %3d..%3d y: %3d..%3d   ", ((u8g_box_t *)arg)->x0, ((u8g_box_t *)arg)->x1, ((u8g_box_t *)arg)->y0, ((u8g_box_t *)arg)->y1);
       {
 	u8g_box_t new_box;
-	
+
 	new_box.x0 = u8g_GetWidthLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->x1 - 1;
 	new_box.x1 = u8g_GetWidthLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->x0 - 1;
 	new_box.y0 = u8g_GetHeightLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->y1 - 1;
@@ -260,13 +259,13 @@ uint8_t u8g_dev_rot180_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
         u8g_uint_t x, y;
 
         y = u8g_GetHeightLL(u8g, rotation_chain);
-        y -= ((u8g_dev_arg_pixel_t *)arg)->y; 
+        y -= ((u8g_dev_arg_pixel_t *)arg)->y;
         y--;
-        
+
         x = u8g_GetWidthLL(u8g, rotation_chain);
-        x -= ((u8g_dev_arg_pixel_t *)arg)->x; 
+        x -= ((u8g_dev_arg_pixel_t *)arg)->x;
         x--;
-        
+
         ((u8g_dev_arg_pixel_t *)arg)->x = x;
         ((u8g_dev_arg_pixel_t *)arg)->y = y;
       }
@@ -276,15 +275,15 @@ uint8_t u8g_dev_rot180_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
     case U8G_DEV_MSG_SET_4TPIXEL:
       {
         u8g_uint_t x, y;
-        
+
         y = u8g_GetHeightLL(u8g, rotation_chain);
-        y -= ((u8g_dev_arg_pixel_t *)arg)->y; 
+        y -= ((u8g_dev_arg_pixel_t *)arg)->y;
         y--;
-        
+
         x = u8g_GetWidthLL(u8g, rotation_chain);
-        x -= ((u8g_dev_arg_pixel_t *)arg)->x; 
+        x -= ((u8g_dev_arg_pixel_t *)arg)->x;
         x--;
-        
+
         ((u8g_dev_arg_pixel_t *)arg)->x = x;
         ((u8g_dev_arg_pixel_t *)arg)->y = y;
         ((u8g_dev_arg_pixel_t *)arg)->dir+=2;
@@ -316,24 +315,24 @@ uint8_t u8g_dev_rot270_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       {
         u8g_dev_arg_bbx_t *bbx = (u8g_dev_arg_bbx_t *)arg;
         u8g_uint_t x, y, tmp;
-        
+
         /* transform the reference point */
         x = bbx->y;
-        
+
         y = u8g->width;
         /* y = u8g_GetHeightLL(u8g, rotation_chain); */
-        y -= bbx->x; 
+        y -= bbx->x;
         y--;
-                
+
         /* adjust point to be the uppler left corner again */
         y -= bbx->w;
         y++;
-        
-        /* swap box dimensions */        
+
+        /* swap box dimensions */
         tmp = bbx->w;
         bbx->w = bbx->h;
         bbx->h = tmp;
-        
+
         /* store x,y */
         bbx->x = x;
         bbx->y = y;
@@ -346,7 +345,7 @@ uint8_t u8g_dev_rot270_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       //printf("pre x: %3d..%3d y: %3d..%3d   ", ((u8g_box_t *)arg)->x0, ((u8g_box_t *)arg)->x1, ((u8g_box_t *)arg)->y0, ((u8g_box_t *)arg)->y1);
       {
 	u8g_box_t new_box;
-	
+
 	new_box.x0 = u8g_GetHeightLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->y1 - 1;
 	new_box.x1 = u8g_GetHeightLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->y0 - 1;
 	new_box.y0 = u8g_GetWidthLL(u8g,rotation_chain) - ((u8g_box_t *)arg)->x1 - 1;
@@ -366,14 +365,14 @@ uint8_t u8g_dev_rot270_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       {
         u8g_uint_t x, y;
         x = ((u8g_dev_arg_pixel_t *)arg)->y;
-        
+
         y = u8g_GetHeightLL(u8g, rotation_chain);
-        y -= ((u8g_dev_arg_pixel_t *)arg)->x; 
+        y -= ((u8g_dev_arg_pixel_t *)arg)->x;
         y--;
-          
+
         /*
         x = u8g_GetWidthLL(u8g, rotation_chain);
-        x -= ((u8g_dev_arg_pixel_t *)arg)->y; 
+        x -= ((u8g_dev_arg_pixel_t *)arg)->y;
         x--;
         */
         ((u8g_dev_arg_pixel_t *)arg)->x = x;
@@ -386,14 +385,14 @@ uint8_t u8g_dev_rot270_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg)
       {
         u8g_uint_t x, y;
         x = ((u8g_dev_arg_pixel_t *)arg)->y;
-        
+
         y = u8g_GetHeightLL(u8g, rotation_chain);
-        y -= ((u8g_dev_arg_pixel_t *)arg)->x; 
+        y -= ((u8g_dev_arg_pixel_t *)arg)->x;
         y--;
-          
+
         /*
         x = u8g_GetWidthLL(u8g, rotation_chain);
-        x -= ((u8g_dev_arg_pixel_t *)arg)->y; 
+        x -= ((u8g_dev_arg_pixel_t *)arg)->y;
         x--;
         */
         ((u8g_dev_arg_pixel_t *)arg)->x = x;
