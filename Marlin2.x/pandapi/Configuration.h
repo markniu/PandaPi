@@ -76,7 +76,7 @@
 #define MOTOR_SPEED_CALIBRATE  
 
 //  PANDAPI
-#define DGUS_LCD_UI_PANDAPI
+//#define DGUS_LCD_UI_PANDAPI
 #if DISABLED(DGUS_LCD_UI_PANDAPI)
 
 	#define ULTRA_LCD 
@@ -538,14 +538,14 @@
   #else
   //////// PANDAPI
   // //  Ender3
-  //#define DEFAULT_Kp 25
-  //#define DEFAULT_Ki 2.0
-  //#define DEFAULT_Kd 440
+  #define DEFAULT_Kp 25
+  #define DEFAULT_Ki 2.0
+  #define DEFAULT_Kd 440
 
   // Ender5
-  #define DEFAULT_Kp 25
-  #define DEFAULT_Ki 1.08
-  #define DEFAULT_Kd 440
+ // #define DEFAULT_Kp 25
+ // #define DEFAULT_Ki 1.08
+ // #define DEFAULT_Kd 440
 
   // PT100
   //#define DEFAULT_Kp 25
@@ -838,7 +838,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 93 }   //Orig { 80, 80, 4000, 500 } 93*2 = DRV8825 1/32 Stepps
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 93 }   //Orig { 80, 80, 4000, 500 } 93*2 = DRV8825 1/32 Stepps
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -1222,9 +1222,9 @@
 // @section machine
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
-#define INVERT_X_DIR false
-#define INVERT_Y_DIR false
-#define INVERT_Z_DIR true
+#define INVERT_X_DIR true
+#define INVERT_Y_DIR true
+#define INVERT_Z_DIR false
 
 // @section extruder
 
