@@ -419,6 +419,10 @@ void GCodeQueue::get_serial_commands() {
     LOOP_L_N(p, NUM_SERIAL) {
       // Check if the queue is full and exit if it is.
       if (ring_buffer.full()) return;
+#if ENABLED(DGUS_LCD_UI_PANDAPI)
+	  if(p==0) // this port is already used for serial dgus screen
+	  	continue;
+#endif
 
       // No data for this port ? Skip it
       if (!serial_data_available(p)) continue;

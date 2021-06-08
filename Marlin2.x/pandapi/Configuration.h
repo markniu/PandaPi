@@ -77,7 +77,7 @@
 
 //  PANDAPI
 #define  CASE_FAN_SPEED_IDLE  180   // the vaule must within 0~255, e.g the default value is 180, means 70% of the speed.
-//#define DGUS_LCD_UI_PANDAPI
+#define DGUS_LCD_UI_PANDAPI
 #if DISABLED(DGUS_LCD_UI_PANDAPI)
 
 	#define ULTRA_LCD 
