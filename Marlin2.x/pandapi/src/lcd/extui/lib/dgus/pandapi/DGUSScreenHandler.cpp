@@ -274,7 +274,7 @@ void DGUSScreenHandler::HandleManualMove(DGUS_VP_Variable &var, void *val_ptr) {
   DEBUG_ECHOLNPGM("HandleManualMove");
 
   int16_t movevalue = swap16(*(uint16_t*)val_ptr);
-  #if ENABLED(DGUS_UI_MOVE_DIS_OPTION)
+  #if DISABLED(DGUS_UI_MOVE_DIS_OPTION)
     if (movevalue) {
       const uint16_t choice = *(uint16_t*)var.memadr;
       movevalue = movevalue < 0 ? -choice : choice;
