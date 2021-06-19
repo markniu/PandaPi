@@ -1,0 +1,40 @@
+,PI GPIO,PandaPI,Klipper
+X_Endstop,18,1,PA3
+Y_Endstop,23,4,PA4
+Z_Endstop,7,11,PA1
+X_Step,4,7,PB8
+X_Dir,27,2,PB6
+Y_Step,10,12,PB5
+Y_Dir,24,5,PB4
+Z_Step,11,14,PB3
+Z_Dir,9,13,PA15
+E0_Step,8,10,PB15
+E0_Dir,25,6,PB14
+E1_Step,12,26,PB2
+E1_Dir,26,25,PA7
+E2_Step,1,31,PA6
+E2_Dir,5,21,PA5
+STEPPER_Enabled,17,0,PB9
+BLTOUCH_Signal,,,PA11
+Heater Bed,,,PB13
+Heater_Hotend0,,,PB12
+Heater_Hotend1,,,PA12
+Fan0(Hotend0),,,PA8
+Fan1(model),,,PA9
+Fan2(board),,,PA10
+Fan3,,,PB7
+Bed Thermistor,,,PB1
+Hotend0 Thermistor,,,PB0
+Hotend1 Thermistor,,,PA2
+Filament Runout,,,PA14
+DHT11,22,3,
+Beeper,19,24,
+LCD_BTN,0,30,
+LCD_BTN1,6,22,
+LCD_BTN2,13,23,
+LCD_RS,20,28,
+LCD_ENABLE,21,29,
+LCD_D4,16,27,
+STLINK_SDA,,,PA13
+STLINK_SCL,,,PA14
+UART_TMC2209_TX,14,15,
