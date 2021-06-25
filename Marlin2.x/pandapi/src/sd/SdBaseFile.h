@@ -33,7 +33,7 @@
 #include "SdFatConfig.h"
 #include "SdVolume.h"
 
-#include <stdint.h>
+//#include <stdint.h>  PANDAPI
 
 /**
  * \struct filepos_t
