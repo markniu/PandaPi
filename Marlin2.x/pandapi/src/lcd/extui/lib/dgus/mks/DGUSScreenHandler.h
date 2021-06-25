@@ -38,6 +38,9 @@ public:
   // Send all 4 strings that are displayed on the infoscreen, confirmation screen and kill screen
   // The bools specifing whether the strings are in RAM or FLASH.
   static void sendinfoscreen(const char *line1, const char *line2, const char *line3, const char *line4, bool l1inflash, bool l2inflash, bool l3inflash, bool liinflash);
+  //PANDAPI
+  static void DGUSLCD_SendOctoPi_ChooseToDisplay(DGUS_VP_Variable &var);
+  static void HandleOCTOPIClose(DGUS_VP_Variable &var, void *val_ptr);
 
   static void HandleUserConfirmationPopUp(uint16_t ConfirmVP, const char *line1, const char *line2, const char *line3, const char *line4, bool l1inflash, bool l2inflash, bool l3inflash, bool liinflash);
 

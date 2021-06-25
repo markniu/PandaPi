@@ -65,7 +65,7 @@ void MKS_reset_settings() {
     { 20, 20 }, { 20, 20 },
     { X_CENTER, Y_CENTER }
   };
-  mks_language_index = 0;
+  mks_language_index = 1; // english
   COPY(mks_corner_offsets, init_dgus_level_offsets);
   mks_park_pos.set(20, 20, 10);
   mks_min_extrusion_temp = 0;

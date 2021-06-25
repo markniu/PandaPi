@@ -175,7 +175,10 @@ void DGUSDisplay::ProcessRx() {
         break;
 
       case DGUS_WAIT_TELEGRAM: // wait for complete datagram to arrive.
-        if (LCD_SERIAL.available() < rx_datagram_len) return;
+        if (LCD_SERIAL.available() < rx_datagram_len)
+		{
+		    delay(100);//return; // PANDAPI
+        }
 
         Initialized = true; // We've talked to it, so we defined it as initialized.
         uint8_t command = LCD_SERIAL.read();

@@ -108,6 +108,11 @@ void DGUSScreenHandler::DGUSLCD_SendPrintTimeToDisplay_MKS(DGUS_VP_Variable &var
   dgusdisplay.WriteVariable(VP_PrintTime_M, uint16_t(time % 3600 / 60));
   dgusdisplay.WriteVariable(VP_PrintTime_S, uint16_t((time % 3600) % 60));
 }
+//PANDAPI
+inline long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 void DGUSScreenHandler::DGUSLCD_SetUint8(DGUS_VP_Variable &var, void *val_ptr) {
   if (var.memadr) {

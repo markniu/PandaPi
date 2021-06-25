@@ -78,10 +78,15 @@
 //  PANDAPI
 #define  CASE_FAN_SPEED_IDLE  180   // the vaule must within 0~255, e.g the default value is 180, means 70% of the speed.
 #define DGUS_LCD_UI_PANDAPI
-#if DISABLED(DGUS_LCD_UI_PANDAPI)
-
+//#define DGUS_LCD_UI_MKS
+#if DISABLED(DGUS_LCD_UI_PANDAPI)&&DISABLED(DGUS_LCD_UI_MKS)
 	#define ULTRA_LCD 
 	#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+#endif
+
+
+#if ENABLED(DGUS_LCD_UI_MKS)
+  #define USE_MKS_GREEN_UI
 #endif
 
 /**
@@ -2418,10 +2423,7 @@
 //#define DGUS_LCD_UI_FYSETC
 //#define DGUS_LCD_UI_HIPRECY
 
-//#define DGUS_LCD_UI_MKS
-#if ENABLED(DGUS_LCD_UI_MKS)
-  #define USE_MKS_GREEN_UI
-#endif
+
 
 //
 // Touch-screen LCD for Malyan M200/M300 printers

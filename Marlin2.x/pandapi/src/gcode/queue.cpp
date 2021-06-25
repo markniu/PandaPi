@@ -300,6 +300,10 @@ void GCodeQueue::gcode_line_error(PGM_P const err, const serial_index_t serial_i
   PORT_REDIRECT(SERIAL_PORTMASK(serial_ind)); // Reply to the serial port that sent the command
   SERIAL_ERROR_START();
   SERIAL_ECHOLNPAIR_P(err, serial_state[serial_ind.index].last_N);
+#if ENABLED(DGUS_LCD_UI_PANDAPI)||ENABLED(DGUS_LCD_UI_MKS)
+	  if(!serial_ind.index) // this port is already used for serial dgus screen
+	  	return;
+#endif
   while (read_serial(serial_ind) != -1) { /* nada */ } // Clear out the RX buffer. Why don't use flush here ?
   flush_and_request_resend(serial_ind);
   serial_state[serial_ind.index].count = 0;
@@ -419,7 +423,7 @@ void GCodeQueue::get_serial_commands() {
     LOOP_L_N(p, NUM_SERIAL) {
       // Check if the queue is full and exit if it is.
       if (ring_buffer.full()) return;
-#if ENABLED(DGUS_LCD_UI_PANDAPI)
+#if ENABLED(DGUS_LCD_UI_PANDAPI)||ENABLED(DGUS_LCD_UI_MKS)
 	  if(p==0) // this port is already used for serial dgus screen
 	  	continue;
 #endif
