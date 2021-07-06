@@ -246,7 +246,7 @@ int CardReader::countItems(SdFile dir) {
 void CardReader::selectByIndex(SdFile dir, const uint8_t index) {
   dir_t p;
   ////PANDAPI
-  printf("selectByIndex==\n");
+   
   Linux_readDir(&p,0,index,NULL);
   return;
 

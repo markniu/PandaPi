@@ -194,8 +194,8 @@ extern char parse_string(char *src,char *start,char *end,char *out,int *e_pos);
 	   // fread(buffer, sizeof(buffer), 1, pf);
 	    // printf("%s\n", buffer);   
 	   // pclose(pf);	
-	   send_to_curl("curl -s   http://localhost//api/files?recursive=true");
-	    while(i<50)
+	    send_to_curl("curl -s   http://localhost//api/files?recursive=true");
+	    while(i<100)
 	    {
 	    	parse_string(buffer+len,"\"resource\":","}",out_t,&k);
 			len+=k;
@@ -207,9 +207,9 @@ extern char parse_string(char *src,char *start,char *end,char *out,int *e_pos);
 			 
 		}
 		octopi_file_num=i++;// total files
-		printf("===%d/%d\n",target_line,octopi_file_num); 
+		//printf("===%d/%d\n",target_line,octopi_file_num); 
 		k=len=0;
-		for(i=0;i<=target_line;i++)
+		for(i=0;i<=top_file+target_line;i++)
 		{
 			parse_string(buffer+len,"\"resource\":","}",out_t,&k);
 			len+=k;
@@ -220,7 +220,7 @@ extern char parse_string(char *src,char *start,char *end,char *out,int *e_pos);
 		 		
 				memset(tmpfilename,0,sizeof(tmpfilename));
 		 	}
-			 printf("%s : %d\n",tmpfilename,i);
+		//	 printf("%s : %d\n",tmpfilename,i);
 		}
 	}
 	else if (filelist.seek(top_file + target_line)) {

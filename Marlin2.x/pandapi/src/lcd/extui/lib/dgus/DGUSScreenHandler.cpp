@@ -450,6 +450,11 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
       }
       else {
         int16_t max_top = filelist.count() -  DGUS_SD_FILESPERSCREEN;
+	  	//PANDAPI
+	    if(octopi_choose_status)
+	    {
+	    	max_top = octopi_file_num -  DGUS_SD_FILESPERSCREEN;
+	    }
         NOLESS(max_top, 0);
         NOMORE(top_file, max_top);
       }
