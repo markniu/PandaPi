@@ -214,7 +214,7 @@ void DGUSScreenHandler::HandleOCTOPIClose(DGUS_VP_Variable &var, void *val_ptr) 
     //PANDAPI
 	int k=0;
 	char out_t[128];
-  printf("DGUSLCD_SendOctoPi_ChooseToDisplay\n");
+  
   if(octopi_choose_status)
   {
   	 
@@ -488,7 +488,7 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
   }
 
   void DGUSScreenHandler::DGUSLCD_SD_PrintTune(DGUS_VP_Variable &var, void *val_ptr) {
-    if (!ExtUI::isPrintingFromMedia()) return; // avoid race condition when user stays in this menu and printer finishes.
+    if ((!ExtUI::isPrintingFromMedia())&&(octopi_choose_status==0)) return; // avoid race condition when user stays in this menu and printer finishes.
     GotoScreen(DGUSLCD_SCREEN_SDPRINTTUNE);
   }
 
