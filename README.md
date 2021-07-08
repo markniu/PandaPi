@@ -39,7 +39,7 @@ stepper driver   |  6*(TMC2209/TMC2208/A4988)	 | Modular, replaceable,uart for T
 Input   | 	9~28V 20A max	 | power both the board and the Raspberry Pi
 heater Output   | 	15Amax	 | 
 MCU   | 	stm32	 |  
-LCD   | 	Graphic128*64/CrealityLCD128*64/HDMI	 | 
+LCD   | 	LCD128*64/HDMI/PandaTouchScreen	 | 
 FAN   |   Support mixed use of 3V-24V fans   | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
