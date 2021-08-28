@@ -117,7 +117,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #endif
   #define X2_STEP_INIT() SET_OUTPUT(X2_STEP_PIN)
   #ifndef X2_STEP_WRITE
-    #define X2_STEP_WRITE(STATE) WRITE(X2_STEP_PIN,STATE)
+    #define X2_STEP_WRITE(STATE) {WRITE(X2_STEP_PIN,STATE);delay_step();}//  PANDAPI
   #endif
   #define X2_STEP_READ() bool(READ(X2_STEP_PIN))
 #endif
@@ -136,7 +136,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #endif
   #define Y2_STEP_INIT() SET_OUTPUT(Y2_STEP_PIN)
   #ifndef Y2_STEP_WRITE
-    #define Y2_STEP_WRITE(STATE) WRITE(Y2_STEP_PIN,STATE)
+    #define Y2_STEP_WRITE(STATE) {WRITE(Y2_STEP_PIN,STATE);delay_step();}//  PANDAPI
   #endif
   #define Y2_STEP_READ() bool(READ(Y2_STEP_PIN))
 #else
@@ -157,7 +157,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #endif
   #define Z2_STEP_INIT() SET_OUTPUT(Z2_STEP_PIN)
   #ifndef Z2_STEP_WRITE
-    #define Z2_STEP_WRITE(STATE) WRITE(Z2_STEP_PIN,STATE)
+    #define Z2_STEP_WRITE(STATE) {WRITE(Z2_STEP_PIN,STATE);delay_step();}//  PANDAPI
   #endif
   #define Z2_STEP_READ() bool(READ(Z2_STEP_PIN))
 #else
@@ -178,7 +178,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #endif
   #define Z3_STEP_INIT() SET_OUTPUT(Z3_STEP_PIN)
   #ifndef Z3_STEP_WRITE
-    #define Z3_STEP_WRITE(STATE) WRITE(Z3_STEP_PIN,STATE)
+    #define Z3_STEP_WRITE(STATE) {WRITE(Z3_STEP_PIN,STATE);delay_step();}//  PANDAPI
   #endif
   #define Z3_STEP_READ() bool(READ(Z3_STEP_PIN))
 #else
@@ -199,7 +199,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #endif
   #define Z4_STEP_INIT() SET_OUTPUT(Z4_STEP_PIN)
   #ifndef Z4_STEP_WRITE
-    #define Z4_STEP_WRITE(STATE) WRITE(Z4_STEP_PIN,STATE)
+    #define Z4_STEP_WRITE(STATE) {WRITE(Z4_STEP_PIN,STATE);delay_step();}//  PANDAPI
   #endif
   #define Z4_STEP_READ() bool(READ(Z4_STEP_PIN))
 #else
@@ -270,7 +270,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E3_STEP_INIT() SET_OUTPUT(E3_STEP_PIN)
 #ifndef E3_STEP_WRITE
-  #define E3_STEP_WRITE(STATE) WRITE(E3_STEP_PIN,STATE)
+  #define E3_STEP_WRITE(STATE) {WRITE(E3_STEP_PIN,STATE);delay_step();}//  PANDAPI
 #endif
 #define E3_STEP_READ() bool(READ(E3_STEP_PIN))
 
@@ -287,7 +287,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E4_STEP_INIT() SET_OUTPUT(E4_STEP_PIN)
 #ifndef E4_STEP_WRITE
-  #define E4_STEP_WRITE(STATE) WRITE(E4_STEP_PIN,STATE)
+  #define E4_STEP_WRITE(STATE) {WRITE(E4_STEP_PIN,STATE);delay_step();}//  PANDAPI
 #endif
 #define E4_STEP_READ() bool(READ(E4_STEP_PIN))
 
@@ -304,7 +304,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E5_STEP_INIT() SET_OUTPUT(E5_STEP_PIN)
 #ifndef E5_STEP_WRITE
-  #define E5_STEP_WRITE(STATE) WRITE(E5_STEP_PIN,STATE)
+  #define E5_STEP_WRITE(STATE) {WRITE(E5_STEP_PIN,STATE);delay_step();}//  PANDAPI
 #endif
 #define E5_STEP_READ() bool(READ(E5_STEP_PIN))
 
@@ -321,7 +321,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E6_STEP_INIT() SET_OUTPUT(E6_STEP_PIN)
 #ifndef E6_STEP_WRITE
-  #define E6_STEP_WRITE(STATE) WRITE(E6_STEP_PIN,STATE)
+  #define E6_STEP_WRITE(STATE) {WRITE(E6_STEP_PIN,STATE);delay_step();}//  PANDAPI
 #endif
 #define E6_STEP_READ() bool(READ(E6_STEP_PIN))
 
@@ -338,7 +338,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 #endif
 #define E7_STEP_INIT() SET_OUTPUT(E7_STEP_PIN)
 #ifndef E7_STEP_WRITE
-  #define E7_STEP_WRITE(STATE) WRITE(E7_STEP_PIN,STATE)
+  #define E7_STEP_WRITE(STATE) {WRITE(E7_STEP_PIN,STATE);delay_step();}//  PANDAPI
 #endif
 #define E7_STEP_READ() bool(READ(E7_STEP_PIN))
 
