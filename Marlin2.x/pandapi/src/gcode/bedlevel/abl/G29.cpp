@@ -87,6 +87,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+// -101~ 100
+int linux_random_101()
+{
+	srand( (unsigned)time( NULL ) );  
+	return rand()%(201)-101;
+
+}
+
 // For manual probing values persist over multiple G29
 class G29_State {
 public:
