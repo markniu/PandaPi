@@ -1,0 +1,2 @@
+Dependencies for Project 'Stm32f103Bootloader', Target 'Target 1': (DO NOT MODIFY !)
+F (.\STM32F10x.s)(0x4A028246)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork -I "C:\Keil-ARM\ARM\INC" -I "C:\Keil-ARM\ARM\INC\ST\STM32F10x" --list "STM32F10x.lst" --xref -o "STM32F10x.o")
