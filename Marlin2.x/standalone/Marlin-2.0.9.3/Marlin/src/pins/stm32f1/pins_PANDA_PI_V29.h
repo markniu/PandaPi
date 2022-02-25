@@ -206,7 +206,7 @@
 #endif
 
 #if SD_CONNECTION_IS(ONBOARD)
-  #define SD_DETECT_PIN                     PC4
+ // #define SD_DETECT_PIN                     PA4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PA7
@@ -218,5 +218,5 @@
 #endif
 
 #define ONBOARD_SPI_DEVICE                     1  // SPI1
-//#define ONBOARD_SD_CS_PIN                   PD2   // Chip select for "System" SD card
-//#define SDSS                   ONBOARD_SD_CS_PIN
+#define ONBOARD_SD_CS_PIN                   PA4   // Chip select for "System" SD card
+#define SDSS                   ONBOARD_SD_CS_PIN
