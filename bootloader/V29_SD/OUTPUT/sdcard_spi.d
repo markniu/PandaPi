@@ -2,7 +2,7 @@
 ..\output\sdcard_spi.o: ..\CODE\SYSTEM\sys.h
 ..\output\sdcard_spi.o: ..\CODE\USER\stm32f10x.h
 ..\output\sdcard_spi.o: ..\CODE\CORE\core_cm3.h
-..\output\sdcard_spi.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\sdcard_spi.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\sdcard_spi.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\sdcard_spi.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\sdcard_spi.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h

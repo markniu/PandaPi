@@ -3,7 +3,7 @@
 ..\output\main.o: ..\CODE\SYSTEM\sys.h
 ..\output\main.o: ..\CODE\USER\stm32f10x.h
 ..\output\main.o: ..\CODE\CORE\core_cm3.h
-..\output\main.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\main.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\main.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\main.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\main.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -31,12 +31,12 @@
 ..\output\main.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\output\main.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
 ..\output\main.o: ..\CODE\SYSTEM\usart.h
-..\output\main.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\main.o: d:\Keil\ARM\ARMCC\bin\..\include\stdio.h
 ..\output\main.o: ..\CODE\APP\flash.h
-..\output\main.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+..\output\main.o: d:\Keil\ARM\ARMCC\bin\..\include\string.h
 ..\output\main.o: ..\CODE\SYSTEM\typedefs.h
 ..\output\main.o: ..\CODE\SYSTEM\util.h
-..\output\main.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\output\main.o: d:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
 ..\output\main.o: ..\CODE\APP\fat.h
 ..\output\main.o: ..\CODE\FATFS\diskio.h
 ..\output\main.o: ..\CODE\FATFS\integer.h

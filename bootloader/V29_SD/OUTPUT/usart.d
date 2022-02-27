@@ -2,7 +2,7 @@
 ..\output\usart.o: ..\CODE\SYSTEM\sys.h
 ..\output\usart.o: ..\CODE\USER\stm32f10x.h
 ..\output\usart.o: ..\CODE\CORE\core_cm3.h
-..\output\usart.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\usart.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\usart.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\usart.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\usart.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -30,5 +30,5 @@
 ..\output\usart.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\output\usart.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
 ..\output\usart.o: ..\CODE\SYSTEM\usart.h
-..\output\usart.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\usart.o: d:\Keil\ARM\ARMCC\bin\..\include\stdio.h
 ..\output\usart.o: ..\CODE\SYSTEM\delay.h

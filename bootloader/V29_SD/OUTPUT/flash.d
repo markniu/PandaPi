@@ -2,7 +2,7 @@
 ..\output\flash.o: ..\CODE\APP\flash.h
 ..\output\flash.o: ..\CODE\USER\stm32f10x.h
 ..\output\flash.o: ..\CODE\CORE\core_cm3.h
-..\output\flash.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\flash.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\flash.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\flash.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\flash.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -29,7 +29,7 @@
 ..\output\flash.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\output\flash.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\output\flash.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
-..\output\flash.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+..\output\flash.o: d:\Keil\ARM\ARMCC\bin\..\include\string.h
 ..\output\flash.o: ..\CODE\SYSTEM\typedefs.h
 ..\output\flash.o: ..\CODE\SYSTEM\util.h
-..\output\flash.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\output\flash.o: d:\Keil\ARM\ARMCC\bin\..\include\stdlib.h

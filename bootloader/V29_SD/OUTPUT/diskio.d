@@ -3,7 +3,7 @@
 ..\output\diskio.o: ..\CODE\FATFS\integer.h
 ..\output\diskio.o: ..\CODE\USER\stm32f10x.h
 ..\output\diskio.o: ..\CODE\CORE\core_cm3.h
-..\output\diskio.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\diskio.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\diskio.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\diskio.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\diskio.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -33,4 +33,4 @@
 ..\output\diskio.o: ..\CODE\HARDWARE\Sdcard_spi.h
 ..\output\diskio.o: ..\CODE\SYSTEM\sys.h
 ..\output\diskio.o: ..\CODE\SYSTEM\usart.h
-..\output\diskio.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\diskio.o: d:\Keil\ARM\ARMCC\bin\..\include\stdio.h
