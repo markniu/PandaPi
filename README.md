@@ -16,7 +16,7 @@
 5. ####  no wiring for TMC driver sensorless homing and uart mode.
 
 
-<img width="1000"  src="https://gitee.com/markyue/pandapi_wiki/raw/master/imges/V28/407172250.jpg"/> 
+<img width="1000"  src="/doc/22311.jpg"/> 
 
 If you want to run PandaPi on RPi, you need one PandaPi extra board that can be droppd in creality Ender3 printer with this board+Raspberry Pi ,just need to print one case for it.
 <img  width="550"  src="https://gitee.com/markyue/pandapi_wiki/raw/master/imges/60202.jpg"/>
@@ -41,6 +41,7 @@ heater Output   | 	15Amax	 |
 MCU   | 	stm32	 |  
 LCD   | 	LCD128*64/HDMI/PandaTouchScreen	 | 
 FAN   |   Support mixed use of 3V-24V fans   | 
+CAN   |   Support CAN bus extruder board like PANDA_CAN   | 
 Spacer screw   | 	Nylon spacer screw	 | 
 filament detect pin    | 	  reuse the SWD pin   | 	
 Bed leveling    | 	  BLtouch  | 	 support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
