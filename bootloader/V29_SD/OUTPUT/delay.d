@@ -3,7 +3,7 @@
 ..\output\delay.o: ..\CODE\SYSTEM\sys.h
 ..\output\delay.o: ..\CODE\USER\stm32f10x.h
 ..\output\delay.o: ..\CODE\CORE\core_cm3.h
-..\output\delay.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\delay.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\delay.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\delay.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\delay.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h

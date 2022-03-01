@@ -2,7 +2,7 @@
 ..\output\bootloaders.o: ..\CODE\APP\bootloaders.h
 ..\output\bootloaders.o: ..\CODE\USER\stm32f10x.h
 ..\output\bootloaders.o: ..\CODE\CORE\core_cm3.h
-..\output\bootloaders.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\bootloaders.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\bootloaders.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\bootloaders.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\bootloaders.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -31,7 +31,7 @@
 ..\output\bootloaders.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
 ..\output\bootloaders.o: ..\CODE\SYSTEM\typedefs.h
 ..\output\bootloaders.o: ..\CODE\APP\fat.h
-..\output\bootloaders.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+..\output\bootloaders.o: d:\Keil\ARM\ARMCC\bin\..\include\string.h
 ..\output\bootloaders.o: ..\CODE\FATFS\diskio.h
 ..\output\bootloaders.o: ..\CODE\FATFS\integer.h
 ..\output\bootloaders.o: ..\CODE\HARDWARE\Sdcard_spi.h
@@ -39,7 +39,7 @@
 ..\output\bootloaders.o: ..\CODE\FATFS\ff.h
 ..\output\bootloaders.o: ..\CODE\APP\flash.h
 ..\output\bootloaders.o: ..\CODE\SYSTEM\util.h
-..\output\bootloaders.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\output\bootloaders.o: d:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
 ..\output\bootloaders.o: ..\CODE\SYSTEM\delay.h
 ..\output\bootloaders.o: ..\CODE\SYSTEM\usart.h
-..\output\bootloaders.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\bootloaders.o: d:\Keil\ARM\ARMCC\bin\..\include\stdio.h

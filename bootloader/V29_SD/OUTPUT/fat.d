@@ -2,7 +2,7 @@
 ..\output\fat.o: ..\CODE\APP\fat.h
 ..\output\fat.o: ..\CODE\USER\stm32f10x.h
 ..\output\fat.o: ..\CODE\CORE\core_cm3.h
-..\output\fat.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\fat.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\fat.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\fat.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\fat.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -29,7 +29,7 @@
 ..\output\fat.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\output\fat.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\output\fat.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
-..\output\fat.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+..\output\fat.o: d:\Keil\ARM\ARMCC\bin\..\include\string.h
 ..\output\fat.o: ..\CODE\FATFS\diskio.h
 ..\output\fat.o: ..\CODE\FATFS\integer.h
 ..\output\fat.o: ..\CODE\HARDWARE\Sdcard_spi.h
@@ -37,4 +37,4 @@
 ..\output\fat.o: ..\CODE\FATFS\ff.h
 ..\output\fat.o: ..\CODE\SYSTEM\typedefs.h
 ..\output\fat.o: ..\CODE\SYSTEM\usart.h
-..\output\fat.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\fat.o: d:\Keil\ARM\ARMCC\bin\..\include\stdio.h

@@ -12,6 +12,57 @@ IAP_FUNCTION  jump2app;
 
 void IAP_LoadApp(u32 appxAddr)
 {
+	
+	////////////////
+	GPIO_InitTypeDef  GPIO_InitStructure;
+	// while (eTXIdle != TRUE);
+    USART_Cmd(USART3, DISABLE);
+    
+    USART_ClearITPendingBit(USART3, USART_IT_TXE);
+    USART_ClearITPendingBit(USART3, USART_IT_TC);
+    USART_ClearITPendingBit(USART3, USART_IT_RXNE);	
+
+    USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
+    USART_ITConfig(USART3, USART_IT_RXNE, DISABLE);
+    USART_ITConfig(USART3, USART_IT_TC, DISABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,DISABLE);  
+/////////////////////////
+	
+	SPI_Cmd(SPI1, DISABLE);
+	SPI_I2S_DeInit(SPI1); 
+	
+	//////////////////
+	
+	///
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE); //
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	//////////////
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	/////////
+
+	//////////////
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	/////////
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	/////////
+	
+	//////////////////
 	if(((*(vu32*)appxAddr)&0x2FFE0000)==0x20000000)
 	{ 
 		jump2app = (IAP_FUNCTION)*(vu32*)(appxAddr+4);

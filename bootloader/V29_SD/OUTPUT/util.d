@@ -2,7 +2,7 @@
 ..\output\util.o: ..\CODE\SYSTEM\util.h
 ..\output\util.o: ..\CODE\USER\stm32f10x.h
 ..\output\util.o: ..\CODE\CORE\core_cm3.h
-..\output\util.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\util.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\util.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\util.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\util.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -29,5 +29,5 @@
 ..\output\util.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\output\util.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\output\util.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
-..\output\util.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\output\util.o: d:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
 ..\output\util.o: ..\CODE\SYSTEM\typedefs.h

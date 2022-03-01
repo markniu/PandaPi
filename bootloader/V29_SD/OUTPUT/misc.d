@@ -2,7 +2,7 @@
 ..\output\misc.o: ..\CODE\STM32F10x_FWLib\inc\misc.h
 ..\output\misc.o: ..\CODE\USER\stm32f10x.h
 ..\output\misc.o: ..\CODE\CORE\core_cm3.h
-..\output\misc.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\misc.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\misc.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\misc.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\misc.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h

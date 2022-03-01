@@ -2,7 +2,7 @@
 ..\output\sd_assist.o: ..\CODE\HARDWARE\sd_assist.h
 ..\output\sd_assist.o: ..\CODE\USER\stm32f10x.h
 ..\output\sd_assist.o: ..\CODE\CORE\core_cm3.h
-..\output\sd_assist.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\sd_assist.o: d:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 ..\output\sd_assist.o: ..\CODE\CORE\system_stm32f10x.h
 ..\output\sd_assist.o: ..\CODE\USER\stm32f10x_conf.h
 ..\output\sd_assist.o: ..\CODE\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -32,6 +32,6 @@
 ..\output\sd_assist.o: ..\CODE\HARDWARE\sdcard.h
 ..\output\sd_assist.o: ..\CODE\FATFS\ff.h
 ..\output\sd_assist.o: ..\CODE\FATFS\integer.h
-..\output\sd_assist.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\output\sd_assist.o: d:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
 ..\output\sd_assist.o: ..\CODE\SYSTEM\util.h
 ..\output\sd_assist.o: ..\CODE\SYSTEM\typedefs.h

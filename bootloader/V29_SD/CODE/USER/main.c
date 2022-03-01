@@ -6,11 +6,15 @@
 #include "bootloaders.h"
 
 int main(void)
-{	
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+{	GPIO_InitTypeDef GPIO_InitStructure;
+  //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	SystemInit();
+   
   delay_init();
+	// IAP_LoadApp(BOOTLOADER_FLASH_ADDR);
   UART_init(115200);
-
+   
+ 
   delay_ms(5000);
   printf("Going to boot ... \r\n");
   /*
