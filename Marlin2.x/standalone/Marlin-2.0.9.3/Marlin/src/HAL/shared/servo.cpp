@@ -146,6 +146,8 @@ bool Servo::attached() { return servo_info[servoIndex].Pin.isActive; }
 void Servo::move(const int value) {
   constexpr uint16_t servo_delay[] = SERVO_DELAY;
   static_assert(COUNT(servo_delay) == NUM_SERVOS, "SERVO_DELAY must be an array NUM_SERVOS long.");
+
+  
   if (attach(0) >= 0) {
     write(value);
     safe_delay(servo_delay[servoIndex]);

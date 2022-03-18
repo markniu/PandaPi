@@ -295,7 +295,280 @@ void GcodeSuite::dwell(millis_t time) {
   }
 
 #endif // G29_RETRY_AND_RECOVER
+#if PANDA_CAN_MODULE
+#include "../module/stepper.h"
+ #include <eXoCAN.h>
+ extern eXoCAN can;
+ #define CAN_MAX_DATA_LEN 8
+void Send_Can_Pose(void)
+{
+  can_message_t message;
 
+  message.flags = CAN_MSG_FLAG_EXTD;
+  message.data_length_code = 8;
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  ////
+  message.identifier='G';
+  message.identifier|=(92<<8);
+  //G92 X
+  sprintf((char *)message.data,"X%.5f\n",planner.get_axis_position_mm(X_AXIS));
+  printf("id:%x,cmd_str:%s \n",message.identifier,(char *)message.data );   
+  if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+  //if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  ////G92 Y
+sprintf((char *)message.data,"Y%.5f\n",planner.get_axis_position_mm(Y_AXIS));
+  printf("id:%x,cmd_str:%s \n",message.identifier,(char *)message.data );  
+  if(can.transmit(message.identifier, message.data, message.data_length_code)==true){ 
+  //if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+////G92 Z
+sprintf((char *)message.data,"Z%.5f\n",planner.get_axis_position_mm(Z_AXIS));
+  printf("id:%x,cmd_str:%s \n",message.identifier,(char *)message.data );
+  if(can.transmit(message.identifier, message.data, message.data_length_code)==true){   
+  //if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  ///G92 E
+  sprintf((char *)message.data,"E%.5f\n",planner.get_axis_position_mm(E_AXIS));
+  printf("id:%x,cmd_str:%s \n",message.identifier,(char *)message.data );   
+  if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+ // if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+
+
+}
+
+void Send_long_cmd(void)
+{
+ can_message_t message;
+      //Configure message to transmit
+  //message.identifier = 0xAAAA;
+  char cn=0, cmd_str[32];
+  int len=0,k;
+  bool e_c=false;
+
+  message.flags = CAN_MSG_FLAG_EXTD;
+  message.data_length_code = 8;
+  memset(cmd_str,0,sizeof(cmd_str));
+  
+
+  for(k=0;k<strlen(parser.command_ptr);k+=8)
+  {
+    memset(message.data,0,CAN_MAX_DATA_LEN);
+    if(strlen(parser.command_ptr+k)<=8)
+    {
+      //the last package
+      message.identifier='c';
+      memcpy(message.data,parser.command_ptr+k,strlen(parser.command_ptr+k));
+    }
+    else
+    {
+      message.identifier='C';
+      memcpy(message.data,parser.command_ptr+k,8);  
+    }
+    if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+   // if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+        delay(1);
+        // printf("send0 %x %.5f,%.5f\n", message.identifier,*((float *)message.data),*((float *)(message.data+4)));
+    } else {
+        printf("Failed send long cmd \n");
+    }
+  }
+  
+ 
+   
+    
+
+}
+
+void  Send_Can_command(void)
+{  
+  can_message_t message;
+      //Configure message to transmit
+  //message.identifier = 0xAAAA;
+  char cn=0, cmd_str[32];
+  int k=0;
+  bool e_c=false;
+
+  message.flags = CAN_MSG_FLAG_EXTD;
+  message.data_length_code = 8;
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  memset(cmd_str,0,sizeof(cmd_str));
+  
+  //printf("%s\n", parser.command_ptr);
+  // G1 X1000.22 Y23323.323 Z324.33 E32.21 F1233 => ID:aXY+Data:1000.22+23323.323;ID:bEF+Data:32.21+1233
+  //if(e_c=parser.seenval('E')&&(parser.command_letter=='G'))
+  if((parser.codenum==0||parser.codenum==1)&&(parser.command_letter=='G'))
+  { 
+    float *tmp_d;
+    char offset=0;
+    char len=parser.seenval('X')+parser.seenval('Y')+parser.seenval('Z')+parser.seenval('E')+parser.seenval('F');
+    //printf("len%d\n",len);
+    if(len>2)
+      message.identifier='a'; // long g1 cmd
+    else
+      message.identifier='A'; // short g1 cmd
+    tmp_d=(float *)(message.data);
+    
+
+    //////
+    if(e_c=parser.seenval('X'))
+    {
+      offset++;
+      message.identifier|=('X'<<(offset*8));
+      *(tmp_d+(offset-1))=parser.value_float();
+       
+    } 
+    if(e_c=parser.seenval('Y'))
+    {
+      offset++;
+      message.identifier|=('Y'<<(offset*8));
+      *(tmp_d+(offset-1))=parser.value_float();
+      if(offset>=2)
+      {
+        if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+       // if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+       //     delay(1);
+           // printf("send0 %x %.5f,%.5f\n", message.identifier,*((float *)message.data),*((float *)(message.data+4)));
+        } else {
+            printf("Failed2 \n");
+        }
+        offset=0;
+        message.identifier='b';
+      }
+    }
+    if(e_c=parser.seenval('E'))
+    {
+      offset++;
+      message.identifier|=('E'<<(offset*8));
+      *(tmp_d+(offset-1))=parser.value_float();
+      if(offset>=2)
+      {
+        if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+       // if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+        //   delay(1);// printf("send1 %x %.5f,%.5f\n", message.identifier,*(float *)message.data,*(float *)(message.data+4));
+        } else {
+            printf("Failed3 \n");
+        }
+        offset=0;
+        message.identifier='b';
+      }
+    }
+    if(e_c=parser.seenval('F'))
+    {
+      offset++;
+      message.identifier|=('F'<<(offset*8));
+      *(tmp_d+(offset-1))=parser.value_int();
+      if(offset>=2)
+      {
+        if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+        //if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+      //     delay(1);// printf("send2 %x %.5f,%.5f\n", message.identifier,*(float *)message.data,*(float *)(message.data+4));
+        } else {
+            printf("Failed4 \n");
+        }
+        offset=0;
+        message.identifier='b';
+      }
+    }
+    if(e_c=parser.seenval('Z'))
+    {
+      offset++;
+      message.identifier|=('Z'<<(offset*8));
+      *(tmp_d+(offset-1))=parser.value_float();
+      if(offset>=2)
+      {
+        if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+        //if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+        //   delay(1);// printf("send3 %x %.5f,%.5f\n", message.identifier,*(float *)message.data,*(float *)(message.data+4));
+        } else {
+            printf("Failed5 \n");
+        }
+        offset=0;
+        message.identifier='b';
+      }
+    }
+    if(offset==1)
+    {
+       //printf("can_transmite\n");
+       if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+     // if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+        //   delay(1);// printf("send4 %x %.5f,%.5f\n", message.identifier,*(float *)message.data,*(float *)(message.data+4));
+        } else {
+            printf("Failed6 \n");
+        }
+    }
+    //////
+    return;
+   // printf("f:%d \n ",*(unsigned short *)(message.data+6));
+     
+  }
+  else
+  {
+    message.identifier=parser.command_letter;
+    
+    if(parser.command_letter=='M'&&parser.codenum==109)
+    {
+      message.identifier|=(104<<8);
+    // parser.codenum==1)&&(parser.command_letter=='G')
+    }
+    else
+      message.identifier|=(parser.codenum<<8);
+    //Send_long_cmd();
+
+    sscanf( parser.command_ptr, "%s", cmd_str );
+    k=strlen(parser.command_ptr+strlen(cmd_str));
+    if(k>8)
+    {
+      Send_long_cmd();
+      return;
+     // memcpy(message.data,parser.command_ptr+strlen(cmd_str),8);
+    }
+    else
+      memcpy(message.data,parser.command_ptr+strlen(cmd_str),k);
+   // printf("val str:%s\n",cmd_str);
+
+  }
+     /////////
+    memset(cmd_str,0,sizeof(cmd_str));
+    sprintf(cmd_str,"%c%d", (char)message.identifier,(int)(message.identifier>>8)&0xFFFF );
+    if(message.data[0]=='E')
+    {
+      sprintf(cmd_str+strlen(cmd_str)," E%.5f",*(float *)(message.data+1));
+      if(message.data[5]=='F')
+        sprintf(cmd_str+strlen(cmd_str)," F%d",*(unsigned short *)(message.data+6));
+    }
+    else
+      memcpy(cmd_str+strlen(cmd_str),message.data,8);
+    //printf("id:%x,cmd_str:%s \n",message.identifier,cmd_str );
+    //////////////  
+  
+
+  //if(strlen(parser.command_ptr)<CAN_MAX_DATA_LEN)
+  {
+     
+    if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+    //if (can_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK) {
+       // printf("send %s \n",message.data);
+    } else {
+        printf("Failed \n");
+    }
+  }
+
+}
+#endif
 /**
  * Process the parsed command and dispatch it to its handler
  */
@@ -303,7 +576,9 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
   TERN_(HAS_FANCHECK, fan_check.check_deferred_error());
 
   KEEPALIVE_STATE(IN_HANDLER);
-
+#if PANDA_CAN_MODULE  
+  Send_Can_command();
+#endif
  /**
   * Block all Gcodes except M511 Unlock Printer, if printer is locked
   * Will still block Gcodes if M511 is disabled, in which case the printer should be unlocked via LCD Menu
@@ -376,11 +651,18 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 27: G27(); break;                                    // G27: Nozzle Park
       #endif
 
-      case 28: G28(); break;                                      // G28: Home one or more axes
+      case 28: G28();
+#if PANDA_CAN_MODULE  
+        Send_Can_Pose();
+#endif
+       break;                                      // G28: Home one or more axes
 
       #if HAS_LEVELING
         case 29:                                                  // G29: Bed leveling calibration
           TERN(G29_RETRY_AND_RECOVER, G29_with_retry, G29)();
+ #if PANDA_CAN_MODULE  
+        Send_Can_Pose();
+#endif         
           break;
       #endif
 

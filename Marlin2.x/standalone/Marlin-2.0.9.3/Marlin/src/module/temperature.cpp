@@ -1312,7 +1312,14 @@ void Temperature::min_temp_error(const heater_id_t heater_id) {
   }
 
 #endif // PIDTEMPCHAMBER
-
+ #if PANDA_CAN_MODULE
+ #include <eXoCAN.h>
+ extern eXoCAN can;
+ extern bool virtual_esp32_pins[32];
+ extern celsius_t target_hotend_slave;
+ #define CAN_MAX_DATA_LEN 8
+ #define FIL_RUNOUT_PIN                        201
+ #endif
 /**
  * Manage heating activities for extruder hot-ends and a heated bed
  *  - Acquire updated temperature readings
@@ -1323,6 +1330,37 @@ void Temperature::min_temp_error(const heater_id_t heater_id) {
  *  - Update the heated bed PID output value
  */
 void Temperature::manage_heater() {
+
+//////////////////
+ #if PANDA_CAN_MODULE
+        can_message_t rx_msg;
+        if (can.receive(rx_msg.identifier, rx_msg.flags, rx_msg.data)>=0)
+         {
+            if(rx_msg.identifier=='M')// read temperature
+            {
+               printf("\nt:%.5f,%d,%c\n",*((float *)(rx_msg.data)),*((unsigned short *)(rx_msg.data+4)),(char)rx_msg.data[6]);
+              thermalManager.temp_hotend[0].celsius=*((float *)(rx_msg.data));
+              
+               target_hotend_slave=*((unsigned short *)(rx_msg.data+4));
+               virtual_esp32_pins[FIL_RUNOUT_PIN-200]=rx_msg.data[6]=='H'?1:0;
+            }
+            else if((rx_msg.identifier&0xff)=='Z')
+            {
+               SERIAL_ECHO_MSG("Z: ");
+              if(((rx_msg.identifier>>8)&0xff)=='H')
+              {
+               // virtual_z_min_pin=1;
+                virtual_esp32_pins[Z_STOP_PIN-200]=1;
+                SERIAL_ECHO_MSG("H: ");
+              }
+              else
+                virtual_esp32_pins[Z_STOP_PIN-200]=0;
+            }
+            
+        }
+  #endif       
+////////////////////////////
+
   if (marlin_state == MF_INITIALIZING) return watchdog_refresh(); // If Marlin isn't started, at least reset the watchdog!
 
   static bool no_reentry = false;  // Prevent recursion
@@ -2079,9 +2117,10 @@ void Temperature::updateTemperaturesFromRawValues() {
   TERN_(TEMP_SENSOR_REDUNDANT_IS_MAX_TC, temp_redundant.raw = READ_MAX_TC(HEATER_ID(TEMP_SENSOR_REDUNDANT_SOURCE)));
 
   #if HAS_HOTEND
+  #if !PANDA_CAN_MODULE
     HOTEND_LOOP() temp_hotend[e].celsius = analog_to_celsius_hotend(temp_hotend[e].raw, e);
   #endif
-
+  #endif
   TERN_(HAS_HEATED_BED,     temp_bed.celsius       = analog_to_celsius_bed(temp_bed.raw));
   TERN_(HAS_TEMP_CHAMBER,   temp_chamber.celsius   = analog_to_celsius_chamber(temp_chamber.raw));
   TERN_(HAS_TEMP_COOLER,    temp_cooler.celsius    = analog_to_celsius_cooler(temp_cooler.raw));
@@ -2093,6 +2132,7 @@ void Temperature::updateTemperaturesFromRawValues() {
   TERN_(HAS_POWER_MONITOR,     power_monitor.capture_values());
 
   #if HAS_HOTEND
+  #if !PANDA_CAN_MODULE
     static constexpr int8_t temp_dir[] = {
       #if TEMP_SENSOR_IS_ANY_MAX_TC(0)
         0
@@ -2131,7 +2171,7 @@ void Temperature::updateTemperaturesFromRawValues() {
         #endif
       }
     }
-
+   #endif
   #endif // HAS_HOTEND
 
   #define TP_CMP(S,A,B) (TEMPDIR(S) < 0 ? ((A)<(B)) : ((A)>(B)))
@@ -2975,10 +3015,14 @@ void Temperature::readings_ready() {
  *  - For ENDSTOP_INTERRUPTS_FEATURE check endstops if flagged
  *  - Call planner.isr to count down its "ignore" time
  */
+
+
+
 HAL_TEMP_TIMER_ISR() {
   HAL_timer_isr_prologue(MF_TIMER_TEMP);
 
   Temperature::isr();
+
 
   HAL_timer_isr_epilogue(MF_TIMER_TEMP);
 }
@@ -3593,7 +3637,29 @@ void Temperature::isr() {
     OPTARG(HAS_TEMP_REDUNDANT, const bool include_r/*=false*/)
   ) {
     #if HAS_TEMP_HOTEND
+     #if PANDA_CAN_MODULE
+        unsigned char txData[8];
+        can.transmit('M'|(0x69<<8), txData, 0);
+        can_message_t message;
+        //send M105
+        message.identifier='M';
+        message.identifier|=(0x69<<8);
+        message.flags = CAN_MSG_FLAG_EXTD;
+        message.data_length_code = 0;
+
+        if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+   //     if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+          //printf("send ok Tdata:%.5f,%d,%c \n",*(float *)message.data,*(unsigned short *)(message.data+4),*(char *)(message.data+6));
+        } else {
+          printf("Failed \n");
+        }
+        ///////////////
+        //can.receive(id, fltIdx, rxbytes)
+        
+        ////////////////
+     #endif
       print_heater_state(H_E0, degHotend(target_extruder), degTargetHotend(target_extruder) OPTARG(SHOW_TEMP_ADC_VALUES, rawHotendTemp(target_extruder)));
+     
     #endif
     #if HAS_HEATED_BED
       print_heater_state(H_BED, degBed(), degTargetBed() OPTARG(SHOW_TEMP_ADC_VALUES, rawBedTemp()));

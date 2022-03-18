@@ -29,7 +29,7 @@
 
 #include <libmaple/gpio.h>
 
-#define READ(IO)                (PIN_MAP[IO].gpio_device->regs->IDR & _BV32(PIN_MAP[IO].gpio_bit) ? HIGH : LOW)
+#define READ(IO)                (IO<200)?((PIN_MAP[IO].gpio_device->regs->IDR & _BV32(PIN_MAP[IO].gpio_bit) ? HIGH : LOW)):virtual_esp32_pins[IO-200]
 #define WRITE(IO,V)             (PIN_MAP[IO].gpio_device->regs->BSRR = _BV32(PIN_MAP[IO].gpio_bit) << ((V) ? 0 : 16))
 #define TOGGLE(IO)              TBI32(PIN_MAP[IO].gpio_device->regs->ODR, PIN_MAP[IO].gpio_bit)
 
@@ -184,3 +184,6 @@
 #define PG13 0x6D
 #define PG14 0x6E
 #define PG15 0x6F // 144 pins (F103Z)
+ #if PANDA_CAN_MODULE
+ extern bool virtual_esp32_pins[32];
+ #endif

@@ -1471,6 +1471,7 @@ void Stepper::isr() {
 
   static uint32_t nextMainISR = 0;  // Interval until the next main Stepper Pulse phase (0 = Now)
 
+
   #ifndef __AVR__
     // Disable interrupts, to avoid ISR preemption while we reprogram the period
     // (AVR enters the ISR with global interrupts disabled, so no need to do it here)

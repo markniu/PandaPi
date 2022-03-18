@@ -70,8 +70,31 @@ int8_t libServo::attach(const int pin, const int min, const int max) {
   fixServoTimerInterruptPriority();
   return result;
 }
-
+ #if PANDA_CAN_MODULE
+ #include <eXoCAN.h>
+ extern eXoCAN can;
+ extern bool virtual_esp32_pins[32];
+ #define CAN_MAX_DATA_LEN 8
+ #endif
 void libServo::move(const int value) {
+
+    printf("Servo:%d\n",value); 
+  //M280 Px S
+#if PANDA_CAN_MODULE
+   can_message_t message;
+    //send M105
+    message.identifier='M';
+    message.identifier|=(280<<8);
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 8;
+    sprintf((char *)message.data,"P0 S%d",value); 
+    if(can.transmit(message.identifier, message.data, message.data_length_code)==true){
+    //if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      printf("Servo can:%s \n",(char *)message.data);
+    } else {
+      printf("Failed \n");
+    }
+#endif
   if (attach(0) >= 0) {
     stm32_servo.write(value);
     safe_delay(delay);

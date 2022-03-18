@@ -26,7 +26,7 @@
  * Fast I/O interfaces for STM32
  * These use GPIO register access for fast port manipulation.
  */
-
+ extern bool virtual_esp32_pins[32];
 // ------------------------
 // Public Variables
 // ------------------------
@@ -59,7 +59,7 @@ void FastIO_init(); // Must be called before using fast io macros
   #define _WRITE(IO, V) (FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->BSRR = _BV32(STM_PIN(digitalPinToPinName(IO)) + ((V) ? 0 : 16)))
 #endif
 
-#define _READ(IO)               bool(READ_BIT(FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->IDR, _BV32(STM_PIN(digitalPinToPinName(IO)))))
+#define _READ(IO)               ((IO<200)?bool(READ_BIT(FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->IDR, _BV32(STM_PIN(digitalPinToPinName(IO))))):virtual_esp32_pins[IO-200])
 #define _TOGGLE(IO)             TBI32(FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->ODR, STM_PIN(digitalPinToPinName(IO)))
 
 #define _GET_MODE(IO)
@@ -87,5 +87,5 @@ void FastIO_init(); // Must be called before using fast io macros
 #define NO_COMPILE_TIME_PWM
 
 // digitalRead/Write wrappers
-#define extDigitalRead(IO)    digitalRead(IO)
+#define extDigitalRead(IO)    (IO<200)?digitalRead(IO):virtual_esp32_pins[IO-200]
 #define extDigitalWrite(IO,V) digitalWrite(IO,V)

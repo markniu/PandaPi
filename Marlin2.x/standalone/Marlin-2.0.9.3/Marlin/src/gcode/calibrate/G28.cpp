@@ -533,8 +533,9 @@ void GcodeSuite::G28() {
       stepperK.rms_current(tmc_save_current_K);
     #endif
   #endif // HAS_HOMING_CURRENT
-
+#if !PANDA_CAN_MODULE
   ui.refresh();
+#endif
 
   TERN_(HAS_DWIN_E3V2_BASIC, DWIN_CompletedHoming());
   TERN_(EXTENSIBLE_UI, ExtUI::onHomingComplete());
