@@ -284,3 +284,4 @@ void set_pwm_frequency(const pin_t pin, int f_desired);
  *  The timer must be pre-configured with set_pwm_frequency() if the default frequency is not desired.
  */
 void set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t v_size=255, const bool invert=false);
+

@@ -25,6 +25,16 @@
  
 #define BOARD_INFO_NAME "PANDA PI V2.9"
 
+#if PANDA_CAN_MODULE
+#define CAN_MSG_FLAG_EXTD               0x01  
+typedef struct {
+    int flags;                 /**< Bit field of message flags indicates frame/transmission type (see documentation) */
+    int identifier;            /**< 11 or 29 bit identifier */
+    uint8_t data_length_code;       /**< Data length code */
+    uint8_t data[8]; /**< Data bytes (not relevant in RTR frame) */
+} can_message_t;
+#endif
+
 // Release PB3/PB4 (TMC_SW Pins) from JTAG pins
 #define DISABLE_JTAG
 
@@ -50,11 +60,14 @@
 #define Y_STOP_PIN                          PC9   // Y-STOP
 #define Z_STOP_PIN                          PA1  // Z-STOP
 
+#if PANDA_CAN_MODULE
+#define Z_STOP_PIN                            200
+#define FIL_RUNOUT_PIN                        201
 //
 // Z Probe must be this pin
 //
-//#define Z_MIN_PROBE_PIN                     PA1  // PROBE
-
+#define Z_MIN_PROBE_PIN                     200  // PROBE
+#endif
 //
 // Filament Runout Sensor
 //

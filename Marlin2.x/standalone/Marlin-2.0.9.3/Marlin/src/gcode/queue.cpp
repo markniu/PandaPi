@@ -583,7 +583,9 @@ void GCodeQueue::get_serial_commands() {
 
           // Put the new command into the buffer (no "ok" sent)
           ring_buffer.commit_command(true);
-
+#if PANDA_CAN_MODULE  		   
+           delay(1);
+#endif	
           // Prime Power-Loss Recovery for the NEXT commit_command
           TERN_(POWER_LOSS_RECOVERY, recovery.cmd_sdpos = card.getIndex());
         }
