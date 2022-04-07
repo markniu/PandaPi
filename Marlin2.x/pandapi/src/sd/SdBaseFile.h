@@ -47,7 +47,7 @@ struct filepos_t {
 };
 
 // use the gnu style oflag in open()
-uint8_t const O_READ = 0x01,                    // open() oflag for reading
+/*uint8_t const O_READ = 0x01,                    // open() oflag for reading
               O_RDONLY = O_READ,                // open() oflag - same as O_IN
               O_WRITE = 0x02,                   // open() oflag for write
               O_WRONLY = O_WRITE,               // open() oflag - same as O_WRITE
@@ -59,6 +59,20 @@ uint8_t const O_READ = 0x01,                    // open() oflag for reading
               O_AT_END = 0x20,                  // Set the initial position at the end of the file
               O_CREAT = 0x40,                   // Create the file if nonexistent
               O_EXCL = 0x80;                    // If O_CREAT and O_EXCL are set, open() shall fail if the file exists
+*/
+
+#define O_READ   1
+#define O_RDONLY O_READ
+#define O_WRITE  2
+#define O_WRONLY O_WRITE
+#define O_RDWR  (O_READ | O_WRITE)
+#define  O_ACCMODE  (O_READ | O_WRITE)
+#define O_APPEND  0x04
+#define O_SYNC  0x08
+#define O_TRUNC 0x10
+#define O_AT_END  0x20
+#define O_CREAT  0x40
+#define O_EXCL  0x80
 
 // SdBaseFile class static and const definitions
 
