@@ -152,7 +152,7 @@ typedef struct {
 //
 #define HEATER_0_PIN                        PB12   // "HE"
 #define HEATER_BED_PIN                      PB13   // "HB"
-#define FAN_PIN                             PA8   // "FAN0"
+#define FAN_PIN                             PA9   // "FAN0"
 #define HEATER_1_PIN                        PA12
 //
 

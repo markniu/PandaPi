@@ -736,7 +736,8 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
 //G102   T4       Set the adjustable max Z hight is 0.4mm, if value==0,disable adjust z hight.
 //G102   T-1    Read sensor information
           BDsensor_config = parser.intval('T');
-          printf("BDsensor_config:%d\n",BDsensor_config);
+         // printf("BDsensor_config:%d\n",BDsensor_config);
+          SERIAL_ECHOLNPGM("BDsensor_config:",BDsensor_config);
        break;
 #endif
       #if ENABLED(CALIBRATION_GCODE)

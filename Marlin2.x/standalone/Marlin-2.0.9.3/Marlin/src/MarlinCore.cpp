@@ -754,8 +754,8 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
   #define CMD_START_CALIBRATE 1019
   #define CMD_END_CALIBRATE 1021  
 
-  #define  I2C_BD_SDA   PC12
-  #define  I2C_BD_SCL  PD2  
+  #define  I2C_BD_SDA   PC6
+  #define  I2C_BD_SCL  PB2
 
   I2C_SegmentBED BD_I2C_SENSOR;
   int BDsensor_config=0; 
@@ -853,6 +853,7 @@ void BD_sensor_process(void)
        
        // BD_I2C_SENSOR.BD_i2c_write(1019);// begain calibrate
        // delay(1000);
+       gcode.stepper_inactive_time = SEC_TO_MS(60*5);
         sprintf_P(tmp_1,  PSTR("M17 Z"));
         parser.parse(tmp_1);
         gcode.process_parsed_command();
@@ -884,7 +885,7 @@ void BD_sensor_process(void)
           float tmp_k=0;
          // queue.enqueue_now_P(PSTR("G91"));
          // sprintf_P(tmp_1,  PSTR("G0 Z%.2f"), z_pose);
-           sprintf_P(tmp_1,  PSTR("G1 Z%d.%d"), (int)z_pose,(int)((int)(z_pose*10)%10));
+          sprintf_P(tmp_1,  PSTR("G1 Z%d.%d"), (int)z_pose,(int)((int)(z_pose*10)%10));
           parser.parse(tmp_1);
           gcode.process_parsed_command();
         //  current_position.z
@@ -899,12 +900,12 @@ void BD_sensor_process(void)
             safe_delay(1);
           }
           safe_delay(800);
-          tmp=(z_pose+0.01)*10;
+          tmp=(z_pose+0.0001)*10;
           BD_I2C_SENSOR.BD_i2c_write(tmp);
          // sprintf(tmp_1+strlen(tmp_1),"; Zpose:%.2f, w:%d \n",z_pose,tmp);
         //  printf(tmp_1);
           SERIAL_ECHOLNPGM("w:",tmp,",Zpose:",z_pose);
-          z_pose+=0.1;
+          z_pose+=0.1001;
          // queue.enqueue_now_P(PSTR("G90"));
         }
       }
@@ -2031,7 +2032,7 @@ can.begin(EXT_ID_LEN, BR1M, PORTB_8_9_XCVR);
   init_data_sync_can();
 #endif
 #if BD_SENSOR
-
+    Serial.end();
     int ret=BD_I2C_SENSOR.i2c_init(I2C_BD_SDA,I2C_BD_SCL,0x3C);
     SERIAL_ECHOLNPGM("i2c_init_ret:",ret);
 #endif
