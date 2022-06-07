@@ -27,9 +27,7 @@
 
 #include "gcode.h"
 GcodeSuite gcode;
-#if BD_SENSOR
-extern int BDsensor_config; 
-#endif
+
 #if ENABLED(WIFI_CUSTOM_COMMAND)
   extern bool wifi_custom_command(char * const command_ptr);
 #endif
@@ -37,7 +35,7 @@ extern int BDsensor_config;
 #include "parser.h"
 #include "queue.h"
 #include "../module/motion.h"
-
+#include "../feature/bedlevel/bdl/bdl.h"
 #if ENABLED(PRINTCOUNTER)
   #include "../module/printcounter.h"
 #endif
@@ -658,7 +656,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         Send_Can_Pose();
 #endif
 #if BD_SENSOR  
-      BDsensor_config=0;
+      BD_Level.BDsensor_config=0;
 #endif
        break;                                      // G28: Home one or more axes
 
@@ -729,17 +727,6 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 91: set_relative_mode(true);  break;                   // G91: Relative Mode
 
       case 92: G92(); break;                                      // G92: Set current axis position(s)
-#if BD_SENSOR      
-      case 102:  
-//G102   T-5     Read raw Calibrate data
-//G102   T-6    Start Calibrate 
-//G102   T4       Set the adjustable max Z hight is 0.4mm, if value==0,disable adjust z hight.
-//G102   T-1    Read sensor information
-          BDsensor_config = parser.intval('T');
-         // printf("BDsensor_config:%d\n",BDsensor_config);
-          SERIAL_ECHOLNPGM("BDsensor_config:",BDsensor_config);
-       break;
-#endif
       #if ENABLED(CALIBRATION_GCODE)
         case 425: G425(); break;                                  // G425: Perform calibration with calibration cube
       #endif
@@ -850,11 +837,17 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 100: M100(); break;                                  // M100: Free Memory Report
       #endif
 
+      #if BD_SENSOR      
+        case 102:  
+          BD_Level.BDsensor_config = parser.intval('S');
+          SERIAL_ECHOLNPGM("BDsensor config:",BD_Level.BDsensor_config);
+        break;
+      #endif
+
       #if HAS_EXTRUDERS
         case 104: M104(); break;                                  // M104: Set hot end temperature
         case 109: M109(); break;                                  // M109: Wait for hotend temperature to reach target
       #endif
-
       case 105: M105(); return;                                   // M105: Report Temperatures (and say "ok")
 
       #if HAS_FAN

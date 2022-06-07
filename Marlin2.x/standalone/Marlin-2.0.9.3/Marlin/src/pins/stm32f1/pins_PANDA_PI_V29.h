@@ -48,6 +48,11 @@ typedef struct {
   #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2KB
 #endif
 
+#if BD_SENSOR
+#define  I2C_BD_SDA_PIN  PC12// PC6
+#define  I2C_BD_SCL_PIN  PD2//PB2
+#define  I2C_BD_DELAY  10
+#endif
 //
 // Servos
 //
