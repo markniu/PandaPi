@@ -35,7 +35,9 @@ GcodeSuite gcode;
 #include "parser.h"
 #include "queue.h"
 #include "../module/motion.h"
-#include "../feature/bedlevel/bdl/bdl.h"
+#if BD_SENSOR
+	#include "../feature/bedlevel/bdl/bdl.h"
+#endif
 #if ENABLED(PRINTCOUNTER)
   #include "../module/printcounter.h"
 #endif

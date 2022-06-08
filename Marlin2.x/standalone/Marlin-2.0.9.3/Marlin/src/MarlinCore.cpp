@@ -772,7 +772,9 @@ void idle(bool no_stepper_sleep/*=false*/) {
     static uint16_t idle_depth = 0;
     if (++idle_depth > 5) SERIAL_ECHOLNPGM("idle() call depth: ", idle_depth);
   #endif
+#if BD_SENSOR
   BD_Level.BD_sensor_process();
+#endif  
   // Core Marlin activities
   manage_inactivity(no_stepper_sleep);
 
@@ -1857,8 +1859,9 @@ can.begin(EXT_ID_LEN, BR1M, PORTB_8_9_XCVR);
 #if PANDA_CAN_MODULE
   init_data_sync_can();
 #endif
+  Serial.end(); // disable the usb serial and then we use the PA11 
 #if BD_SENSOR
-   // Serial.end();
+   // 
     BD_Level.init(I2C_BD_SDA_PIN,I2C_BD_SCL_PIN,I2C_BD_DELAY);   
 #endif
   SETUP_LOG("setup() completed.");

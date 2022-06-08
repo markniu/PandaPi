@@ -40,6 +40,7 @@
 #include <Panda_segmentBed_I2C.h>
 
 #include "bdl.h"
+#define DEBUG_OUT_BD 0
 Bed_Distance_sensor_level BD_Level; 
 
 //M102   S-5     Read raw Calibrate data
@@ -94,7 +95,9 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
         &&(old_cur_z==cur_z)&&(old_buf_z==current_position.z)&&(z_sensor<(MAX_BD_HEIGHT))){
           
           babystep.set_mm(Z_AXIS,(cur_z-z_sensor));
+#if DEBUG_OUT_BD          
           SERIAL_ECHOLNPGM("BD:",z_sensor,", Z:",cur_z,"|",current_position.z);
+#endif          
       }
       else{
         babystep.set_mm(Z_AXIS,0);
@@ -110,14 +113,11 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
     }
     else
       stepper.set_directions();
-    static int n=0;
-    n++;
-    // if((n%30)==0)
-    {
-      SERIAL_ECHOLNPGM("BD:",tmp&0x3ff,", Z:",cur_z,"|",current_position.z);
-      if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0)
-        SERIAL_ECHOLNPGM("errorCRC");        
-    }
+#if DEBUG_OUT_BD      
+    SERIAL_ECHOLNPGM("BD:",tmp&0x3ff,", Z:",cur_z,"|",current_position.z);
+    if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0)
+      SERIAL_ECHOLNPGM("errorCRC");        
+#endif    
     if((tmp&0x3ff)>1020){
       BD_I2C_SENSOR.BD_i2c_stop();
       safe_delay(10);
@@ -129,8 +129,6 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
          
       for(int i=0;i<MAX_BD_HEIGHT*10;i++){
         tmp=BD_I2C_SENSOR.BD_i2c_read();    
-        // sprintf(tmp_1,"Calibrate data:%d,%d,%d\n",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
-        // printf(tmp_1);
         SERIAL_ECHOLNPGM("Calibrate data:",i,",",tmp&0x3ff,", check:",BD_I2C_SENSOR.BD_Check_OddEven(tmp));
         safe_delay(500);
       }
