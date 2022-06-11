@@ -249,6 +249,10 @@
   #include "feature/stepper_driver_safety.h"
 #endif
 
+#if BD_SENSOR
+	#include "feature/bedlevel/bdl/bdl.h"
+#endif
+ 
 //  PANDAPI
 int OCR1A,DDRE ,PINE,PINE5,SREG,cli,DDRB,DDRH,PINB4,PINB5,PINH6,ADCSRA,ADEN,ADSC,ADIF,MCUSR;
 int PORTE,PORTD,DDRF,PINF7,PINL1,PINC3,DDRC,PORTJ,DIDR0,OCR0B,PINB,PORTA,PINA,PINA2,PINA6,PORTL,OCIE0B,TIMSK0,OCIE1A,TCNT1,PINL3,PINA4,PORTF,PINF,PINF6,PINF0;
@@ -753,6 +757,9 @@ void idle(TERN_(ADVANCED_PAUSE_FEATURE, bool no_stepper_sleep/*=false*/)) {
 
   // Core Marlin activities
   manage_inactivity(TERN_(ADVANCED_PAUSE_FEATURE, no_stepper_sleep));
+#if BD_SENSOR
+	BD_Level.BD_sensor_process();
+#endif 
 
   // Manage Heaters (and Watchdog)
   thermalManager.manage_heater();
@@ -1609,6 +1616,10 @@ printf("setup===\n");
   #if BOTH(HAS_LCD_MENU, TOUCH_SCREEN_CALIBRATION) && EITHER(TFT_CLASSIC_UI, TFT_COLOR_UI)
     ui.check_touch_calibration();
   #endif
+#if BD_SENSOR
+	 // 
+	  BD_Level.init(I2C_BD_SDA_PIN,I2C_BD_SCL_PIN,I2C_BD_DELAY*2);   
+#endif
 
   marlin_state = MF_RUNNING;
 

@@ -96,6 +96,19 @@ Endstops::esbits_t Endstops::live_state = 0;
   millis_t sg_guard_period; // = 0
 #endif
 
+
+#if BD_SENSOR
+bool BD_Z_state;
+#define READ_ENDSTOP(PIN)  (PIN==Z_MIN_PIN)?BD_Z_state:READ(PIN)
+void Endstops::BD_Zaxis_update(bool z_state){
+  BD_Z_state=z_state;
+}
+
+#else
+#define READ_ENDSTOP(PIN)  READ(PIN)
+#endif
+
+
 /**
  * Class and Instance Methods
  */
@@ -416,7 +429,7 @@ static void print_es_state(const bool is_hit, PGM_P const label=nullptr) {
 void _O2 Endstops::report_states() {
   TERN_(BLTOUCH, bltouch._set_SW_mode());
   SERIAL_ECHOLNPGM(STR_M119_REPORT);
-  #define ES_REPORT(S) print_es_state(READ(S##_PIN) != S##_ENDSTOP_INVERTING, PSTR(STR_##S))
+  #define ES_REPORT(S) print_es_state(READ_ENDSTOP(S##_PIN) != S##_ENDSTOP_INVERTING, PSTR(STR_##S))
   #if HAS_X_MIN
     ES_REPORT(X_MIN);
   #endif
@@ -486,7 +499,7 @@ void _O2 Endstops::report_states() {
     }
     #undef _CASE_RUNOUT
   #elif HAS_FILAMENT_SENSOR
-    print_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE, PSTR(STR_FILAMENT_RUNOUT_SENSOR));
+    print_es_state(READ_ENDSTOP(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE, PSTR(STR_FILAMENT_RUNOUT_SENSOR));
   #endif
 
   TERN_(BLTOUCH, bltouch._reset_SW_mode());
@@ -508,7 +521,7 @@ void Endstops::update() {
     if (!abort_enabled()) return;
   #endif
 
-  #define UPDATE_ENDSTOP_BIT(AXIS, MINMAX) SET_BIT_TO(live_state, _ENDSTOP(AXIS, MINMAX), (READ(_ENDSTOP_PIN(AXIS, MINMAX)) != _ENDSTOP_INVERTING(AXIS, MINMAX)))
+  #define UPDATE_ENDSTOP_BIT(AXIS, MINMAX) SET_BIT_TO(live_state, _ENDSTOP(AXIS, MINMAX), (READ_ENDSTOP(_ENDSTOP_PIN(AXIS, MINMAX)) != _ENDSTOP_INVERTING(AXIS, MINMAX)))
   #define COPY_LIVE_STATE(SRC_BIT, DST_BIT) SET_BIT_TO(live_state, DST_BIT, TEST(live_state, SRC_BIT))
 
   #if ENABLED(G38_PROBE_TARGET) && PIN_EXISTS(Z_MIN_PROBE) && NONE(CORE_IS_XY, CORE_IS_XZ, MARKFORGED_XY)
@@ -946,7 +959,7 @@ void Endstops::update() {
     static uint8_t local_LED_status = 0;
     uint16_t live_state_local = 0;
 
-    #define ES_GET_STATE(S) if (READ(S##_PIN)) SBI(live_state_local, S)
+    #define ES_GET_STATE(S) if (READ_ENDSTOP(S##_PIN)) SBI(live_state_local, S)
 
     #if HAS_X_MIN
       ES_GET_STATE(X_MIN);

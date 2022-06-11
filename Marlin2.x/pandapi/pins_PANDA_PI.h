@@ -6,6 +6,12 @@
 
 #define BOARD_INFO_NAME      "PANDA,PI"
 
+#if BD_SENSOR
+#define  I2C_BD_SDA_PIN  25// PC6
+#define  I2C_BD_SCL_PIN  26//PB2
+#define  I2C_BD_DELAY  10
+#endif
+
 
 
 //

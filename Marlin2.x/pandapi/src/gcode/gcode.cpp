@@ -66,6 +66,9 @@ GcodeSuite gcode;
 #endif
 
 #include "../MarlinCore.h" // for idle, kill
+#if BD_SENSOR
+	#include "../feature/bedlevel/bdl/bdl.h"
+#endif
 
 // Inactivity shutdown
 millis_t GcodeSuite::previous_move_ms = 0,
@@ -346,6 +349,9 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 28: 
         status_printer=1;
 		G28(); 
+		#if BD_SENSOR  
+      		BD_Level.BDsensor_config=0;
+		#endif
         status_printer=0;
 	  break;                                      // G28: Home one or more axes
 
@@ -522,6 +528,12 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       #if ENABLED(M100_FREE_MEMORY_WATCHER)
         case 100: M100(); break;                                  // M100: Free Memory Report
       #endif
+#if BD_SENSOR	   
+        case 102:  
+          BD_Level.BDsensor_config = parser.intval('S');
+          printf("BDsensor config:%d\n",BD_Level.BDsensor_config);
+        break;
+#endif
 
       #if EXTRUDERS
         case 104: M104(); break;                                  // M104: Set hot end temperature
