@@ -53,7 +53,7 @@ Bed_Distance_sensor_level BD_Level;
 #define CMD_END_READ_CALIBRATE_DATA   1018
 #define CMD_START_CALIBRATE 1019
 #define CMD_END_CALIBRATE 1021  
-
+#define CMD_READ_VERSION  1016
 
 
 I2C_SegmentBED BD_I2C_SENSOR;
@@ -129,9 +129,25 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
          
       for(int i=0;i<MAX_BD_HEIGHT*10;i++){
         tmp=BD_I2C_SENSOR.BD_i2c_read();    
-        printf("Calibrate data:%d,%d,check:%d",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
-        safe_delay(500);
+        printf("Calibrate data:%d,%d,check:%d\n",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
+        safe_delay(100);
       }
+      BDsensor_config=0; 
+      BD_I2C_SENSOR.BD_i2c_write(CMD_END_READ_CALIBRATE_DATA);//
+        safe_delay(500);
+    }
+    // read raw calibrate data
+    if(BDsensor_config==-1){
+      BD_I2C_SENSOR.BD_i2c_write(CMD_READ_VERSION);
+      safe_delay(1000);
+         
+      for(int i=0;i<19;i++){
+        tmp=BD_I2C_SENSOR.BD_i2c_read();    
+		tmp_1[i]=tmp&0x3ff;
+        printf("read data:%d,%d,check:%d",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
+        safe_delay(100);
+      }
+	  printf("BDsensor version:%s\n",tmp_1);
       BDsensor_config=0; 
       BD_I2C_SENSOR.BD_i2c_write(CMD_END_READ_CALIBRATE_DATA);//
         safe_delay(500);
