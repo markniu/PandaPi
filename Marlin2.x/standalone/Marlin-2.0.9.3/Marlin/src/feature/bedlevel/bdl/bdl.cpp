@@ -40,7 +40,7 @@
 #include <Panda_segmentBed_I2C.h>
 
 #include "bdl.h"
-#define DEBUG_OUT_BD 0
+#define DEBUG_OUT_BD 1
 Bed_Distance_sensor_level BD_Level; 
 
 //M102   S-5     Read raw Calibrate data
@@ -53,7 +53,7 @@ Bed_Distance_sensor_level BD_Level;
 #define CMD_END_READ_CALIBRATE_DATA   1018
 #define CMD_START_CALIBRATE 1019
 #define CMD_END_CALIBRATE 1021  
-
+#define CMD_READ_VERSION  1016
 
 
 I2C_SegmentBED BD_I2C_SENSOR;
@@ -109,15 +109,34 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
       old_buf_z=current_position.z;
       endstops.BD_Zaxis_update(z_sensor<=0.01);
       //endstops.update();
-      
+      sprintf_P(tmp_1,  PSTR("M117 Z%d.%d"), (int)z_sensor,(int)((int)(z_sensor*100)%100));
+       
     }
     else
       stepper.set_directions();
 #if DEBUG_OUT_BD      
     SERIAL_ECHOLNPGM("BD:",tmp&0x3ff,", Z:",cur_z,"|",current_position.z);
-    if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0)
-      SERIAL_ECHOLNPGM("errorCRC");        
-#endif    
+#endif     
+    
+    if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0){
+      sprintf_P(tmp_1,  PSTR("M117 BDsensor connect error"));
+#if DEBUG_OUT_BD          
+      SERIAL_ECHOLNPGM("BDsensor connect error"); 
+#endif           
+    }
+    else if((tmp&0x3ff)>1020){
+      BD_I2C_SENSOR.BD_i2c_stop();
+      safe_delay(10);
+      sprintf_P(tmp_1,  PSTR("M117 BDsensor data error"));
+#if DEBUG_OUT_BD       
+      SERIAL_ECHOLNPGM("BDsensor data error"); 
+#endif      
+    }
+    queue.enqueue_one_now(tmp_1); // enquen M117 
+  
+ 
+
+
     if((tmp&0x3ff)>1020){
       BD_I2C_SENSOR.BD_i2c_stop();
       safe_delay(10);
@@ -130,12 +149,29 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
       for(int i=0;i<MAX_BD_HEIGHT*10;i++){
         tmp=BD_I2C_SENSOR.BD_i2c_read();    
         SERIAL_ECHOLNPGM("Calibrate data:",i,",",tmp&0x3ff,", check:",BD_I2C_SENSOR.BD_Check_OddEven(tmp));
-        safe_delay(500);
+        safe_delay(100);
       }
       BDsensor_config=0; 
       BD_I2C_SENSOR.BD_i2c_write(CMD_END_READ_CALIBRATE_DATA);//
         safe_delay(500);
     }
+     // read version of sensor
+     else if(BDsensor_config==-1){
+      BD_I2C_SENSOR.BD_i2c_write(CMD_READ_VERSION);
+      safe_delay(1000);
+         
+      for(int i=0;i<19;i++){
+        tmp=BD_I2C_SENSOR.BD_i2c_read();    
+		    tmp_1[i]=tmp&0x3ff;
+        //printf("read data:%d,%d,check:%d",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
+        SERIAL_ECHOLNPGM("read data:",i,",",tmp&0x3ff,", check:",BD_I2C_SENSOR.BD_Check_OddEven(tmp));
+        safe_delay(100);
+      }
+       SERIAL_ECHOLNPGM("BDsensor version:",tmp_1);
+      BDsensor_config=0; 
+      BD_I2C_SENSOR.BD_i2c_write(CMD_END_READ_CALIBRATE_DATA);//
+        safe_delay(500);
+     }
     // start Calibrate
     else if(BDsensor_config<=-6){
       safe_delay(100);     

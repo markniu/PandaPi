@@ -4,20 +4,16 @@
 
  #define I2C_READ 1
 #define I2C_WRITE 0
-  #define DELAY 20 // usec delay
+//#define DELAY 100 // usec delay
 #define BUFFER_LENGTH 32
 #define I2C_MAXWAIT 5000
 //#define I2C_7BITADDR 0x3C// DS1307
 #define MEMLOC 0x0A
 #define ADDRLEN 1 
 
-#define INPUT 0
-#define OUTPUT 1
-#define INPUT_PULLUP INPUT
-
 class I2C_SegmentBED{
 public:
-	int i2c_init(unsigned char _sda,unsigned char _scl,unsigned char _addr,int soft_delay);
+	int i2c_init(unsigned char _sda,unsigned char _scl,unsigned char _addr,int delay_m);
 	void I2C_read_str(char *dat_r,int addr);
 	void I2C_send_str(char *dat_r,char send_now);	 
 //////////////////////

@@ -45,8 +45,7 @@ Bed_Distance_sensor_level BD_Level;
 
 //M102   S-5     Read raw Calibrate data
 //M102   S-6     Start Calibrate 
-//M102   S4      Set the adjustable Z height value,e.g. M102 S4  means it 
-will do adjusting while the Z height <=0.4mm , disable it by M102 S0.
+//M102   S4      Set the adjustable Z height value,e.g. M102 S4  means it will do adjusting while the Z height <=0.4mm , disable it by M102 S0.
 //M102   S-1     Read sensor information
 
 #define MAX_BD_HEIGHT 6.9
@@ -54,16 +53,15 @@ will do adjusting while the Z height <=0.4mm , disable it by M102 S0.
 #define CMD_END_READ_CALIBRATE_DATA   1018
 #define CMD_START_CALIBRATE 1019
 #define CMD_END_CALIBRATE 1021  
-
+#define CMD_READ_VERSION  1016
 
 
 I2C_SegmentBED BD_I2C_SENSOR;
 
 
-void Bed_Distance_sensor_level::echo_name() { }
+void Bed_Distance_sensor_level::echo_name() { SERIAL_ECHOPGM("unified bed leveling"); }
 
-void Bed_Distance_sensor_level::init(unsigned char _sda,unsigned char _scl,
-int delay_s) {
+void Bed_Distance_sensor_level::init(unsigned char _sda,unsigned char _scl,int delay_s) {
 
   int ret=BD_I2C_SENSOR.i2c_init(_sda,_scl,0x3C,delay_s);
   if(ret!=1)
@@ -98,7 +96,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
           
           babystep.set_mm(Z_AXIS,(cur_z-z_sensor));
 #if DEBUG_OUT_BD          
-          printf("BD:%.2f,Z:%.2f|%.2f\n",z_sensor,cur_z,current_position.z);
+          printf("BD:%.2f Z:%.2f | %.2f\n",z_sensor,cur_z,current_position.z);
 #endif          
       }
       else{
@@ -116,7 +114,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
     else
       stepper.set_directions();
 #if DEBUG_OUT_BD      
-    printf("BD:%d,Z:%.2f|%.2f",tmp&0x3ff,cur_z,current_position.z);
+    printf("BD:%d Z:%.2f | %.2f\n",tmp&0x3ff,cur_z,current_position.z);
     if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0)
       printf("errorCRC\n");        
 #endif    
@@ -132,8 +130,24 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
       for(int i=0;i<MAX_BD_HEIGHT*10;i++){
         tmp=BD_I2C_SENSOR.BD_i2c_read();    
         printf("Calibrate data:%d,%d,check:%d\n",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
-        safe_delay(500);
+        safe_delay(100);
       }
+      BDsensor_config=0; 
+      BD_I2C_SENSOR.BD_i2c_write(CMD_END_READ_CALIBRATE_DATA);//
+        safe_delay(500);
+    }
+    // read raw calibrate data
+    if(BDsensor_config==-1){
+      BD_I2C_SENSOR.BD_i2c_write(CMD_READ_VERSION);
+      safe_delay(1000);
+         
+      for(int i=0;i<19;i++){
+        tmp=BD_I2C_SENSOR.BD_i2c_read();    
+		tmp_1[i]=tmp&0x3ff;
+        printf("read data:%d,%d,check:%d",i,tmp&0x3ff,BD_I2C_SENSOR.BD_Check_OddEven(tmp));
+        safe_delay(100);
+      }
+	  printf("BDsensor version:%s\n",tmp_1);
       BDsensor_config=0; 
       BD_I2C_SENSOR.BD_i2c_write(CMD_END_READ_CALIBRATE_DATA);//
         safe_delay(500);
@@ -174,7 +188,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
           gcode.process_parsed_command();
         //  current_position.z
           SERIAL_ECHOPGM(tmp_1);
-          printf(" Z:%.2f\n",current_position.z);
+          printf(" Z:%.2f",current_position.z);
           while((tmp_k+0.1)<z_pose){
             tmp_k=planner.get_axis_position_mm(Z_AXIS);
             safe_delay(1);
@@ -182,7 +196,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
           safe_delay(800);
           tmp=(z_pose+0.0001)*10;
           BD_I2C_SENSOR.BD_i2c_write(tmp);
-          printf("w:%d ,Zpose:%.2f",tmp,z_pose);
+          printf("w:%d,Zpose:%0.2f",tmp,z_pose);
           z_pose+=0.1001;
          // queue.enqueue_now_P(PSTR("G90"));
         }
