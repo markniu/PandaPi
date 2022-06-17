@@ -109,7 +109,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
       old_buf_z=current_position.z;
       endstops.BD_Zaxis_update(z_sensor<=0.01);
       //endstops.update();
-      sprintf_P(tmp_1,  PSTR("M117 Z%d.%d"), (int)z_sensor,(int)((int)(z_sensor*100)%100));
+      sprintf_P(tmp_1,  PSTR("M117 BD sensor Z:%d.%02dmm"), (int)z_sensor,(int)((int)(z_sensor*100)%100));
        
     }
     else
@@ -132,8 +132,9 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
       SERIAL_ECHOLNPGM("BDsensor data error"); 
 #endif      
     }
-    queue.enqueue_one_now(tmp_1); // enquen M117 
-  
+     // enquen M117 
+    parser.parse(tmp_1);
+    gcode.process_parsed_command();
  
 
 
