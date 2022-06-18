@@ -1472,6 +1472,10 @@ void Temperature::manage_heater() {
 	  temp_hotend[0].celsius=readTemp();
 	  tick();
 #endif
+#if ENABLED(BABYSTEPPING) && DISABLED(INTEGRATED_BABYSTEPPING)
+	 babystep.task();
+ #endif
+
 	  
   }
   
