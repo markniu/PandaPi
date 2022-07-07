@@ -48,7 +48,7 @@ Bed_Distance_sensor_level BD_Level;
 //M102   S4      Set the adjustable Z height value,e.g. M102 S4  means it will do adjusting while the Z height <=0.4mm , disable it by M102 S0.
 //M102   S-1     Read sensor information
 
-#define MAX_BD_HEIGHT 6.9
+#define MAX_BD_HEIGHT 4.0
 #define CMD_START_READ_CALIBRATE_DATA   1017
 #define CMD_END_READ_CALIBRATE_DATA   1018
 #define CMD_START_CALIBRATE 1019
