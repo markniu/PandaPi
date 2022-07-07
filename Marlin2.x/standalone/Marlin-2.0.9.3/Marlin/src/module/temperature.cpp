@@ -1338,8 +1338,11 @@ void Temperature::manage_heater() {
          {
             if(rx_msg.identifier=='M')// read temperature
             {
+               float cel_tmp=*((float *)(rx_msg.data));
                printf("\nt:%.5f,%d,%c\n",*((float *)(rx_msg.data)),*((unsigned short *)(rx_msg.data+4)),(char)rx_msg.data[6]);
-              thermalManager.temp_hotend[0].celsius=*((float *)(rx_msg.data));
+              
+               if(cel_tmp>1&&cel_tmp<350)
+                  thermalManager.temp_hotend[0].celsius=cel_tmp;
               
                target_hotend_slave=*((unsigned short *)(rx_msg.data+4));
                virtual_esp32_pins[FIL_RUNOUT_PIN-200]=rx_msg.data[6]=='H'?1:0;
