@@ -40,7 +40,7 @@
 #include <Panda_segmentBed_I2C.h>
 
 #include "bdl.h"
-#define DEBUG_OUT_BD 1
+#define DEBUG_OUT_BD 0
 Bed_Distance_sensor_level BD_Level; 
 
 //M102   S-5     Read raw Calibrate data

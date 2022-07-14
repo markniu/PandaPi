@@ -755,14 +755,50 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/) {
  *   - Raise to the BETWEEN height
  * - Return the probed Z position
  */
+#include "planner.h"
 float Probe::probe_at_point(const_float_t rx, const_float_t ry, const ProbePtRaise raise_after/*=PROBE_PT_NONE*/, const uint8_t verbose_level/*=0*/, const bool probe_relative/*=true*/, const bool sanity_check/*=true*/) {
   DEBUG_SECTION(log_probe, "Probe::probe_at_point", DEBUGGING(LEVELING));
 
 #if BD_SENSOR
-  
+  // On delta keep Z below clip height or do_blocking_move_to will abort
+ /* xyz_pos_t npos = { rx, ry, TERN(DELTA, _MIN(delta_clip_start_height, current_position.z), current_position.z) };
+  if (!can_reach(npos, probe_relative)) {
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Position Not Reachable");
+    return NAN;
+  }
+  if (probe_relative) npos -= offset_xy;  // Get the nozzle position
+
+  // Move the probe to the starting XYZ
+  do_blocking_move_to(npos, feedRate_t(XY_PROBE_FEEDRATE_MM_S));
+  // safe_delay(2000);
+  */
+ char tmp_1[50];
+ float tmp_k=0;
+          sprintf_P(tmp_1,  PSTR("G90"));
+          parser.parse(tmp_1);
+          gcode.process_parsed_command();
+          safe_delay(1000);
+           sprintf_P(tmp_1,  PSTR("G1 X%d.%d Y%d.%d "), (int)rx,(int)((int)(rx*10)%10),(int)ry,(int)((int)(ry*10)%10));
+          parser.parse(tmp_1);
+          gcode.process_parsed_command();
+
+        //  current_position.z
+          SERIAL_ECHOPGM(tmp_1);
+          SERIAL_ECHOLNPGM(" ,x:",planner.get_axis_position_mm(X_AXIS));
+          while((tmp_k+0.1)<rx){
+            tmp_k=planner.get_axis_position_mm(X_AXIS);
+            safe_delay(1);
+          }
+          tmp_k=0;
+         while((tmp_k+0.1)<ry){
+            tmp_k=planner.get_axis_position_mm(Y_AXIS);
+            safe_delay(1);
+          }
+safe_delay(2000);
   float measured_z = NAN;
   measured_z=BD_Level.BD_sensor_read();
-
+    
+ SERIAL_ECHOLNPGM("BD:",measured_z,"X:",rx,"Y:",ry);
 #else
   if (DEBUGGING(LEVELING)) {
     DEBUG_ECHOLNPGM(
