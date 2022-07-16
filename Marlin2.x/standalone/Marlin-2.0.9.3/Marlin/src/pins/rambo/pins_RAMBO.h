@@ -48,34 +48,40 @@
 #endif
 
 //
-// Servos
-//
-#ifndef SERVO0_PIN
-  #define SERVO0_PIN                          22  // Motor header MX1
+ 
+
+#define BOARD_NAME "Rambo"
+
+#define POWER_LOSS_DETECT_PIN   44
+#define FIL_RUNOUT_PIN    22
+
+#if BD_SENSOR
+#define  I2C_BD_SDA_PIN   30
+#define  I2C_BD_SCL_PIN   23
+#define  I2C_BD_DELAY  10
 #endif
-#define SERVO1_PIN                            23  // Motor header MX2
-#ifndef SERVO2_PIN
-  #define SERVO2_PIN                          24  // Motor header MX3
-#endif
-#define SERVO3_PIN                             5  // PWM header pin 5
 
 //
 // Limit Switches
 //
 #define X_MIN_PIN                             12
-#define X_MAX_PIN                             24
+#define X_MAX_PIN                             22
 #define Y_MIN_PIN                             11
-#define Y_MAX_PIN                             23
-#ifndef Z_MIN_PIN
+//#define Y_MAX_PIN                             23
+#if ENABLED(BLTOUCH)
+	#define Z_MIN_PIN          22
+#elif ENABLED(FIX_MOUNTED_PROBE)
+	#define Z_MIN_PIN    30//24
+#else
   #define Z_MIN_PIN                           10
 #endif
-#define Z_MAX_PIN                             30
+//#define Z_MAX_PIN                             30
 
 //
 // Z Probe (when not Z_MIN_PIN)
 //
 #ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN                     30
+  #define Z_MIN_PROBE_PIN                     30//30
 #endif
 
 #ifndef FIL_RUNOUT_PIN
@@ -104,6 +110,8 @@
 #define E1_STEP_PIN                           33
 #define E1_DIR_PIN                            42
 #define E1_ENABLE_PIN                         25
+
+
 
 // Microstepping pins - Mapping not from fastio.h (?)
 #define X_MS1_PIN                             40
@@ -142,10 +150,10 @@
   #define FAN_PIN                              8
 #endif
 #ifndef FAN1_PIN
-  #define FAN1_PIN                             6
+  #define FAN1_PIN                             2
 #endif
 #ifndef FAN2_PIN
-  #define FAN2_PIN                             2
+  #define FAN2_PIN                             6
 #endif
 
 //

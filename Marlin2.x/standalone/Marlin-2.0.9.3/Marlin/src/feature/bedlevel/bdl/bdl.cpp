@@ -40,7 +40,7 @@
 #include <Panda_segmentBed_I2C.h>
 
 #include "bdl.h"
-#define DEBUG_OUT_BD 1
+#define DEBUG_OUT_BD 0
 Bed_Distance_sensor_level BD_Level; 
 
 //M102   S-5     Read raw Calibrate data
@@ -92,7 +92,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
     timeout_y=1000;
  if((millis()-timeout_auto)>timeout_y){
     unsigned short tmp=0;
-    char tmp_1[50];
+    char tmp_1[50]={0};
     float cur_z=planner.get_axis_position_mm(Z_AXIS);//current_position.z
     static float old_cur_z=cur_z;
     static float old_buf_z=current_position.z;
@@ -131,7 +131,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
 #endif     
     
     if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0){
-      sprintf_P(tmp_1,  PSTR("M117 BDsensor connect error"));
+      sprintf_P(tmp_1,  PSTR("M117 sensor connect error"));
 #if DEBUG_OUT_BD          
       SERIAL_ECHOLNPGM("BDsensor connect error"); 
 #endif           
@@ -139,7 +139,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
     else if((tmp&0x3ff)>1020){
       BD_I2C_SENSOR.BD_i2c_stop();
       safe_delay(10);
-      sprintf_P(tmp_1,  PSTR("M117 BDsensor data error"));
+      sprintf_P(tmp_1,  PSTR("M117 sensor data error"));
 #if DEBUG_OUT_BD       
       SERIAL_ECHOLNPGM("BDsensor data error"); 
 #endif      
@@ -220,7 +220,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
           parser.parse(tmp_1);
           gcode.process_parsed_command();
         //  current_position.z
-          SERIAL_ECHOPGM(tmp_1);
+          //SERIAL_ECHOPGM(tmp_1);
           SERIAL_ECHOLNPGM(" ,Z:",current_position.z);
           while((tmp_k+0.1)<z_pose){
             tmp_k=planner.get_axis_position_mm(Z_AXIS);

@@ -759,8 +759,18 @@ float Probe::probe_at_point(const_float_t rx, const_float_t ry, const ProbePtRai
   DEBUG_SECTION(log_probe, "Probe::probe_at_point", DEBUGGING(LEVELING));
 
 #if BD_SENSOR
-  
+
   float measured_z = NAN;
+  xyz_pos_t npos = { rx, ry, TERN(DELTA, _MIN(delta_clip_start_height, current_position.z), current_position.z) };
+  if (!can_reach(npos, probe_relative)) {
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Position Not Reachable");
+    return NAN;
+  }
+  if (probe_relative) npos -= offset_xy;  // Get the nozzle position
+
+  // Move the probe to the starting XYZ
+  do_blocking_move_to(npos, feedRate_t(XY_PROBE_FEEDRATE_MM_S));
+  
   measured_z=BD_Level.BD_sensor_read();
 
 #else
