@@ -1053,6 +1053,12 @@
  *      - normally-open switches to 5V and D32.
  */
 //#define Z_MIN_PROBE_PIN 32 // Pin 32 is the RAMPS default
+/*Bed Distance Sensor,
+ it can measure the distance from bed to nozzle with distance resolution 0.01mm
+ For information about this sensor https://github.com/markniu/Bed_Distance_sensor
+ Communicated to this sensor with I2C port,so it require a I2C libarary markyue/Panda_SoftMasterI2C
+*/
+#define BD_SENSOR 1
 
 /**
  * Probe Type
@@ -1067,13 +1073,6 @@
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
 //#define PROBE_MANUALLY
-
-/*Bed Distance Sensor,
- it can measure the distance from bed to nozzle with distance resolution 0.01mm
- For information about this sensor https://github.com/markniu/Bed_Distance_sensor
- Communicated to this sensor with I2C port,so it require a I2C libarary markyue/Panda_SoftMasterI2C
-*/
-#define BD_SENSOR 0 
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1232,7 +1231,6 @@
     //#define PROBE_TARE_ONLY_WHILE_INACTIVE  // Fail to tare/probe if PROBE_ACTIVATION_SWITCH is active
   #endif
 #endif
-
 
 
 
