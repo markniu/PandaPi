@@ -18,7 +18,7 @@ This project is no longer maintained although I don't want to, sorry.
 5. ####  no wiring for TMC driver sensorless homing and uart mode.
 
 PCB & SCH files：
-https://lceda.cn/editor#id=|594cb9c12f2344b588df6965300ba6a4|5d16c0af55394b818e09e83b3baa44bd
+if you cann't open, please copy and paste into the new tab:https://lceda.cn/editor#id=|594cb9c12f2344b588df6965300ba6a4|5d16c0af55394b818e09e83b3baa44bd
 
 <img width="1000"  src="/doc/22311.jpg"/> 
 
@@ -89,6 +89,7 @@ Protection    | 	 4 autorecovery fuses and isolation components  | 	 on board fo
 
 ## [Where to buy](https://www.pandapi3d.com/)  
 thanks for your support! and have fun with 3D printer world!
+
 
 
 
